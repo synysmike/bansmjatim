@@ -1,10 +1,5 @@
 /node_modules
-<<<<<<< HEAD
-/public/hot
-/public/storage
-=======
-/public
->>>>>>> 25455cd (nganu, ngeconfig Github)
+# /public
 /storage/*.key
 /vendor
 .env
