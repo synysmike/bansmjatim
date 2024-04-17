@@ -176,18 +176,20 @@
                 columnDefs: [{ width: '20%', targets: 1 }]
             });
             // Selectric
+            $(".selectric").select2({
+                placeholder: "Pilih kolom inputa"
+            });
 
-
-            if (jQuery().selectric) {
-                $(".selectric").selectric({
-                    disableOnMobile: false,
-                    nativeOnMobile: false,
-                    onClose: function() {
-                        var lbl = $('.label').text()
-                        $("#tag").val(lbl)
-                    },
-                });
-            }
+            // if (jQuery().selectric) {
+            //     $(".selectric").selectric({
+            //         disableOnMobile: false,
+            //         nativeOnMobile: false,
+            //         onClose: function() {
+            //             var lbl = $('.label').text()
+            //             $("#tag").val(lbl)
+            //         },
+            //     });
+            // }
 
             // $("#link").keyup(function (e) { 
             //     $("#rdr").attr("href", this.val)
