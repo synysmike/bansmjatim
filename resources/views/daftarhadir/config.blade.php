@@ -190,9 +190,9 @@
                 });
 
 
-                $('.selectric').on('select2:select', function(e) {
-                    var lbl = $('.label').text()
-                        $("#tag").val(lbl)
+                $('.selectric').on('select2:close', function(e) {
+                    var data = e.params.data;
+                    console.log(data);
                 });
 
                 // $(".selectric").selectric({
@@ -205,7 +205,7 @@
                 // });
             }
 
-            $("#link").keyup(function (e) { 
+            $("#link").keyup(function(e) {
                 $("#rdr").attr("href", this.val)
             });
 
