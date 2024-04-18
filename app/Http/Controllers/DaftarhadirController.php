@@ -56,8 +56,8 @@ class DaftarhadirController extends Controller
         } else {
             $data = Daftarhadir::where('kat_dh', $datanya->kategori)
                 ->orderBy('created_at', 'DESC')->get();
-                // $ass = null;
-                // array_unshift($compact, 'ass');
+            $ass = null;
+            array_unshift($compact, 'ass');
         }
         //table head lists
         $theads = $isi;
