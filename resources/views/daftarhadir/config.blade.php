@@ -25,34 +25,36 @@
                     <div class="card">
                         <div class="card-header">
                             <h4>Input Text</h4>
-                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#my-modal">Tambah Form</button>
+                            <button class="btn btn-primary" type="button" data-toggle="modal"
+                                data-target="#my-modal">Tambah Form</button>
                         </div>
-                        
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table id="tabel-config" class="table table-light">
-                                        <thead>
-                                            <tr>
-                                                <td>no</td>
-                                                <td>field</td>
-                                                <td>judul</td>
-                                                <td>kategori</td>
-                                                <td>link</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="tabel-config" class="table table-light">
+                                    <thead>
+                                        <tr>
+                                            <td>no</td>
+                                            <td>field</td>
+                                            <td>judul</td>
+                                            <td>kategori</td>
+                                            <td>link</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
-                        
-                        
+                        </div>
+
+
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <div id="my-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="my-modal-title" aria-hidden="true">
+    <div id="my-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="my-modal-title"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -163,7 +165,7 @@
                         data: 'judul',
                         name: 'judul'
                     },
-                    
+
                     {
                         data: 'kategori',
                         name: 'kategori'
@@ -173,30 +175,39 @@
                         name: 'link'
                     },
                 ],
-                columnDefs: [{ width: '20%', targets: 1 }]
+                columnDefs: [{
+                    width: '20%',
+                    targets: 1
+                }]
             });
             // Selectric
-            
+
 
             if (jQuery().selectric) {
 
                 $(".selectric").select2({
-                placeholder: "Pilih kolom inputa"
-            });
-            
-                $(".selectric").selectric({
-                    disableOnMobile: false,
-                    nativeOnMobile: false,
-                    onClose: function() {
-                        var lbl = $('.label').text()
-                        $("#tag").val(lbl)
-                    },
+                    placeholder: "Pilih kolom inputa"
                 });
+
+
+                $('.selectric').on('select2:select', function(e) {
+                    var lbl = $('.label').text()
+                        $("#tag").val(lbl)
+                });
+
+                // $(".selectric").selectric({
+                //     disableOnMobile: false,
+                //     nativeOnMobile: false,
+                //     onClose: function() {
+                //         var lbl = $('.label').text()
+                //         $("#tag").val(lbl)
+                //     },
+                // });
             }
 
-            // $("#link").keyup(function (e) { 
-            //     $("#rdr").attr("href", this.val)
-            // });
+            $("#link").keyup(function (e) { 
+                $("#rdr").attr("href", this.val)
+            });
 
 
             $(document).on('submit', '#id-form', function(e) {
