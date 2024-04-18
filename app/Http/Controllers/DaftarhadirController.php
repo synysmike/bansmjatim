@@ -68,7 +68,7 @@ class DaftarhadirController extends Controller
         $unit = $isi;
         array_unshift($unit, 'DT_RowIndex');
 
-        dd($unit);
+        // dd($unit);
         $form = Form::select('tag_field')
             ->whereIn("nama_field", $konten)
             ->get();
