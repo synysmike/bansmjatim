@@ -36,7 +36,7 @@
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h3>{{ $judul }} tes ngegit</h3>
+                        <h3>{{ $judul }}</h3>
                     </div>
                     <div class="modal-body">
                         <div class="table-responsive">
@@ -71,7 +71,7 @@
                         <!-- Content -->
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h4>{{ $judul }} BAN-PDM JAWA TIMUR banget!!!!!</h4>
+                                <h4>{{ $judul }} BAN-PDM JAWA TIMUR</h4>
                             </div>
                             <div class="card-body">
                                 <form id="id-form" enctype="multipart/form-data">
