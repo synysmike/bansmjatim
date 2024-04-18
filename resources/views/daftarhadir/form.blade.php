@@ -251,19 +251,7 @@
                     // parsing nama columns
                     'columns': columns,
                     'bAutoWidth': false,
-                    'aoColumns': [{
-                            'sWidth': '15%'
-                        },
-                        // {
-                        //     'sWidth': '25%'
-                        // },
-                        // {
-                        //     'sWidth': '25%'
-                        // },
-                        // {
-                        //     'sWidth': '25%'
-                        // },
-                    ]
+                    
                 });
                 // console.log(table);
                 new $.fn.dataTable.Buttons(table, {
