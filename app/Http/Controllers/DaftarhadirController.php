@@ -152,8 +152,8 @@ class DaftarhadirController extends Controller
     public function set_config(Request $request)
     {
         //
-        if ($request->tag) {
-            $tabel = str_replace(" ", "", $request->tag);
+        if ($request->tabel) {
+            $tabel = str_replace(" ", "", $request->tabel);
             $newdata = implode("),(", $tabel);
             $unit = Config::updateOrCreate(
                 ['id' => 1],

@@ -81,7 +81,7 @@
                                 </p>
 
 
-                                <select name="tabel[]" class="form-control selectric" multiple="multiple">
+                                <select name="tabel[]" id="select-form" class="form-control" multiple="multiple">
                                     <option value=''>-- Pilih field --</option>
                                     @foreach ($forms as $form)
                                         <option @if (in_array($form->nama_field, $newdata)) {{ ' selected ' }} @endif
@@ -180,30 +180,16 @@
                     targets: 1
                 }]
             });
-            // Selectric
+            // Select2
 
 
-            if (jQuery().selectric) {
+            var cek = $("#select-form").select2();
+            cek.on("select2:close", function(e) {
+                var vals = cek.val()
+                $("#tag").val(vals)
+                // console.log(vals)
+            });
 
-                $(".selectric").select2({
-                    placeholder: "Pilih kolom inputa"
-                });
-
-
-                $('.selectric').on('select2:close', function(e) {
-                    var data = e.params.data;
-                    console.log(data);
-                });
-
-                // $(".selectric").selectric({
-                //     disableOnMobile: false,
-                //     nativeOnMobile: false,
-                //     onClose: function() {
-                //         var lbl = $('.label').text()
-                //         $("#tag").val(lbl)
-                //     },
-                // });
-            }
 
             $("#link").keyup(function(e) {
                 $("#rdr").attr("href", this.val)
@@ -224,6 +210,7 @@
                         $('#id-form').trigger(
                             "reset");
                         $('#btn-save').html('Tersimpan');
+                        $("#my-modal").modal('hide');
                         var url = $("#link").val()
                         $("#rdr").show()
                         $("#rdr").attr("href", "https://form.bansmprovjatim.com/form/" + url)
@@ -231,6 +218,9 @@
                         swal("Berhasil",
                             "Berkas telah tersimpan",
                             "success");
+                            var oTable = $("#tabel-config")
+                                        .dataTable();
+                                    oTable.fnDraw(false);
 
                     },
                     error: function(data) {
