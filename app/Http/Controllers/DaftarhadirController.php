@@ -67,6 +67,8 @@ class DaftarhadirController extends Controller
         //declarate datatable columns
         $unit = $isi;
         array_unshift($unit, 'DT_RowIndex');
+
+        dd($unit);
         $form = Form::select('tag_field')
             ->whereIn("nama_field", $konten)
             ->get();
