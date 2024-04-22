@@ -24,8 +24,8 @@ class DaftarhadirController extends Controller
     {
         // load config form
         $datanya = Config::where('link', $link)->first();
-        $judul = "$datanya->judul";
-        $link = "$datanya->link";
+        $judul = $datanya->judul;
+        $link = $datanya->link;
         $kategori = "<input type='hidden' name='kat_dh' id='kat_dh' value='" . $datanya->kategori . "'>";
         #sampai sini
         $mytime = Carbon::now('Asia/Jakarta');
