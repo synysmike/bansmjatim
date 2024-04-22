@@ -23,7 +23,7 @@ class DaftarhadirController extends Controller
     public function index(Request $request, $link)
     {
         // load config form
-        $datanya = Config::where('link', $link)->first();
+        $datanya = Config::all();
         dd($datanya);
         $judul = $datanya->judul;
         $link = $datanya->link;
