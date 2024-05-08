@@ -43,8 +43,7 @@ class DaftarhadirController extends Controller
             array_push($isi, 'created_at');
             // dd($isi);
             $ass =
-                asesor::where([
-                    ['judul', '=', 'pelatihan_2024_th_2'],
+                asesor::where([['judul', '=', 'dh_kpa'],
                     ['soft_delete', '=', 0],
                     // Add more conditions here if needed
                 ])->get();
