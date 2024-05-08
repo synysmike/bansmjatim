@@ -312,6 +312,10 @@ class DaftarhadirController extends Controller
                     'kelas' => $kelas,
                     'ttd' => $file,
                     'tanggal' => $mytime->format('d-m-Y'),
+                    'unit' => $request->unit,
+                    'kabkota' => $request->asal,
+                    'unsur' => $request->unsur,
+                    'jabatan' => $request->jabatan,
 
                 ]
             );
