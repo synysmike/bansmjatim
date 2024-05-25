@@ -42,8 +42,10 @@ class DaftarhadirController extends Controller
             array_unshift($isi, 'nia');
             array_push($isi, 'created_at');
             // dd($isi);
+
             $ass =
-                asesor::where([['judul', '=', 'dh_kpa'],
+            asesor::where([
+                ['judul', '=', $kat],
                     ['soft_delete', '=', 0],
                     // Add more conditions here if needed
                 ])->get();
@@ -332,15 +334,8 @@ class DaftarhadirController extends Controller
                 [
 
                     // fix this issue {
-
-
                     'nama' => $request->nama,
-
                     // }
-
-
-
-
                     'ttd' => $file,
                     'hp' => $request->hp,
                     'tanggal' => $mytime->format('d-m-Y'),
