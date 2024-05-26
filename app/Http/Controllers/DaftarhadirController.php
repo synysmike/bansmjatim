@@ -36,6 +36,8 @@ class DaftarhadirController extends Controller
         $compact = array('unit', 'theads', 'judul', 'kategori', 'form', 'link', 'kat');
         $isi = explode(",", $datanya->tabel);
         $konten = $isi;
+        //date today
+        $today = $mytime->format('d-m-Y');
         if (in_array("nama_asesor", $isi)) {
             unset($isi[0]);
             array_unshift($isi, 'nama');
@@ -52,10 +54,16 @@ class DaftarhadirController extends Controller
             array_unshift($compact, 'ass');
 
             $data = Daftarhadir::with('nia_asesor')
-                ->where('kat_dh', $datanya->kategori)
+                ->where(
+                    ['kat_dh', '=', $datanya->kategori],
+                    ['tanggal', '=', $today]
+                )
                 ->orderBy('created_at', 'DESC')->get();
         } else {
-            $data = Daftarhadir::where('kat_dh', $datanya->kategori)
+            $data = Daftarhadir::where(
+                ['kat_dh', '=', $datanya->kategori],
+                ['tanggal', '=', $today]
+            )
                 ->orderBy('created_at', 'DESC')->get();
             $ass = null;
             array_unshift($compact, 'ass');
@@ -73,8 +81,7 @@ class DaftarhadirController extends Controller
         $form = Form::select('tag_field')
             ->whereIn("nama_field", $konten)
             ->get();
-        //date today
-        $today = $mytime->format('d-m-Y');
+        
 
         //load yajra datatable
         if ($request->ajax()) {
