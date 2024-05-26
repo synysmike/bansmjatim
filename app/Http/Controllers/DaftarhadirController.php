@@ -55,14 +55,18 @@ class DaftarhadirController extends Controller
 
             $data = Daftarhadir::with('nia_asesor')
                 ->where(
+                [
                     ['kat_dh', '=', $datanya->kategori],
                     ['tanggal', '=', $today]
+                ]
                 )
                 ->orderBy('created_at', 'DESC')->get();
         } else {
             $data = Daftarhadir::where(
+                [
                 ['kat_dh', '=', $datanya->kategori],
-                ['tanggal', '=', $today]
+                    ['tanggal', '=', $today]
+                ]
             )
                 ->orderBy('created_at', 'DESC')->get();
             $ass = null;
