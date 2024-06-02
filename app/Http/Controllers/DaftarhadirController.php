@@ -258,7 +258,7 @@ class DaftarhadirController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('tand', function ($data) {
-                    $cek =  Storage::url($data->ttd);
+                $cek =  Storage::disk('public') . $data->ttd;
                     if (!empty($data->ttd)) {
                         return '<img width="40" src="' . $cek . '" />';
                     } else {
