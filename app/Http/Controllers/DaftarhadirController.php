@@ -260,7 +260,7 @@ class DaftarhadirController extends Controller
                 ->addColumn('tand', function ($data) {
                 $ttd = $data->ttd;
                     if (!empty($data->ttd)) {
-                    return '<img width="100" src="storage/app/public/' . $ttd . '" alt="">';
+                    return '<img width="100" src="public/app/public/' . $ttd . '" alt="">';
                     } else {
                         return '-';
                     }
