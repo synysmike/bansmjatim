@@ -334,6 +334,7 @@ class DaftarhadirController extends Controller
             );
         } else {
             $signature = $request->signature;
+            
             $signatureFileName = uniqid() . '.png';
             $signature = str_replace('data:image/png;base64,', '', $signature);
             $signature = str_replace(' ', '+', $signature);
@@ -346,6 +347,8 @@ class DaftarhadirController extends Controller
 
                     // fix this issue {
                     'nama' => $request->nama,
+                    'nia' => $request->nia,
+
                     // }
                     'ttd' => $file,
                     'hp' => $request->hp,
