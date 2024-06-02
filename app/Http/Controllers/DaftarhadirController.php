@@ -110,7 +110,28 @@ class DaftarhadirController extends Controller
         // dd($ass);
         return view('daftarhadir.form', compact($compact));
     }
+    public function listForm(Request $request)
+    {
 
+
+
+        $search = $request->search;
+
+        if ($search == '') {
+            $lists = Form::select('nama_field')->get();
+        } else {
+            $lists = Form::select('nama_field')->where('nama_field', 'like', '%' . $search . '%')->limit(20)->get();
+        }
+
+        $response = array();
+        foreach ($lists as $list) {
+            $response[] = array(
+                "id" => $list->nama_field,
+                "text" => $list->nama_field
+            );
+        }
+        return response()->json($response);
+    }
     // show form page parsed from dynamic URL
     public function show(Request $request, $link)
     {
@@ -146,11 +167,13 @@ class DaftarhadirController extends Controller
                 //     $ttd = $data->ttd;
                 //     return '<img width="100" src="'.base_url().'app/public/' . $ttd . '" alt="">';
                 // })
-                // ->addColumn('aksi', function ($data) {
-                //     $url = Crypt::encrypt($data->id);
-                //     return '<a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-info show-btn"> Edit</a>';
-                // })
-                // ->rawColumns(['ttd'])
+                ->addColumn('aksi', function ($data) {
+                    $url = Crypt::encrypt($data->id);
+                    $btn1 = '<a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-info show-btn"> Edit</a>';
+                    $aksi = $btn1 . ' <a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-danger del-btn"> Hapus</a>';
+                    return $aksi;
+                })
+                ->rawColumns(['aksi'])
                 ->make(true);
         }
         return view('daftarhadir.config', compact('tittle', 'data', 'newdata', 'forms'));
@@ -224,7 +247,7 @@ class DaftarhadirController extends Controller
     {
         $tittle = "list daftar hadir";
         $theads = array('No', 'id', 'Nama', 'NIA', 'Kelas', 'Kab./Kota', 'Kat DH', 'TTD');
-        $data = Daftarhadir::where('kat_dh', "Konfirmasi kehadiran RAKORDA II 2023")
+        $data = Daftarhadir::where('kat_dh', "Klasifikasi Permohonan Akreditasi (KPA) Tahap I")
             // ->orWhere('kode_kat',23)
             // ->orWhere('kode_kat',24)
             ->get();
