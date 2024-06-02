@@ -95,8 +95,8 @@
                         name: 'kat_dh'
                     },
                     {
-                        data: 'ttd',
-                        name: 'ttd'
+                        data: 'tand',
+                        name: 'tand'
                     },
                     
                 ],
