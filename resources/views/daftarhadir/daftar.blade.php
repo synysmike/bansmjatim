@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="/admin_theme/library/summernote/dist/summernote-bs4.css">
     <link rel="stylesheet" href="/admin_theme/library/bootstrap-daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
+
 @endpush
 @section('admin-container')
     <section>
@@ -23,10 +24,10 @@
                                                 <th class="text-center">{{ $tbh }}</th>
                                             @endforeach
                                         </tr>
-
+                                        
                                     </thead>
                                     <tbody>
-
+                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -47,8 +48,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"
         integrity="sha512-0QDLUJ0ILnknsQdYYjG7v2j8wERkKufvjBNmng/EdR/s/SE7X8cQ9y0+wMzuQT0lfXQ/NhG+zhmHNOWTUS3kMA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.4/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.3.4/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.print.min.js"></script>
@@ -59,17 +60,17 @@
         $(document).ready(function() {
 
             var label = [];
-            '@foreach ($unit as $unt)';
-            label.push('{!! $unt !!}');
-            '@endforeach';
-            // console.log(label);
-            var columns = [];
-            $.each(label, function(key, value) {
-                var my_item = {};
-                my_item.name = value;
-                my_item.data = value;
-                columns.push(my_item);
-            });
+                '@foreach ($unit as $unt)';
+                label.push('{!! $unt !!}');
+                '@endforeach';
+                // console.log(label);
+                var columns = [];
+                $.each(label, function(key, value) {
+                    var my_item = {};
+                    my_item.name = value;
+                    my_item.data = value;
+                    columns.push(my_item);
+                });
             //datatable yajra
             var table = $('#table-1').dataTable({
                 'processing': true,
@@ -78,13 +79,17 @@
                     url: '{{ $link }}', // ambil data
                     type: 'GET'
                 },
-
-                'columns': columns,
                 
+                'columns': columns,
+                'aLengthMenu': [
+                    [10, 50, 100, 200, -1],
+                    [10, 50, 100, 200, "All"]
+                ],
+                'iDisplayLength': 10,
             });
             new $.fn.dataTable.Buttons(table, {
                 buttons: [
-                    'copy', 'excel', 'pdf'
+                    'copy', 'excel','pdf'
                 ],
             });
             table.buttons(0, null).container().prependTo(
