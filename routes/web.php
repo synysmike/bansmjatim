@@ -8,19 +8,21 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AbsenController;
+use App\Http\Controllers\AsesorController;
 use App\Http\Controllers\AbsenDhController;
-use App\Http\Controllers\GalleryController;
 // use App\Http\Controllers\KinerjaController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\RakordaController;
 use App\Http\Controllers\SekolahController;
-use App\Http\Controllers\AsesorController;
 use App\Http\Controllers\BukuTamuController;
+use App\Http\Controllers\RecordBioController;
 use App\Http\Controllers\AssetsFormController;
 use App\Http\Controllers\ConfigFormController;
+use App\Http\Controllers\JudulAbsenController;
 use App\Http\Controllers\VerifikasiController;
 use App\Http\Controllers\DaftarhadirController;
+use App\Http\Controllers\MSoslokFormController;
 use App\Http\Controllers\DetilSekolahController;
-use App\Http\Controllers\JudulAbsenController;
 use App\Http\Controllers\NamaSekretariatController;
 
 /*
@@ -48,6 +50,8 @@ Route::get('/asesor',function(){
 return redirect("http://202.51.106.30/asesor/");
 });
 
+Route::resource('/bio', RecordBioController::class);
+Route::resource('/form-field', MSoslokFormController::class);
 
 
 Route::get('/', [HomeController::class, 'index']);
@@ -64,9 +68,10 @@ Route::get('/loginbansm', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout']);
 
 // public access
+Route::post('/list-form', [DaftarhadirController::class, 'listForm']);
 Route::get('/tbl-dh', [DaftarhadirController::class, 'tbl_dh']);
 Route::get('/cetak-dh', [DaftarhadirController::class, 'cetak']);
-Route::get('/list-dh', [DaftarhadirController::class, 'view']);
+Route::get('/list-dh/{link}', [DaftarhadirController::class, 'view']);
 Route::get('/configtable', [DaftarhadirController::class, 'config']);
 Route::get('/kesanggupan', [DaftarhadirController::class, 'kesediaan']);
 Route::post('/kesanggupan', [DaftarhadirController::class, 'postkesediaan']);
