@@ -85,10 +85,10 @@
                     [10, 50, 100, 200, "All"]
                 ],
                 iDisplayLength: 10,
-                dom: 'Bfrtip',
-        buttons: [
-            'copy', 'excel', 'pdf', 'csv'
-        ]
+        //         dom: 'Bfrtip',
+        // buttons: [
+        //     'copy', 'excel', 'pdf', 'csv'
+        // ]
             });
             // new $.fn.dataTable.Buttons(table1, {
             //     buttons: [
