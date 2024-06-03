@@ -1,6 +1,6 @@
 @extends('ad_layout.wrapper')
 @push('css-custom')
-    <link rel="stylesheet" href="admin_theme/library/datatables/media/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/admin_theme/library/datatables/media/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="/admin_theme/library/summernote/dist/summernote-bs4.css">
     <link rel="stylesheet" href="/admin_theme/library/bootstrap-daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
@@ -40,10 +40,10 @@
 @endsection
 
 @push('js-custom')
-    <script src="admin_theme/library/datatables/media/js/jquery.dataTables.min.js"></script>
-    <script src="admin_theme/library/jquery-ui-dist/jquery-ui.min.js"></script>
+    <script src="/admin_theme/library/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script src="/admin_theme/library/jquery-ui-dist/jquery-ui.min.js"></script>
     <script src="/admin_theme/library/bootstrap-daterangepicker/daterangepicker.js"></script>
-    <script src="admin_theme/library/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="/admin_theme/library/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/admin_theme/library/summernote/dist/summernote-bs4.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"
         integrity="sha512-0QDLUJ0ILnknsQdYYjG7v2j8wERkKufvjBNmng/EdR/s/SE7X8cQ9y0+wMzuQT0lfXQ/NhG+zhmHNOWTUS3kMA=="
@@ -58,53 +58,33 @@
     {{-- <script src="admin_theme/js/page/bootstrap-modal.js"></script> --}}
     <script>
         $(document).ready(function() {
+
+            var label = [];
+                '@foreach ($unit as $unt)';
+                label.push('{!! $unt !!}');
+                '@endforeach';
+                // console.log(label);
+                var columns = [];
+                $.each(label, function(key, value) {
+                    var my_item = {};
+                    my_item.name = value;
+                    my_item.data = value;
+                    columns.push(my_item);
+                });
             //datatable yajra
             var table = $('#table-1').DataTable({
-                processing: true,
-                serverSide: true, //aktifkan server-side 
-                ajax: {
+                'processing': true,
+                'serverSide': true, //aktifkan server-side 
+                'ajax': {
                     url: "/list-dh", // ambil data
                     type: 'GET'
                 },
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
-                    },
-                    {
-                        data: 'id',
-                        name: 'id'
-                    },
-                    {
-                        data: 'nama',
-                        name: 'nama'
-                    },
-                    {
-                        data: 'nia',
-                        name: 'nia'
-                    },
-                    {
-                        data: 'kelas',
-                        name: 'kelas'
-                    },
-                    {
-                        data: 'kabkota',
-                        name: 'kabkota'
-                    },
-                    {
-                        data: 'kat_dh',
-                        name: 'kat_dh'
-                    },
-                    {
-                        data: 'tand',
-                        name: 'tand'
-                    },
-                    
-                ],
-                aLengthMenu: [
+                'columns': columns,
+                'aLengthMenu': [
                     [10, 50, 100, 200, -1],
                     [10, 50, 100, 200, "All"]
                 ],
-                iDisplayLength: 10,
+                'iDisplayLength': 10,
             });
             new $.fn.dataTable.Buttons(table, {
                 buttons: [

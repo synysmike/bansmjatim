@@ -110,6 +110,70 @@ class DaftarhadirController extends Controller
         // dd($ass);
         return view('daftarhadir.form', compact($compact));
     }
+    public function view(Request $request, $link)
+    {
+        $datanya = Config::where('link', $link)->first();
+        $isi = explode(",", $datanya->tabel);
+        $kat = $datanya->kategori;
+        $compact = array('unit', 'theads', 'tittle');
+
+        if (in_array("nama_asesor", $isi)) {
+            unset($isi[0]);
+            array_unshift($isi, 'nama');
+            array_unshift($isi, 'nia');
+            array_push($isi, 'created_at');
+            // dd($isi);
+            $ass =
+                asesor::where([
+                    ['judul', '=', $kat],
+                    ['soft_delete', '=', 0],
+                    // Add more conditions here if needed
+                ])->get();
+            array_unshift($compact, 'ass');
+            $data = Daftarhadir::with('nia_asesor')
+            ->where(
+                [
+                    ['kat_dh', '=', $datanya->kategori],
+                ]
+            )
+                ->orderBy('created_at', 'DESC')->get();
+        } else {
+            $data = Daftarhadir::where(
+                [
+                    ['kat_dh', '=', $datanya->kategori],
+                ]
+            )
+                ->orderBy('created_at', 'DESC')->get();
+            $ass = null;
+            array_unshift($compact, 'ass');
+        }
+        //declarate datatable columns
+        $unit = $isi;
+        array_unshift($unit, 'DT_RowIndex');
+        array_push($unit, 'ttd');
+        //declarate tittle
+        $tittle = $datanya->kategori;
+        // $theads = array('No', 'id', 'Nama', 'NIA', 'Kelas', 'Kab./Kota', 'Kat DH', 'TTD');
+        $theads = $isi;
+        //array_unshift() is for append value to the first queue/array, array_shift() is the opposite 
+        array_unshift($theads, 'No.');
+        array_push($theads, 'TTD');
+        if ($request->ajax()) {
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('tand', function ($data) {
+                    $ttd = $data->ttd;
+                    if (!empty($data->ttd)) {
+                        return '<img width="100" src="public/app/public/' . $ttd . '" alt="">';
+                    } else {
+                        return '-';
+                    }
+                })
+                ->rawColumns(['tand'])
+                ->make(true);
+        }
+        return view('daftarhadir.daftar', compact($compact));
+    }
     public function listForm(Request $request)
     {
 
@@ -169,8 +233,9 @@ class DaftarhadirController extends Controller
                 // })
                 ->addColumn('aksi', function ($data) {
                     $url = Crypt::encrypt($data->id);
+                $btn = '<a href="/list-dh/' . $data->link . '" data-id="' . $url . '" class="btn btn-success"> Report</a>';
                     $btn1 = '<a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-info show-btn"> Edit</a>';
-                    $aksi = $btn1 . ' <a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-danger del-btn"> Hapus</a>';
+                $aksi = $btn . $btn1 . ' <a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-danger del-btn"> Hapus</a>';
                     return $aksi;
                 })
                 ->rawColumns(['aksi'])
@@ -243,33 +308,7 @@ class DaftarhadirController extends Controller
 
 
     
-    public function view(Request $request)
-    {
-        $tittle = "list daftar hadir";
-        $theads = array('No', 'id', 'Nama', 'NIA', 'Kelas', 'Kab./Kota', 'Kat DH', 'TTD');
-        $data = Daftarhadir::where('kat_dh', "Klasifikasi Permohonan Akreditasi (KPA) Tahap I")
-            // ->orWhere('kode_kat',23)
-            // ->orWhere('kode_kat',24)
-            ->get();
-        // $data = Daftarhadir::whereLike('PPDA Tahap')->get();
-        // $data = Daftarhadir::where('kode_kat',8)->get();
-        // dd($data);
-        if ($request->ajax()) {
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('tand', function ($data) {
-                $ttd = $data->ttd;
-                    if (!empty($data->ttd)) {
-                    return '<img width="100" src="public/app/public/' . $ttd . '" alt="">';
-                    } else {
-                        return '-';
-                    }
-                })
-                ->rawColumns(['tand'])
-                ->make(true);
-        }
-        return view('daftarhadir.daftar', compact('tittle', 'theads'));
-    }
+    
 
     // dd($form);
     /**

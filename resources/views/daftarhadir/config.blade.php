@@ -25,8 +25,8 @@
                     <div class="card">
                         <div class="card-header">
                             <h4>Input Text</h4>
-                            <button class="btn btn-primary" type="button" data-toggle="modal"
-                                data-target="#my-modal">Tambah Form</button>
+                            <button class="btn btn-primary" type="button" data-toggle="modal" id = "tambah">Tambah
+                                Form</button>
                         </div>
 
                         <div class="card-body">
@@ -83,11 +83,7 @@
 
                                 <select name="tabel[]" id="select-form" class="form-control" multiple="multiple">
                                     <option value=''>-- Pilih field --</option>
-                                    @foreach ($forms as $form)
-                                        <option @if (in_array($form->nama_field, $newdata)) {{ ' selected ' }} @endif
-                                            value='{{ $form->nama_field }}'>{{ $form->nama_field }}
-                                        </option>
-                                    @endforeach
+                                    <option></option>
                                 </select>
                             </div>
                         </div>
@@ -97,18 +93,15 @@
                             <div class="section-title">Config form</div>
                             <div class="form-group">
                                 <label>Set judul form</label>
-                                <input class='form-control' type="text" name="judul" id="judul"
-                                    value='{{ $data->judul }}'>
+                                <input class='form-control' type="text" name="judul" id="judul">
                             </div>
                             <div class="form-group">
                                 <label>Kategori Form</label>
-                                <input class='form-control' type="text" name="kat" id="kat"
-                                    value='{{ $data->kategori }}'>
+                                <input class='form-control' type="text" name="kat" id="kat">
                             </div>
                             <div class="form-group">
                                 <label>link controller</label>
-                                <input class='form-control' type="text" name="link" id="link"
-                                    value='{{ $data->link }}'>
+                                <input class='form-control' type="text" name="link" id="link">
                             </div>
                             <div class="form-group">
                                 <button type="submit" id="btn-save" class="btn btn-info"> Simpan</button>
@@ -174,6 +167,10 @@
                         data: 'link',
                         name: 'link'
                     },
+                    {
+                        data: 'aksi',
+                        name: 'aksi'
+                    },
                 ],
                 columnDefs: [{
                     width: '20%',
@@ -183,18 +180,42 @@
             // Select2
 
 
-            var cek = $("#select-form").select2();
+            // Set up the Select2 control
+            // var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            var cek = $("#select-form").select2({
+                ajax: {
+                    url: "/list-form",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            // _token: CSRF_TOKEN,
+                            search: params.term // search term
+                        };
+                    },
+                    processResults: function(response) {
+                        return {
+                            results: response
+                        };
+                    },
+                    cache: true
+                }
+            });
+            
             cek.on("select2:close", function(e) {
                 var vals = cek.val()
                 $("#tag").val(vals)
                 // console.log(vals)
             });
 
-
             $("#link").keyup(function(e) {
                 $("#rdr").attr("href", this.val)
             });
-
+            $('#tambah').click(function() {
+                $("#my-modal").modal('show');
+                $('#id-form').trigger("reset");
+            });
 
             $(document).on('submit', '#id-form', function(e) {
                 e.preventDefault()
@@ -218,9 +239,9 @@
                         swal("Berhasil",
                             "Berkas telah tersimpan",
                             "success");
-                            var oTable = $("#tabel-config")
-                                        .dataTable();
-                                    oTable.fnDraw(false);
+                        var oTable = $("#tabel-config")
+                            .dataTable();
+                        oTable.fnDraw(false);
 
                     },
                     error: function(data) {
