@@ -115,7 +115,8 @@ class DaftarhadirController extends Controller
         $datanya = Config::where('link', $link)->first();
         $isi = explode(",", $datanya->tabel);
         $kat = $datanya->kategori;
-        $compact = array('unit', 'theads', 'tittle');
+        $link = $datanya->link;
+        $compact = array('unit', 'theads', 'tittle', 'link');
 
         if (in_array("nama_asesor", $isi)) {
             unset($isi[0]);
@@ -123,20 +124,11 @@ class DaftarhadirController extends Controller
             array_unshift($isi, 'nia');
             array_push($isi, 'created_at');
             // dd($isi);
-            
             $data = Daftarhadir::with('nia_asesor')
-            ->where(
-                [
-                    ['kat_dh', '=', $datanya->kategori],
-                ]
-            )
-                ->orderBy('created_at', 'DESC')->get();
+            ->where('kat_dh',  $datanya->kategori)
+            ->orderBy('created_at', 'DESC')->get();
         } else {
-            $data = Daftarhadir::where(
-                [
-                    ['kat_dh', '=', $datanya->kategori],
-                ]
-            )
+            $data = Daftarhadir::where('kat_dh', $datanya->kategori)
                 ->orderBy('created_at', 'DESC')->get();
             
         }
@@ -169,17 +161,12 @@ class DaftarhadirController extends Controller
     }
     public function listForm(Request $request)
     {
-
-
-
         $search = $request->search;
-
         if ($search == '') {
             $lists = Form::select('nama_field')->get();
         } else {
             $lists = Form::select('nama_field')->where('nama_field', 'like', '%' . $search . '%')->limit(20)->get();
         }
-
         $response = array();
         foreach ($lists as $list) {
             $response[] = array(
@@ -206,10 +193,8 @@ class DaftarhadirController extends Controller
         //
         $forms = Form::all();
         $confs = Config::all();
-
         $tittle = "uji select2";
-        $data = Config::where('id', '1')->first();
-        
+        $data = Config::where('id', '1')->first();        
         $newdata = explode(",", $data->tabel);
         // dd($data);
         if ($request->ajax()) {
