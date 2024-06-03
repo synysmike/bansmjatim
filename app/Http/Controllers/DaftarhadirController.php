@@ -135,7 +135,7 @@ class DaftarhadirController extends Controller
         //declarate datatable columns
         $unit = $isi;
         array_unshift($unit, 'DT_RowIndex');
-        array_push($unit, 'ttd');
+        array_push($unit, 'tand');
         //declarate tittle
         $tittle = $datanya->kategori;
         // $theads = array('No', 'id', 'Nama', 'NIA', 'Kelas', 'Kab./Kota', 'Kat DH', 'TTD');
