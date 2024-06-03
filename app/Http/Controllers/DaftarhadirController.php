@@ -43,7 +43,15 @@ class DaftarhadirController extends Controller
             array_unshift($isi, 'nama');
             array_unshift($isi, 'nia');
             array_push($isi, 'created_at');
-            // dd($isi);           
+            // dd($isi);
+
+            $ass =
+            asesor::where([
+                ['judul', '=', $kat],
+                ['soft_delete', '=', 0],
+                // Add more conditions here if needed
+            ])->get();
+            array_unshift($compact, 'ass');
 
             $data = Daftarhadir::with('nia_asesor')
                 ->where(
@@ -61,8 +69,9 @@ class DaftarhadirController extends Controller
                 ]
             )
                 ->orderBy('created_at', 'DESC')->get();
+            $ass = null;
+            array_unshift($compact, 'ass');
         }
-        dd($data);
         //table head lists
         $theads = $isi;
         //array_unshift() is for append value to the first queue/array, array_shift() is the opposite 
@@ -114,13 +123,7 @@ class DaftarhadirController extends Controller
             array_unshift($isi, 'nia');
             array_push($isi, 'created_at');
             // dd($isi);
-            $ass =
-                asesor::where([
-                    ['judul', '=', $kat],
-                    ['soft_delete', '=', 0],
-                    // Add more conditions here if needed
-                ])->get();
-            array_unshift($compact, 'ass');
+            
             $data = Daftarhadir::with('nia_asesor')
             ->where(
                 [
@@ -135,8 +138,7 @@ class DaftarhadirController extends Controller
                 ]
             )
                 ->orderBy('created_at', 'DESC')->get();
-            $ass = null;
-            array_unshift($compact, 'ass');
+            
         }
         //declarate datatable columns
         $unit = $isi;
@@ -148,7 +150,7 @@ class DaftarhadirController extends Controller
         $theads = $isi;
         //array_unshift() is for append value to the first queue/array, array_shift() is the opposite 
         array_unshift($theads, 'No.');
-        array_push($theads, 'TTD');
+        array_push($unit, 'ttd');
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addIndexColumn()
