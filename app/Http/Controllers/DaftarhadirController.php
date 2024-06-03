@@ -142,7 +142,7 @@ class DaftarhadirController extends Controller
         $theads = $isi;
         //array_unshift() is for append value to the first queue/array, array_shift() is the opposite 
         array_unshift($theads, 'No.');
-        array_push($unit, 'ttd');
+        array_push($theads, 'ttd');
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addIndexColumn()
