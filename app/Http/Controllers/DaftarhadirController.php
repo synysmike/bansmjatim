@@ -64,7 +64,7 @@ class DaftarhadirController extends Controller
         } else {
             $data = Daftarhadir::where(
                 [
-                ['kat_dh', '=', $datanya->kategori],
+                    ['kat_dh', '=', $datanya->kategori],
                     ['tanggal', '=', $today]
                 ]
             )
@@ -85,7 +85,7 @@ class DaftarhadirController extends Controller
         $form = Form::select('tag_field')
             ->whereIn("nama_field", $konten)
             ->get();
-        
+
 
         //load yajra datatable
         if ($request->ajax()) {
@@ -130,7 +130,6 @@ class DaftarhadirController extends Controller
         } else {
             $data = Daftarhadir::where('kat_dh', $datanya->kategori)
                 ->orderBy('created_at', 'DESC')->get();
-            
         }
         //declarate datatable columns
         $unit = $isi;
@@ -159,6 +158,7 @@ class DaftarhadirController extends Controller
         }
         return view('daftarhadir.daftar', compact($compact));
     }
+
     public function listForm(Request $request)
     {
         $search = $request->search;
@@ -176,6 +176,34 @@ class DaftarhadirController extends Controller
         }
         return response()->json($response);
     }
+    public function selectlist($id)
+    {
+        // $decid = Crypt::decrypt($id);       // dd($decid);
+        $data = Config::where('id', $id)->first();
+        $arr = [];
+        $isis = explode(",", $data->tabel);
+        foreach ($isis as $isi => $value) {
+            # code...
+            array_unshift($arr, $value);
+        }
+        // dd($arr);
+
+        return response()->json($arr);
+
+        // $search = $request->search;
+        // if ($search == '') {
+        //     $lists = Form::select('nama_field')->get();
+        // } else {
+        //     $lists = Form::select('nama_field')->where('nama_field', 'like', '%' . $search . '%')->limit(20)->get();
+        // }
+        // $response = array();
+        // foreach ($lists as $list) {
+        //     $response[] = array(
+        //         "id" => $list->nama_field,
+        //         "text" => $list->nama_field
+        //     );
+        // }
+    }
     // show form page parsed from dynamic URL
     public function show(Request $request, $link)
     {
@@ -187,80 +215,7 @@ class DaftarhadirController extends Controller
         return response()->json($unit);
     }
 
-    //load config page
-    public function config(Request $request)
-    {
-        //
-        $forms = Form::all();
-        $confs = Config::all();
-        $tittle = "uji select2";
-        $data = Config::where('id', '1')->first();        
-        $newdata = explode(",", $data->tabel);
-        // dd($data);
-        if ($request->ajax()) {
-            return DataTables::of($confs)
-                ->addIndexColumn()
-                // ->addColumn('nia', function ($data) {
-                //     return $data->nia_asesor->nia;
-                // })
-                // ->addColumn('nama', function ($data) {
-                //     return $data->nia_asesor->nama;
-                // })
-                //     $ttd = $data->ttd;
-                //     return '<img width="100" src="'.base_url().'app/public/' . $ttd . '" alt="">';
-                // })
-                ->addColumn('aksi', function ($data) {
-                    $url = Crypt::encrypt($data->id);
-                $btn = '<a href="/list-dh/' . $data->link . '" data-id="' . $url . '" class="btn btn-success"> Report</a>';
-                    $btn1 = '<a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-info show-btn"> Edit</a>';
-                $aksi = $btn . $btn1 . ' <a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-danger del-btn"> Hapus</a>';
-                    return $aksi;
-                })
-                ->rawColumns(['aksi'])
-                ->make(true);
-        }
-        return view('daftarhadir.config', compact('tittle', 'data', 'newdata', 'forms'));
-    }
-
-    // save the config page
-    public function set_config(Request $request)
-    {
-        //
-        if ($request->tabel) {
-            $tabel = str_replace(" ", "", $request->tabel);
-            $newdata = implode("),(", $tabel);
-            $unit = Config::updateOrCreate(
-                ['id' => 1],
-                [
-                    "tabel" => $newdata,
-                    "kategori" => $request->kat,
-                    "link" => $request->link,
-                    "judul" => $request->judul,
-                ]
-            );
-        } else {
-            $unit = Config::updateOrCreate(
-                ['id' => 1],
-                [
-                    "kategori" => $request->kat,
-                    "link" => $request->link,
-                    "judul" => $request->judul,
-                ]
-            );
-        }
-        $tabel = str_replace(" ", "", $request->tag);
-        $newdata = implode("),(", $tabel);
-        $unit = Config::updateOrCreate(
-            ['id' => 1],
-            [
-                "tabel" => $newdata,
-                "kategori" => $request->kat,
-                "link" => $request->link,
-                "judul" => $request->judul,
-            ]
-        );
-        return response()->json($unit);
-    }
+    
     public function dhtable(Request $request)
     {
         $tittle = 'Daftar Hadir';
@@ -278,23 +233,6 @@ class DaftarhadirController extends Controller
         // dd($form);
         return view('absen.daftar_hadir', compact('tittle'));
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-
-    
-    
-
-    // dd($form);
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreDaftarhadirRequest  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
@@ -356,7 +294,6 @@ class DaftarhadirController extends Controller
             Storage::disk('public')->put($file, $ttd);
             $unit = Daftarhadir::updateOrCreate(
                 [
-
                     // fix this issue {
                     'kat_dh' => $request->kat_dh,
                     'nia' => $nia,
@@ -374,7 +311,7 @@ class DaftarhadirController extends Controller
             );
         } else {
             $signature = $request->signature;
-            
+
             $signatureFileName = uniqid() . '.png';
             $signature = str_replace('data:image/png;base64,', '', $signature);
             $signature = str_replace(' ', '+', $signature);
@@ -384,11 +321,9 @@ class DaftarhadirController extends Controller
             Storage::disk('public')->put($file, $ttd);
             $unit = Daftarhadir::updateOrCreate(
                 [
-
                     // fix this issue {
                     'nama' => $request->nama,
                     'nia' => $request->nia,
-
                     // }
                     'ttd' => $file,
                     'hp' => $request->hp,
@@ -396,7 +331,6 @@ class DaftarhadirController extends Controller
                     'kabkota' => $request->asal,
                     'kat_dh' => $request->kat_dh,
                     'bidang' => $request->bidang,
-
                     // []=>$isi,
                     'npsn' => $request->npsn,
                     'nama_lembaga' => $request->nama_lembaga,
@@ -422,8 +356,6 @@ class DaftarhadirController extends Controller
                 ]
             );
         }
-
-
         // dd($unit);
         return response()->json($unit);
     }
@@ -513,8 +445,6 @@ class DaftarhadirController extends Controller
         $file = 'ttdKesanggupan/' . $signatureFileName;
         // file_put_contents($file, $ttd);
         Storage::disk('public')->put($file, $ttd);
-
-
         $mytime = Carbon::now('Asia/Jakarta');
         $unit = Daftarhadir::updateOrCreate(
             [

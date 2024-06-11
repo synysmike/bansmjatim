@@ -9,8 +9,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\AsesorController;
-use App\Http\Controllers\AbsenDhController;
+use App\Http\Controllers\ConfigController;
 // use App\Http\Controllers\KinerjaController;
+use App\Http\Controllers\AbsenDhController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\RakordaController;
 use App\Http\Controllers\SekolahController;
@@ -72,17 +73,23 @@ Route::post('/list-form', [DaftarhadirController::class, 'listForm']);
 Route::get('/tbl-dh', [DaftarhadirController::class, 'tbl_dh']);
 Route::get('/cetak-dh', [DaftarhadirController::class, 'cetak']);
 Route::get('/list-dh/{link}', [DaftarhadirController::class, 'view']);
-Route::get('/configtable', [DaftarhadirController::class, 'config']);
+Route::get('/selectlist/{id}', [DaftarhadirController::class, 'selectlist']);
 Route::get('/kesanggupan', [DaftarhadirController::class, 'kesediaan']);
 Route::post('/kesanggupan', [DaftarhadirController::class, 'postkesediaan']);
 Route::get('/sesi1', [DaftarhadirController::class, 'sesi1']);
 Route::post('/sesi1', [DaftarhadirController::class, 'postsesi1']);
-Route::post('/settable', [DaftarhadirController::class, 'set_config']);
+
+// Route::delete('/del_config/{id}', [DaftarhadirController::class, 'del_config']);
+// Route::get('/show_config/{id}', [DaftarhadirController::class, 'show_config']);
+// Route::post('/settable', [DaftarhadirController::class, 'set_config']);
+// Route::get('/configtable', [DaftarhadirController::class, 'config']);
+// access of config
+Route::resource('/config', ConfigController::class);
 
 // dynamic URL get from config_table
 Route::get('form/{link}', [DaftarhadirController::class,'index']);
 Route::post('form/{link}', [DaftarhadirController::class,'store']);
-Route::post('/form/{link}/{id}', [DaftarhadirController::class,'show']);
+// Route::post('/form/{link}/{id}', [DaftarhadirController::class,'show']);
 
 Route::get('link/{red}', [UrlController::class,'redirect']);
 Route::get('link/{link}', [UrlController::class,'show']);

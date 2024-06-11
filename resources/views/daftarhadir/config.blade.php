@@ -72,18 +72,11 @@
                                 {{-- @php
                                     $list = [];
                                 @endphp --}}
-                                <p>Field form terpasang : @foreach ($newdata as $datanya)
-                                        {{ $datanya . ',' }}
-                                    @endforeach
-                                    {{-- @php
-                                        dd($newdata);
-                                    @endphp --}}
+                                <p>Field form terpasang :
                                 </p>
 
 
                                 <select name="tabel[]" id="select-form" class="form-control" multiple="multiple">
-                                    <option value=''>-- Pilih field --</option>
-                                    <option></option>
                                 </select>
                             </div>
                         </div>
@@ -94,6 +87,8 @@
                             <div class="form-group">
                                 <label>Set judul form</label>
                                 <input class='form-control' type="text" name="judul" id="judul">
+                                <input id='id' type='hidden' class='form-control' placeholder='npsn' name='id'
+                                    value=''>
                             </div>
                             <div class="form-group">
                                 <label>Kategori Form</label>
@@ -128,6 +123,10 @@
     <script src="/admin_theme/library/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
     <script src="/admin_theme/library/select2/dist/js/select2.full.min.js"></script>
     <script src="/admin_theme/library/selectric/public/jquery.selectric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"
+        integrity="sha512-0QDLUJ0ILnknsQdYYjG7v2j8wERkKufvjBNmng/EdR/s/SE7X8cQ9y0+wMzuQT0lfXQ/NhG+zhmHNOWTUS3kMA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
 
     <!-- Page Specific JS File -->
     {{-- <script src="/admin_theme/js/page/forms-advanced-forms.js"></script> --}}
@@ -141,7 +140,7 @@
                 'serverSide': true,
                 'bAutoWidth': false, //aktifkan server-side 
                 'ajax': {
-                    'url': '/configtable', // ambil data
+                    'url': '/config', // ambil data
                     'type': 'GET'
                 },
                 // parsing nama columns
@@ -182,12 +181,20 @@
 
             // Set up the Select2 control
             // var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+
+
+            $("#link").keyup(function(e) {
+                $("#rdr").attr("href", this.val)
+            });
+
             var cek = $("#select-form").select2({
+                placeholder: "Pilih Kolom Input",
+                allowClear: true,
                 ajax: {
                     url: "/list-form",
                     type: "post",
                     dataType: 'json',
-                    delay: 250,
+                    // delay: 250,
                     data: function(params) {
                         return {
                             // _token: CSRF_TOKEN,
@@ -202,51 +209,163 @@
                     cache: true
                 }
             });
-            
-            cek.on("select2:close", function(e) {
-                var vals = cek.val()
-                $("#tag").val(vals)
-                // console.log(vals)
-            });
-
-            $("#link").keyup(function(e) {
-                $("#rdr").attr("href", this.val)
-            });
+            // ** tambahDATA * / 
             $('#tambah').click(function() {
+                $('#id-form').attr("id","id-form-tambah");
                 $("#my-modal").modal('show');
                 $('#id-form').trigger("reset");
+                $("#select-form").val('').trigger('change');
+                cek.on("select2:close", function(e) {
+                    var vals = cek.val()
+                    $("#tag").val(vals)
+                    // console.log(vals)
+                });
+                // ** SIMPAN DATA * / 
+                $(document).on('submit', '#id-form-tambah', function(e) {
+                    e.preventDefault()
+                    var formData = new FormData(this);
+                    console.log(formData)
+                    
+                    $.ajax({
+                        type: "POST",
+                        url: "/config",
+                        data: formData,
+                        dataType: 'json',
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            // console.log(response);
+                            $('#id-form').trigger("reset");
+                            $('#my-modal').modal(
+                                "hide");
+                            $('#btn-save').html('Simpan');
+                            var url = $("#link").val()
+                            $("#rdr").show()
+                            $('#select-form').val(null).trigger('change');
+                            $("#rdr").attr("href",
+                                "https://form.bansmprovjatim.com/form/" +
+                                url)
+                            //Reload Total Finansial Planing
+                            swal("Berhasil",
+                                "Berkas telah tersimpan",
+                                "success");
+                            // refresh yajra datatable
+                            var oTable = $("#tabel-config")
+                                .dataTable();
+                            oTable.fnDraw(false);
+                        },
+                        error: function(data) {
+                            console.log('Error', data);
+                            $('#errnama').text('Mohon Mengisi Nama');
+                        }
+                    });
+                });
+
             });
 
-            $(document).on('submit', '#id-form', function(e) {
-                e.preventDefault()
-                var formData = new FormData(this);
-                $.ajax({
-                    type: "POST",
-                    url: "/settable",
-                    data: formData,
-                    dataType: 'json',
-                    processData: false,
-                    contentType: false,
-                    success: function(data) {
-                        $('#id-form').trigger(
-                            "reset");
-                        $('#btn-save').html('Tersimpan');
-                        $("#my-modal").modal('hide');
-                        var url = $("#link").val()
-                        $("#rdr").show()
-                        $("#rdr").attr("href", "https://form.bansmprovjatim.com/form/" + url)
-                        //Reload Total Finansial Planing
-                        swal("Berhasil",
-                            "Berkas telah tersimpan",
-                            "success");
-                        var oTable = $("#tabel-config")
-                            .dataTable();
-                        oTable.fnDraw(false);
 
-                    },
-                    error: function(data) {
-                        console.log('Error', data);
+            // ** editDATA * / 
+            $(document).on('click', '.show-btn', function() {
+                var data_id = $(this).attr('data-id');
+                // console.log(data_id)
+                $.get("/config/" + data_id, function(data) {
+                    $('#id-form').attr("id","id-form-edit");
+                    $("#my-modal").modal('show');
+                    $('#id-form').trigger("reset");
+                    $.ajax({
+                        type: 'GET',
+                        url: 'selectlist/' + data_id
+                    }).then(function(data) {
+                        //Clearing selections
+                        cek.val(null).trigger('change');
+                        $("#tag").val(data)
+                        var columns = [];
+                        $.each(data, function(key, value) {
+                            var my_item = {};
+                            my_item.id = value;
+                            my_item.text = value;
+                            columns.push(my_item);
+                        });
+                        // console.log(columns);
+                        // data.category=[{id: "2", title: "sdsd"},{id: "2", title: "sdsd"}]; 
+                        for (i = 0; i < columns.length; ++i) {
+                            var currentObject = columns[i];
+                            var option = new Option(currentObject.text, currentObject.id,
+                                true, true);
+                            cek.append(option).trigger('change');
+                        }
+                    });
+                    cek.on("select2:close", function(e) {
+                        var vals = cek.val()
+                        $("#tag").val(vals)
+                        // console.log(vals)
+                    });
+                    $('#judul').val(data.judul);
+                    $('#id').val(data_id);
+                    $('#kat').val(data.kategori);
+                    $('#link').val(data.link);
+                    // ** SIMPAN DATA * / 
+                    $(document).on('submit', '#id-form-edit', function(e) {
+                        e.preventDefault()
+                        var formData = new FormData(this);
+                        $.ajax({
+                            type: "POST",
+                            url: "/config",
+                            data: formData,
+                            dataType: 'json',
+                            processData: false,
+                            contentType: false,
+                            success: function(data) {
+                                // console.log(response);
+                                $('#id-form').trigger("reset");
+                                $('#my-modal').modal(
+                                    "hide");
+                                $('#btn-save').html('Simpan');
+                                var url = $("#link").val()
+                                $("#rdr").show()
+                                $('#select-form').val(null).trigger('change');
+                                $("#rdr").attr("href",
+                                    "https://form.bansmprovjatim.com/form/" +
+                                    url)
+                                //Reload Total Finansial Planing
+                                swal("Berhasil",
+                                    "Berkas telah tersimpan",
+                                    "success");
+                                // refresh yajra datatable
+                                var oTable = $("#tabel-config")
+                                    .dataTable();
+                                oTable.fnDraw(false);
+                            },
+                            error: function(data) {
+                                console.log('Error', data);
+                                $('#errnama').text('Mohon Mengisi Nama');
+                            }
+                        });
+                    });
+                });
+            });
 
+            // ** HAPUS DATA * / 
+            $(document).on('click', '.del-btn', function() {
+                dataId = $(this).attr('data-id');
+                swal({
+                    dangerMode: true,
+                    title: 'Apakah Anda Yakin?',
+                    text: 'Data akan dihapus permanen',
+                    icon: 'warning',
+                    buttons: ["Tidak", "Iya"],
+                }).then(function(value) {
+                    if (value) {
+                        $.ajax({
+                            type: "DELETE",
+                            url: "/config/" + dataId,
+                            success: function(data) {
+                                var oTable = $("#tabel-config").dataTable();
+                                oTable.fnDraw(false);
+                                swal("Berhasil", "Data telah terhapus",
+                                    "success");
+                            }
+                        });
                     }
                 });
             });
