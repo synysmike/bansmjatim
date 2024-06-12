@@ -32,8 +32,8 @@ class ConfigController extends Controller
                 ->addColumn('aksi', function ($confs) {
                     $valId = $confs->id;
                     $url = Crypt::encrypt($valId);
-                    $red = ' <a href="/form/' . $confs->link . '" terget="_blank" class="btn btn-outline-secondary"> View Form</a>';
-                    $btn = ' <a href="/list-dh/' . $confs->link . '" data-id="' . $url . '" class="btn btn-success"> Report</a>';
+                $red = ' <a href="/form/' . $confs->link . '" target="_blank" class="btn btn-outline-secondary"> View Form</a>';
+                $btn = ' <a href="/list-dh/' . $confs->link . '" data-id="' . $url . '" target="_blank" class="btn btn-success"> Report</a>';
                     $btn1 = ' <a href="javascript:void(0)" data-id="' . $valId . '" class="btn btn-info show-btn"> Edit</a>';
                     $aksi = $red . $btn . $btn1 . ' <a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-danger del-btn"> Hapus</a>';
                     return $aksi;
