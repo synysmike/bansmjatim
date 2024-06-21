@@ -37,10 +37,8 @@
                             Please fill in your email
                         </div>
                         <input id="username" type="email" class="form-control" name="username" tabindex="1"
-                        value="{{ old('username') }}"    required autofocus>
-                        
+                        value="{{ old('username') }}"    required autofocus>                        
                     </div>
-
                     <div class="form-group">
                         <div class="d-block">
                             <label for="password" class="control-label">Password</label>
@@ -50,8 +48,7 @@
                         <div class="invalid-feedback">
                             please fill in your password
                         </div>
-                    </div>
-
+                    </div>  
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
                             <input type="checkbox" name="remember" class="custom-control-input" tabindex="3"

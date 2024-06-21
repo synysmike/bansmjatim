@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    @stack('tittle') 
+    @stack('tittle')
 
     <!-- General CSS Files -->
     <link rel="stylesheet" href="{{ asset('/admin_theme/library/bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
         integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-        @stack('cssform-custom')
+    @stack('cssform-custom')
     <!-- CSS Libraries -->
     <link rel="stylesheet" href="{{ asset('/admin_theme/library/bootstrap-social/bootstrap-social.css') }}">
 
@@ -20,14 +20,11 @@
     <link rel="stylesheet" href="{{ asset('/admin_theme/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('/admin_theme/css/components.css') }}">
 </head>
+
 <body>
     <div id="app">
-        
 
-@yield('form')
-
-
-
+        @yield('form')
 
     </div>
 
@@ -53,14 +50,14 @@
     @stack('jsform-custom')
     <script>
         // for background
-$("[data-background]").each(function() {
+        $("[data-background]").each(function() {
             var me = $(this);
             me.css({
                 backgroundImage: 'url(' + me.data('background') + ')'
             });
         });
     </script>
-        
+
 </body>
 
 </html>
