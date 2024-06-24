@@ -82,7 +82,7 @@
                                                 <option value="">--Pilih Nama--</option>
                                                 @foreach ($ass as $nama)
                                                     <option value = "{{ $nama->nia }}">{{ $nama->nia }}
-                                                        {{ $nama->nama }}</option>
+                                                        {{ $nama->nama_tanpa_gelar }}</option>
                                                 @endforeach
                                             </select></div>
                                     @endif
