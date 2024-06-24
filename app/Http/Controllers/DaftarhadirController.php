@@ -46,9 +46,10 @@ class DaftarhadirController extends Controller
             // dd($isi);
 
             $ass =
-            asesor::where([
-                ['judul', '=', $kat],
+            asesor::select('nia', 'nama_tanpa_gelar')
+            ->where([
                 ['soft_delete', '=', 0],
+                ['status_asesor', '=', 1],
                 // Add more conditions here if needed
             ])->get();
             array_unshift($compact, 'ass');

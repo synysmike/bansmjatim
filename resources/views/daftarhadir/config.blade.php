@@ -177,9 +177,7 @@
                         targets: 1,
                         render: function(data, type, row, meta) {
 
-                            return '<div id="accordion"><div class="card"><div class="card-header" id="headingOne"><h5 class="mb-0"><button class="btn btn-link" data-toggle="collapse" data-target="#collapse' +
-                                meta.row +
-                                '" aria-expanded="true" aria-controls="collapseOne">Click To View</button></h5></div> <div id="collapse' +
+                            return '<div id="accordion"><div class="card"><div class="card-header" id="headingOne"><h5 class="mb-0"><button class="btn btn-link" data-toggle="collapse" data-target="#collapse' +meta.row +'" aria-expanded="true" aria-controls="collapseOne">Click To View</button></h5></div> <div id="collapse' +
                                 meta.row +
                                 '" class="collapse" aria-labelledby="headingOne" data-parent="#accordion"><div class="card-body">' +
                                 data + '</div></div></div></div>'
