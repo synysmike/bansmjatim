@@ -306,6 +306,7 @@ class DaftarhadirController extends Controller
                     'unit' => $request->unit,
                     'kabkota' => $request->asal,
                     'unsur' => $request->unsur,
+                    'bidang' => $request->bidang,
                     'sebagai' => $request->sebagai,
                     'jabatan' => $request->jabatan,
 
