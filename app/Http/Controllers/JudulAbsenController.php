@@ -89,10 +89,10 @@ class JudulAbsenController extends Controller
      * @param  \App\Models\judul_absen  $judul_absen
      * @return \Illuminate\Http\Response
      */
-    public function update(Updatejudul_absenRequest $request, judul_absen $judul_absen)
-    {
-        //
-    }
+    // public function update(Updatejudul_absenRequest $request, judul_absen $judul_absen)
+    // {
+    //     //
+    // }
 
     /**
      * Remove the specified resource from storage.
