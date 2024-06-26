@@ -40,8 +40,8 @@
 <body class="layout-3">
     <div id="app">
         <div class="main-wrapper container">
-            @include('ad_layout.nav')
-            @include('ad_layout.side')
+            {{-- @include('ad_layout.nav')
+            @include('ad_layout.side') --}}
             <!-- Content -->
             <div class="main-content">
                 
