@@ -309,6 +309,10 @@ class DaftarhadirController extends Controller
                     'bidang' => $request->bidang,
                     'sebagai' => $request->sebagai,
                     'jabatan' => $request->jabatan,
+                    'npwp' => $request->npwp,
+                    'norek' => $request->norek,
+                    'alamat_kantor' => $request->alamat_kantor,
+                    'alamat_rumah' => $request->alamat_rumah,
 
                 ]
             );
@@ -327,24 +331,18 @@ class DaftarhadirController extends Controller
                     // fix this issue {
                     'nama' => $request->nama,
                     'nia' => $request->nia,
-                    // }
                     'ttd' => $file,
                     'hp' => $request->hp,
                     'tanggal' => $mytime->format('d-m-Y'),
                     'kabkota' => $request->asal,
                     'kat_dh' => $request->kat_dh,
                     'bidang' => $request->bidang,
-                    // []=>$isi,
                     'npsn' => $request->npsn,
                     'nama_lembaga' => $request->nama_lembaga,
                     'tempat_lahir' => $request->tempat_lahir,
                     'tgl_lahir' => $request->tgl_lahir,
                     'nip' => $request->nip,
                     'pangkat' => $request->pangkat,
-                    // 'kelas' => $request->kelas,
-                    // 'npwp' => $request->npwp,
-                    // 'norek' => $request->norek,
-                    // 'fotorek'=>$filename_fotorek,
                     'unit' => $request->unit,
                     'unsur' => $request->unsur,
                     'jabatan' => $request->jabatan,
