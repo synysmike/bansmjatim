@@ -86,14 +86,20 @@
                 ],
                 iDisplayLength: 10,
                 dom: 'Bfrtip',
-        buttons: [
-            'copy', 'excel', 'pdf', 'csv'
-        ]
+                buttons: [
+                    'copy', 'excel', 'pdf', 'csv'
+                ]
             });
             new $.fn.dataTable.Buttons(table1, {
                 buttons: [
                     'copy', 'excel', 'pdf'
                 ],
+                exportOptions: {
+                    modifer: {
+                        page: 'all',
+                        search: 'none'
+                    }
+                }
             });
             table1.buttons(0, null).container().prependTo(
                 table1.table().container()
