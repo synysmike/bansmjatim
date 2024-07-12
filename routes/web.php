@@ -6,11 +6,13 @@ use App\Http\Controllers\KpaController;
 use App\Http\Controllers\UrlController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InfoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\AsesorController;
-use App\Http\Controllers\ConfigController;
 // use App\Http\Controllers\KinerjaController;
+use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\AbsenDhController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\RakordaController;
@@ -51,13 +53,20 @@ Route::get('/asesor',function(){
 return redirect("http://202.51.106.30/asesor/");
 });
 
+
+
+Route::resource('/berita', BeritaController::class);
+Route::resource('/galeri', GalleryController::class);
+Route::resource('/info', InfoController::class);
+
+
+
 Route::resource('/bio', RecordBioController::class);
 Route::resource('/form-field', MSoslokFormController::class);
 
-
 Route::get('/', [HomeController::class, 'index']);
 Route::resource('/asesor', AsesorController::class);
-Route::resource('/dh_absen', AbsenDhController::class);
+Route::resource('/presensi', AbsenDhController::class);
 Route::resource('/sekretariat', NamaSekretariatController::class);
 Route::resource('/judul_absen', JudulAbsenController::class);
 Route::get('/total', [VerifikasiController::class, 'total']);
