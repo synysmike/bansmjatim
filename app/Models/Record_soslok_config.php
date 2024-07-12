@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class info extends Model
+class Record_soslok_config extends Model
 {
     use HasFactory;
-    protected $table = 'infos';
+    protected $table = 'tbr_soslok_config';
 }

@@ -6,6 +6,7 @@ use App\Models\Gallery;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
@@ -19,30 +20,40 @@ class GalleryController extends Controller
 
         $data = Gallery::All();
         $tittle = "Daftar Gallery";
-
+        $cek = 1;
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('file', function ($data) {
+                    $src = $data->file;
+                    // $alt = $data->fjudul;
+                    // return '<img class="img-thumbnail" src="' . $img . '" alt="' . $alt . '">';
+                    return '<img width="100px" class="img-thumbnail" data-magnify="gallery" data-src="' . $src . '" src="' . $src . '" alt=""> </br><label class="form-label">click image to Preview</label>';
+                })
                 ->addColumn('aksi', function ($data) {
                     $url = Crypt::encrypt($data->id);
-                    return '<a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-info show-btn"> Edit</a>';
+                $btn = '<a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-info show-btn"> Edit</a>';
+                $btn1 = $btn . " " . '<a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-danger del-btn"> Hapus</a>';
+                return $btn1;
                 })
-                ->addColumn('kondisi', function ($data) {
-                    $cek = $data->updated_at;
-                    if($cek !== null){
-                        return '<span class="badge badge-success">Sudah di edit</span>';
-                    }else{
-                        return '<span class="badge badge-info">Belum di edit</span>';
-                    }
-                })        
-                ->rawColumns(['aksi','kondisi'])        
+                // ->addColumn('kondisi', function ($data) {
+                //     $cek = $data->updated_at;
+                //     if($cek !== null){
+                //         return '<span class="badge badge-success">Sudah di edit</span>';
+                //     }else{
+                //         return '<span class="badge badge-info">Belum di edit</span>';
+                //     }
+                // })        
+                ->rawColumns(['aksi', 'file'])
                 // ->rawColumns([])
                 ->make(true);
         }
         return view(
-            'gallery.daftar_gallery',
-            compact('tittle')
+            'konten.gallery.index',
+            compact('tittle', 'cek')
         );
+
+        // return "galeri";
     }
 
     /**
@@ -64,6 +75,34 @@ class GalleryController extends Controller
     public function store(Request $request)
     {
         //
+        $validator = $request->validate([
+            'file' => 'file|mimes:jpg,jpeg,png|max:1028|nullable',
+            'judul' => 'nullable',
+            'jenis' => 'nullable',
+        ]);
+
+        if (isset($validator->error)) {
+            return response()->json($validator);
+        } else {
+            $mytime = date('Y-m-d H:i:s');
+            if ($request->file('gambar')) {
+                $imageName = time() . '.' . $request->gambar->getClientOriginalExtension();
+                $path = $request->gambar->storeAs('images', $imageName, 'my_files');
+            }
+
+            $unit_gall = Gallery::updateOrCreate(
+                ['id' => $request->id_gall],
+                [
+                    'judul' => $validator['judul'],
+                    'file' => $path,
+                    'desc' => $request->desc,
+                    'jenis' => $validator['jenis'],
+                    'show' => $request->show,
+                    'range_show' => $request->range_show
+                ]
+            );
+            return response()->json($unit_gall);
+        }
     }
 
     /**
@@ -72,9 +111,13 @@ class GalleryController extends Controller
      * @param  \App\Models\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function show(Gallery $gallery)
+    public function show($id)
     {
         //
+        $decid = Crypt::decrypt($id);        // dd($decid);
+        $where = array('id' => $decid);
+        $unit = Gallery::where($where)->first();
+        return response()->json($unit);
     }
 
     /**
@@ -106,8 +149,11 @@ class GalleryController extends Controller
      * @param  \App\Models\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Gallery $gallery)
+    public function destroy($id)
     {
         //
+        $id = crypt::decrypt($id);
+        $data = Gallery::where('id', $id)->delete();
+        return response()->json($data);
     }
 }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\info;
-use App\Http\Requests\StoreinfoRequest;
-use App\Http\Requests\UpdateinfoRequest;
+use App\Models\Record_soslok_config;
+use App\Http\Requests\StoreRecord_soslok_configRequest;
+use App\Http\Requests\UpdateRecord_soslok_configRequest;
 
-class InfoController extends Controller
+class RecordSoslokConfigController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +16,6 @@ class InfoController extends Controller
     public function index()
     {
         //
-        return "info";
     }
 
     /**
@@ -32,10 +31,10 @@ class InfoController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreinfoRequest  $request
+     * @param  \App\Http\Requests\StoreRecord_soslok_configRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreinfoRequest $request)
+    public function store(StoreRecord_soslok_configRequest $request)
     {
         //
     }
@@ -43,10 +42,10 @@ class InfoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\info  $info
+     * @param  \App\Models\Record_soslok_config  $record_soslok_config
      * @return \Illuminate\Http\Response
      */
-    public function show(info $info)
+    public function show(Record_soslok_config $record_soslok_config)
     {
         //
     }
@@ -54,10 +53,10 @@ class InfoController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\info  $info
+     * @param  \App\Models\Record_soslok_config  $record_soslok_config
      * @return \Illuminate\Http\Response
      */
-    public function edit(info $info)
+    public function edit(Record_soslok_config $record_soslok_config)
     {
         //
     }
@@ -65,11 +64,11 @@ class InfoController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateinfoRequest  $request
-     * @param  \App\Models\info  $info
+     * @param  \App\Http\Requests\UpdateRecord_soslok_configRequest  $request
+     * @param  \App\Models\Record_soslok_config  $record_soslok_config
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateinfoRequest $request, info $info)
+    public function update(UpdateRecord_soslok_configRequest $request, Record_soslok_config $record_soslok_config)
     {
         //
     }
@@ -77,10 +76,10 @@ class InfoController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\info  $info
+     * @param  \App\Models\Record_soslok_config  $record_soslok_config
      * @return \Illuminate\Http\Response
      */
-    public function destroy(info $info)
+    public function destroy(Record_soslok_config $record_soslok_config)
     {
         //
     }
