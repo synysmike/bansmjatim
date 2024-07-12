@@ -92,12 +92,11 @@
             });
             new $.fn.dataTable.Buttons(table1, {
                 buttons: [{
-                    extend: 'excelHtml5',
-                    text: 'Eksport Excel',
+                    "extend": 'excelHtml5',
+                    "text": 'Eksport Excel',
                     messageTop: 'Rekap Daftar Hadir Pelatihan Asesor 2024',
-                    action: newexportaction
+                    "action": newexportaction
                 }],
-
             });
 
             function newexportaction(e, dt, button, config) {
