@@ -143,7 +143,7 @@
                 processing: true,
                 serverSide: true, //aktifkan server-side 
                 ajax: {
-                    url: "/dh_absen", // ambil data
+                    url: "/presensi", // ambil data
                     type: 'GET'
                 },
                 columns: [{
@@ -203,7 +203,7 @@
                 var formData = new FormData(this);
                 $.ajax({
                     type: "POST",
-                    url: "/dh_absen",
+                    url: "/presensi",
                     data: formData,
                     dataType: 'json',
                     processData: false,
