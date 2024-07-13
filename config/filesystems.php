@@ -66,10 +66,6 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
         ],
-        'my_files' => [
-            'driver' => 'local',
-            'root'   => public_path() . '/'
-        ],
 
     ],
 

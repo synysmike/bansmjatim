@@ -15,7 +15,6 @@ class BeritaController extends Controller
      */
     public function index()
     {
-        return "berita";
         //
     }
 

@@ -16,7 +16,6 @@ class InfoController extends Controller
     public function index()
     {
         //
-        return "info";
     }
 
     /**
