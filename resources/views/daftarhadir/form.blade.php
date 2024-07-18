@@ -124,7 +124,7 @@
             </div>
         </section>
 
-        <div class="modal fade" tabindex="-1" role="dialog" id="editModal-show">
+        {{-- <div class="modal fade" tabindex="-1" role="dialog" id="editModal-show">
             <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
                 <form id="edit-form" action="" enctype="multipart/form-data">
                     <div class="modal-content">
@@ -144,9 +144,9 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </div> --}}
     </div>
-    </div>
+    
     <!-- General JS Scripts -->
 
     <script src="{{ asset('admin_theme/library/jquery/dist/jquery.min.js') }}"></script>
@@ -251,7 +251,7 @@
                     // parsing nama columns
                     'columns': columns,
                     'bAutoWidth': false,
-                    
+
                 });
                 // console.log(table);
                 new $.fn.dataTable.Buttons(table, {
