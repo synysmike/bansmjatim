@@ -284,7 +284,8 @@ class DaftarhadirController extends Controller
             $nia = $request->nia_ass;
             $ass = asesor::where('nia', $nia)->first();
             $nama = $ass->nama;
-            $kelas = $ass->kelas;
+            $kelas = $request->kelas;
+            $kelompok = $request->kelompok;
             $signature = $request->signature;
             $signatureFileName = uniqid() . '.png';
             $signature = str_replace('data:image/png;base64,', '', $signature);
@@ -301,6 +302,7 @@ class DaftarhadirController extends Controller
                     'nama' => $nama,
                     'hp' => $request->hp,
                     'kelas' => $kelas,
+                    'kelompok' => $kelompok,
                     'ttd' => $file,
                     'tanggal' => $mytime->format('d-m-Y'),
                     'unit' => $request->unit,
