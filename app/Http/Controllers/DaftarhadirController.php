@@ -190,20 +190,6 @@ class DaftarhadirController extends Controller
         // dd($arr);
 
         return response()->json($arr);
-
-        // $search = $request->search;
-        // if ($search == '') {
-        //     $lists = Form::select('nama_field')->get();
-        // } else {
-        //     $lists = Form::select('nama_field')->where('nama_field', 'like', '%' . $search . '%')->limit(20)->get();
-        // }
-        // $response = array();
-        // foreach ($lists as $list) {
-        //     $response[] = array(
-        //         "id" => $list->nama_field,
-        //         "text" => $list->nama_field
-        //     );
-        // }
     }
     // show form page parsed from dynamic URL
     public function show(Request $request, $link)
