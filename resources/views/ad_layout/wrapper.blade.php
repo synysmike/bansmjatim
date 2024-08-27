@@ -51,17 +51,17 @@
             <footer class="main-footer">
                 <div class="footer-left">
                     Copyright &copy; 2022 <div class="bullet"></div> <a href="https://bansmprovjatim.com">
-                        BAN-S/M Provinsi Jawa Timur</a>
+                        BAN-PDM Provinsi Jawa Timur</a>
                 </div>
                 <div class="footer-right">
-                    ir.teguh IT BANSMJATIM
+                    ir.teguh IT BANPDMJATIM
                 </div>
             </footer>
         </div>
     </div>
 
     <!-- General JS Scripts -->
-    <script src="/admin_theme/library/jquery/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="/admin_theme/library/popper.js/dist/umd/popper.js"></script>
     <script src="/admin_theme/library/tooltip.js/dist/umd/tooltip.js"></script>
     <script src="/admin_theme/library/bootstrap/dist/js/bootstrap.min.js"></script>
