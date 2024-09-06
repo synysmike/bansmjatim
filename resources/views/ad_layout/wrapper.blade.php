@@ -51,7 +51,7 @@
             <footer class="main-footer">
                 <div class="footer-left">
                     Copyright &copy; 2022 <div class="bullet"></div> <a href="https://bansmprovjatim.com">
-                        BAN-PDM Provinsi Jawa Timur</a>
+                        BAN-PDM Provinsi Jawa Timur </a>
                 </div>
                 <div class="footer-right">
                     ir.teguh IT BANPDMJATIM
