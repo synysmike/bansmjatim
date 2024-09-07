@@ -54,7 +54,7 @@
                         BAN-PDM Provinsi Jawa Timur </a>
                 </div>
                 <div class="footer-right">
-                    ir.teguh IT BANPDMJATIM
+                    ir.teguh IT BANPDMJATIM 
                 </div>
             </footer>
         </div>
