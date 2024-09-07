@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $tittle }}</title>
+    <title>{{ $tittle }} - BAN-PDM Jatim</title>
 
     <!-- General CSS Files -->
     <link rel="stylesheet" href="/admin_theme/library/bootstrap/dist/css/bootstrap.min.css">
