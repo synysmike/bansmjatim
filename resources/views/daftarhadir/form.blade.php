@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>{{ $judul }}&mdash; BAN-S/M JATIM</title>
+    <title>{{ $judul }}&mdash; BAN-PDM JATIM</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta property="og:title" content="{{ $judul }}" />
     {{-- <meta property="og:type" content="video.movie" /> --}}
@@ -117,12 +117,12 @@
                         </div>
                         <!-- Footer -->
                         <div class="simple-footer">
-                            Copyright &copy; BAN-S/M Provinsi Jawa Timur by IR.TEGUH
+                            Copyright &copy; BAN-PDM Provinsi Jawa Timur by IR.TEGUH
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </section> 
 
         {{-- <div class="modal fade" tabindex="-1" role="dialog" id="editModal-show">
             <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
