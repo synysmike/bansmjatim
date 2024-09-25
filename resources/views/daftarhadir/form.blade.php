@@ -122,7 +122,7 @@
                     </div>
                 </div>
             </div>
-        </section> 
+        </section>
 
         {{-- <div class="modal fade" tabindex="-1" role="dialog" id="editModal-show">
             <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
@@ -147,7 +147,7 @@
         </div> --}}
     </div>
     </div>
-    
+
     <!-- General JS Scripts -->
 
     <script src="{{ asset('admin_theme/library/jquery/dist/jquery.min.js') }}"></script>
@@ -267,15 +267,27 @@
                 var oTable = $("#table-1").dataTable();
                 oTable.fnDraw(false);
             });
-            $("#jumlah_progli").on('change', function () {
-                    var vals = this.value
-                    console.log(vals)
-                    if (vals == "lain") {
-                        $("#jumlah_progli").remove()
-                        $("#field_progli").append("<input required id='jumlah_progli'  name='jumlah_progli' class='form-control' type='textarea'>")
-                        
-                    }
-                })
+            $("#jumlah_progli").on('change', function() {
+                var vals = this.value
+                console.log(vals)
+                if (vals == "lain") {
+                    $("#jumlah_progli").remove()
+                    $("#field_progli").append(
+                        "<input required id='jumlah_progli' placeholder='Masukan Jumlah Progli' name='jumlah_progli' class='form-control' type='textarea'>"
+                        )
+
+                }
+            })
+            $(".daftar_progli").summernote({
+                dialogsInBody: true,
+                placeholder: 'Progli 1 :, Progli 2 :, Progli 3:, dan seterusnya... (Wajib Diakhiri (,) koma di setiap progli)',
+                minHeight: 150,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough']],
+                    ['para', ['paragraph']]
+                ]
+            });
             // klik submit
             // $(document).on('click', '#btn-save', function() {
             //     // $('#signature').empty();
