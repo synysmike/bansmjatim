@@ -338,6 +338,8 @@ class DaftarhadirController extends Controller
                     'alamat_rumah' => $request->alamat_rumah,
                     'kesanggupan' => $request->kesanggupan,
                     'kepulauan' => $request->kepulauan,
+                    'jumlah_progli' => $request->jumlah_progli,
+                    'daftar_progli' => $request->daftar_progli,
                     // 'surat_tugas'=>$filename_tugas,
                     // 'pernyataan'=>$filename_nyata,
                     // 'surat_sehat'=>$filename_sehat
