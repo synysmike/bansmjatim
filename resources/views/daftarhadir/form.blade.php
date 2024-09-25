@@ -267,6 +267,15 @@
                 var oTable = $("#table-1").dataTable();
                 oTable.fnDraw(false);
             });
+            $("#jumlah_progli").on('change', function () {
+                    var vals = this.value
+                    console.log(vals)
+                    if (vals == "lain") {
+                        $("#jumlah_progli").remove()
+                        $("#field_progli").append("<input required id='jumlah_progli'  name='jumlah_progli' class='form-control' type='textarea'>")
+                        
+                    }
+                })
             // klik submit
             // $(document).on('click', '#btn-save', function() {
             //     // $('#signature').empty();
