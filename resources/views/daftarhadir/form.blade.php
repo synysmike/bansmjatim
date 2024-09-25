@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
 
     <link rel="stylesheet" href="{{ asset('/admin_theme/library/bootstrap-daterangepicker/daterangepicker.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
     <!-- Start GA -->
 
     <!-- END GA -->
@@ -164,6 +165,7 @@
         integrity="sha512-0QDLUJ0ILnknsQdYYjG7v2j8wERkKufvjBNmng/EdR/s/SE7X8cQ9y0+wMzuQT0lfXQ/NhG+zhmHNOWTUS3kMA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('jq-signature/jq-signature.min.') }}js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js">
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
     <script src="{{ asset('/admin_theme/library/cleave.js/dist/cleave.min.js') }}"></script>
     <script src="{{ asset('/admin_theme/library/cleave.js/dist/addons/cleave-phone.id.js') }}"></script>
