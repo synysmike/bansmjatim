@@ -135,6 +135,7 @@ class DaftarhadirController extends Controller
         //declarate datatable columns
         $unit = $isi;
         array_unshift($unit, 'DT_RowIndex');
+        array_push($unit, 'created_at');
         array_push($unit, 'tand');
         //declarate tittle
         $tittle = $datanya->kategori;
@@ -142,6 +143,7 @@ class DaftarhadirController extends Controller
         $theads = $isi;
         //array_unshift() is for append value to the first queue/array, array_shift() is the opposite 
         array_unshift($theads, 'No.');
+        array_unshift($theads, 'Tanggal');
         array_push($theads, 'ttd');
         if ($request->ajax()) {
             return DataTables::of($data)
