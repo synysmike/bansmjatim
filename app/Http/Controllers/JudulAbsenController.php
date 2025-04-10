@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\judul_absen;
 use App\Http\Requests\Storejudul_absenRequest;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 use App\Http\Requests\Updatejudul_absenRequest;
 
 class JudulAbsenController extends Controller
@@ -14,14 +15,34 @@ class JudulAbsenController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
         $tittle = "judul dh";
-        $data = judul_absen::where('id',1)->first();
+        $data = judul_absen::all();
+        if ($request->ajax()) {
+            return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function ($data) {
+                $rp = '<a target="_blank" href="report_dh/' . $data->id . '" class="btn btn-success" id="goto">Report</a> ';
+                $form = ' <a href="/presensi/' . $data->id . '" target="_blank" class="btn btn-primary btn-icon icon-right">lihat form</a>';
+                $btn = $rp . $form;
+                return $btn;
+            })
+                ->addColumn('act', function ($data) {
+                    if ($data->activate == 1) {
+                        # code...
+                        return '<div class="badge badge-success">Active</div>';
+                    } else {
+                        return '<div class="badge badge-danger">Inactive</div>';
+                    }
+                })
+                ->rawColumns(['action', 'act'])
+                ->make(true);
+        }
         // dd($data);
-        $cek = $data->activate;
-        return view('absen.judul_absen', compact('data','tittle','cek'));
+        // $cek = $data->activate;
+        return view('absen.judul_absen', compact('tittle'));
     }
 
     /**

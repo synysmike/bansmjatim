@@ -18,13 +18,13 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\RakordaController;
 use App\Http\Controllers\SekolahController;
 use App\Http\Controllers\BukuTamuController;
-use App\Http\Controllers\RecordBioController;
-use App\Http\Controllers\AssetsFormController;
-use App\Http\Controllers\ConfigFormController;
+// use App\Http\Controllers\RecordBioController;
+// use App\Http\Controllers\AssetsFormController;
+// use App\Http\Controllers\ConfigFormController;
 use App\Http\Controllers\JudulAbsenController;
 use App\Http\Controllers\VerifikasiController;
 use App\Http\Controllers\DaftarhadirController;
-use App\Http\Controllers\MSoslokFormController;
+// use App\Http\Controllers\MSoslokFormController;
 use App\Http\Controllers\DetilSekolahController;
 use App\Http\Controllers\NamaSekretariatController;
 
@@ -61,14 +61,15 @@ Route::resource('/info', InfoController::class);
 
 
 
-Route::resource('/bio', RecordBioController::class);
-Route::resource('/form-field', MSoslokFormController::class);
+// Route::resource('/bio', RecordBioController::class);
+// Route::resource('/form-field', MSoslokFormController::class);
 
 Route::get('/', [HomeController::class, 'index']);
 Route::resource('/asesor', AsesorController::class);
 Route::resource('/presensi', AbsenDhController::class);
 Route::resource('/sekretariat', NamaSekretariatController::class);
 Route::resource('/judul_absen', JudulAbsenController::class);
+Route::get('/report-dh/{link}', [AbsenDhController::class, 'view']);
 Route::get('/total', [VerifikasiController::class, 'total']);
 Route::get('/status', [DetilsekolahController::class, 'status']);
 Route::post('/perbaikan', [DetilsekolahController::class, 'perbaikan']);

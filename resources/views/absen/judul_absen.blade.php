@@ -22,26 +22,18 @@
                                         </div>
                                         <div class="form-group pb-3">
                                             <label>Nama kegiatan saat ini</label>
-                                            <input type="text" class="form-control" disabled value="{{ $data->judul }}">
+                                            <input type="text" class="form-control" >
                                         </div>
                                         <div class="form-group pb-3">
                                             <label>Pilih Tanggal</label>
                                             <input id="datepicker" type="text" class="form-control datepicker">
-                                        </div>
-                                        <div class="form-group pb-3">
-                                            <label>Tanggal kegiatan saat ini</label>
-                                            <input type="text" class="form-control" disabled
-                                                placeholder="{{ $data->tanggal }}">
                                             <input name="tanggal" id="tanggal" type="text" class="form-control" hidden>
                                         </div>
+                                    
                                         <div class="form-group">
                                             <div class="control-label">Aktifkan kolom</div>
                                             <label class="custom-switch mt-2">
-                                                <input id="aktif" type="checkbox" @if ($cek == 1)
-                                                    checked value=1
-                                                @elseif($cek == 0)
-                                                value=0
-                                                @endif  class="custom-switch-input" >
+                                                <input id="aktif" type="checkbox" class="custom-switch-input" >
                                                     <input name="active" id="active" type="text" class="form-control" hidden>
                                                 <span class="custom-switch-indicator"></span>
                                                 <span class="custom-switch-description">Kolom Aktif</span>
@@ -49,10 +41,40 @@
                                         </div>
                                         <button id="btn-save" type="submit"
                                             class="btn btn-primary btn-icon icon-right">simpan</button>
-                                        <a href="/dh_absen" target="_blank" class="btn btn-primary btn-icon icon-right">
-                                            lihat form</a>
+                                        
                                     </div>
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+                    <span></span>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="list_absen" class="table table-light">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <td>No.</td>
+                                            <td>Judul Absen</td>
+                                            <td> Tanggal</td>
+                                            <td> Active?</td>
+                                            <td>Action</td>
+                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>#</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -82,6 +104,64 @@
         {{-- <script src="admin_theme/js/page/bootstrap-modal.js"></script> --}}
         <script>
             $(document).ready(function() {
+                var table = $('#list_absen').DataTable({
+                "bAutoWidth": false,
+                processing: true,
+                serverSide: true, //aktifkan server-side 
+                ajax: {
+                    url: "/judul_absen", // ambil data
+                    type: 'GET'
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        width : '5%'
+                    },
+
+                    {
+                        data: 'judul',
+                        name: 'judul',
+                        width : '25%'
+                        
+                    },
+                    {
+                        data: 'tanggal',
+                        name: 'tanggal',
+                        width : '5%'
+                        
+                    },
+                    {
+                        data: 'act',
+                        name: 'act',
+                        width : '5%'
+                        
+                    },
+
+                    
+                    {
+                        data: 'action',
+                        name: 'action',
+                        width : '15%'
+                    },
+
+                ],               
+                
+                aLengthMenu: [
+                    [10, 50, 100, 200, -1],
+                    [10, 50, 100, 200, "All"]
+                ],
+            });
+            new $.fn.dataTable.Buttons(table, {
+                buttons: [{
+                    text: 'Reload',
+                    action: function(e, dt, node, config) {
+                        dt.ajax.reload();
+                    }
+                }],
+            });
+            table.buttons(0, null).container().prependTo(
+                table.table().container()
+            );
                 // $(".datepicker").datepicker();
                 $("#select-nama").select2();
                 //modal button

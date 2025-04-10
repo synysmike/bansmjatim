@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/admin_theme/library/bootstrap-timepicker/css/bootstrap-timepicker.min.css">
     <link rel="stylesheet" href="/admin_theme/library/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
 @endpush
 
 @section('admin-container')
@@ -99,6 +101,17 @@
                                 <label>link controller</label>
                                 <input class='form-control' type="text" name="link" id="link">
                             </div>
+                            
+
+                            {{-- <div class='form-group'>
+                                <label for='jumlah_progli'>
+                                    Jumlah Progli
+                                </label>
+                                <input required id='jumlah_progli' name='jumlah_progli' class='form-control'
+                                    type='textarea'>
+
+                                <div class='invalid-feedback'></div>
+                            </div> --}}
                             <div class="form-group">
                                 <button type="submit" id="btn-save" class="btn btn-info"> Simpan</button>
                                 <a hide id="rdr" class="btn btn-primary btn-lg" target="_blank"> lihat form</a>
@@ -124,6 +137,7 @@
     <script src="/admin_theme/library/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
     <script src="/admin_theme/library/select2/dist/js/select2.full.min.js"></script>
     <script src="/admin_theme/library/selectric/public/jquery.selectric.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"
         integrity="sha512-0QDLUJ0ILnknsQdYYjG7v2j8wERkKufvjBNmng/EdR/s/SE7X8cQ9y0+wMzuQT0lfXQ/NhG+zhmHNOWTUS3kMA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -135,6 +149,36 @@
 
     <script>
         $(document).ready(function() {
+
+            // var vals = [{
+            //         id: 1,
+            //         text: '1',
+            //         value: '1'
+            //     },
+            //     {
+            //         id: 2,
+            //         text: '2',
+            //         value: '2'
+            //     },
+            //     {
+            //         id: 3,
+            //         text: '3',
+            //         value: '3'
+            //     },
+            //     {
+            //         id: 4,
+            //         text: '4',
+            //         value: '4'
+            //     }
+            // ];
+            // var lain = $("#jumlah_progli").select2({
+            //     placeholder: "Pilih Jumlah Progli",
+            //     allowClear: true,
+            //     data: vals
+
+            // });
+            // console.log(lain.val())
+            
             $("#rdr").hide()
             var table = $('#tabel-config').DataTable({
                 'processing': true,
@@ -177,7 +221,9 @@
                         targets: 1,
                         render: function(data, type, row, meta) {
 
-                            return '<div id="accordion"><div class="card"><div class="card-header" id="headingOne"><h5 class="mb-0"><button class="btn btn-link" data-toggle="collapse" data-target="#collapse' +meta.row +'" aria-expanded="true" aria-controls="collapseOne">Click To View</button></h5></div> <div id="collapse' +
+                            return '<div id="accordion"><div class="card"><div class="card-header" id="headingOne"><h5 class="mb-0"><button class="btn btn-link" data-toggle="collapse" data-target="#collapse' +
+                                meta.row +
+                                '" aria-expanded="true" aria-controls="collapseOne">Click To View</button></h5></div> <div id="collapse' +
                                 meta.row +
                                 '" class="collapse" aria-labelledby="headingOne" data-parent="#accordion"><div class="card-body">' +
                                 data + '</div></div></div></div>'
@@ -225,6 +271,8 @@
                     cache: true
                 }
             });
+
+
             // ** tambahDATA * / 
             $('#tambah').click(function() {
                 $('#id-form').attr("id", "id-form-tambah");
@@ -236,6 +284,8 @@
                     $("#tag").val(vals)
                     // console.log(vals)
                 });
+
+
                 // ** SIMPAN DATA * / 
                 $(document).on('submit', '#id-form-tambah', function(e) {
                     e.preventDefault()
