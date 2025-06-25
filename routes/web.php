@@ -18,6 +18,7 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\RakordaController;
 use App\Http\Controllers\SekolahController;
 use App\Http\Controllers\BukuTamuController;
+use App\Http\Controllers\FormController;
 // use App\Http\Controllers\RecordBioController;
 // use App\Http\Controllers\AssetsFormController;
 // use App\Http\Controllers\ConfigFormController;
@@ -80,7 +81,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 
 // public access
 Route::post('/list-form', [DaftarhadirController::class, 'listForm']);
-Route::get('/tbl-dh', [DaftarhadirController::class, 'tbl_dh']);
+// Route::get('/tbl-dh', [DaftarhadirController::class, 'tbl_dh']);
 Route::get('/cetak-dh', [DaftarhadirController::class, 'cetak']);
 Route::get('/list-dh/{link}', [DaftarhadirController::class, 'view']);
 Route::get('/selectlist/{id}', [DaftarhadirController::class, 'selectlist']);
@@ -105,6 +106,9 @@ Route::get('link/{red}', [UrlController::class,'redirect']);
 Route::get('link/{link}', [UrlController::class,'show']);
 Route::get('link/', [UrlController::class,'index']);
 Route::post('link/', [UrlController::class,'store']);
+
+Route::get('list-form/', [FormController::class,'index']);
+Route::get('list-form/list/', [FormController::class,'get_form']);
 
 // Route::resource('/link', UrlController::class);
 // Route::resource('/kinerja', KinerjaController::class);
