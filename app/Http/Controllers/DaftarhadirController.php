@@ -346,6 +346,7 @@ class DaftarhadirController extends Controller
                     'surat_tugas'=>$filename_tugas,
                     'npwp' => $request->npwp,
                     'norek' => $request->norek,
+                    'nama_bank' => $request->nama_bank,
                     // 'pernyataan'=>$filename_nyata,
                     // 'surat_sehat'=>$filename_sehat
                     // 'document' => $request->file('document')->store('dokumen/'.$parent->tahun.'/'.$parent->satker->namasatker.'/'.$parent->risk_code.'/tindakan-penanganan', 'public'),
