@@ -225,12 +225,13 @@ class DaftarhadirController extends Controller
     public function store(Request $request)
     {
         //
-        // $validator = $request->validate([            
-        //     'fotorek' => 'file|mimes:pdf,PDF,jpg,jpeg,png|max:1028|nullable',
-        //     'surat_tugas' => 'file|mimes:pdf,PDF|max:1028|nullable',
-        //     'surat_sehat' => 'file|mimes:pdf,PDF|max:1028|nullable',
-        //     'pernyataan' => 'file|mimes:pdf,PDF|max:1028|nullable',
-        // ]);
+        $nia = $request->nia_ass;
+        $validator = $request->validate([            
+            // 'fotorek' => 'file|mimes:pdf,PDF,jpg,jpeg,png|max:1028|nullable',
+            'surat_tugas' => 'file|mimes:pdf,PDF|max:1028|nullable',
+            // 'surat_sehat' => 'file|mimes:pdf,PDF|max:1028|nullable',
+            // 'pernyataan' => 'file|mimes:pdf,PDF|max:1028|nullable',
+        ]);
 
         $mytime = Carbon::now('Asia/Jakarta');
 
@@ -252,14 +253,14 @@ class DaftarhadirController extends Controller
         //     $file_sehat->storeAs('surat_sehat', $filename_sehat);            
         // }
 
-        // if ($request->file('surat_tugas')) {
-        //     $file_tugas = $request->file('surat_tugas');
-        //     $extension_tugas = $file_tugas->getClientOriginalExtension();
-        //     $filename_tugas = "surat_tugas/".time() . "_" . $nia . "_surat_tugas." . $extension_tugas;
-        //     $validator['surat_tugas'] = $filename_tugas;
-        //     // Storage::disk('public')->put($filename_tugas, $file_tugas);
-        //     $file_tugas->storeAs('surat_tugas', $filename_tugas);            
-        // }
+        if ($request->file('surat_tugas')) {
+            $file_tugas = $request->file('surat_tugas');
+            $extension_tugas = $file_tugas->getClientOriginalExtension();
+            $filename_tugas = "surat_tugas/".time() . "_" . $nia . "_surat_tugas." . $extension_tugas;
+            $validator['surat_tugas'] = $filename_tugas;
+            // Storage::disk('public')->put($filename_tugas, $file_tugas);
+            $file_tugas->storeAs('surat_tugas', $filename_tugas);            
+        }
         // if ($request->file('fotorek')) {
         //     $file_fotorek = $request->file('fotorek');
         //     $extension_fotorek = $file_fotorek->getClientOriginalExtension();
@@ -342,7 +343,7 @@ class DaftarhadirController extends Controller
                     'kepulauan' => $request->kepulauan,
                     'jumlah_progli' => $request->jumlah_progli,
                     'daftar_progli' => $request->daftar_progli,
-                    // 'surat_tugas'=>$filename_tugas,
+                    'surat_tugas'=>$filename_tugas,
                     // 'pernyataan'=>$filename_nyata,
                     // 'surat_sehat'=>$filename_sehat
                     // 'document' => $request->file('document')->store('dokumen/'.$parent->tahun.'/'.$parent->satker->namasatker.'/'.$parent->risk_code.'/tindakan-penanganan', 'public'),
