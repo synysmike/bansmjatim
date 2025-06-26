@@ -344,6 +344,8 @@ class DaftarhadirController extends Controller
                     'jumlah_progli' => $request->jumlah_progli,
                     'daftar_progli' => $request->daftar_progli,
                     'surat_tugas'=>$filename_tugas,
+                    'npwp' => $request->npwp,
+                    'norek' => $request->norek,
                     // 'pernyataan'=>$filename_nyata,
                     // 'surat_sehat'=>$filename_sehat
                     // 'document' => $request->file('document')->store('dokumen/'.$parent->tahun.'/'.$parent->satker->namasatker.'/'.$parent->risk_code.'/tindakan-penanganan', 'public'),
