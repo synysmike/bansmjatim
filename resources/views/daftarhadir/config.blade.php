@@ -362,6 +362,7 @@
                         }
                     });
                     cek.on("select2:close", function(e) {
+                        cek.val(null).trigger('change');
                         var vals = cek.val()
                         $("#tag").val(vals)
                         // console.log(vals)
