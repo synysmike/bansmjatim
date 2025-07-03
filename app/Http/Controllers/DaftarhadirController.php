@@ -317,12 +317,12 @@ class DaftarhadirController extends Controller
             $file = 'ttdKesanggupan/' . $signatureFileName;
             // file_put_contents($file, $ttd);
             Storage::disk('public')->put($file, $ttd);
-            if ($request->file('surat_tugas')) {
+            // if ($request->file('surat_tugas')) {
 
-               $st = [ 'surat_tugas'=>$filename_tugas];
-            }else{
-                $st = ['surat_tugas' => null];
-            }
+            //    $st = [ 'surat_tugas'=>$filename_tugas];
+            // }else{
+            //     $st = ['surat_tugas' => null];
+            // }
             $unit = Daftarhadir::updateOrCreate(
                 [
                     // fix this issue {
@@ -349,7 +349,7 @@ class DaftarhadirController extends Controller
                     'kepulauan' => $request->kepulauan,
                     'jumlah_progli' => $request->jumlah_progli,
                     'daftar_progli' => $request->daftar_progli,
-                    $st,
+                    // $st,
                     'npwp' => $request->npwp,
                     'norek' => $request->norek,
                     'nama_bank' => $request->nama_bank,
