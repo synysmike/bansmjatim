@@ -24,7 +24,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
 
-    <link rel="stylesheet" href="{{ asset('/admin_theme/library/bootstrap-daterangepicker/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin_theme/library/bootstrap-daterangepicker/daterangepicker.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
     <!-- Start GA -->
 
@@ -82,8 +82,9 @@
                                                 id="selectValue" name="nia_ass" class="form-control" required>
                                                 <option value="">--Pilih Nama--</option>
                                                 @foreach ($ass as $nama)
-                                                    <option value = "{{ $nama->nia }}">{{ $nama->nia }}
-                                                        {{ $nama->nama_tanpa_gelar }}</option>
+                                                    <option value="{{ $nama->nia }}">{{ $nama->nia }}
+                                                        {{ $nama->nama_tanpa_gelar }}
+                                                    </option>
                                                 @endforeach
                                             </select></div>
                                     @endif
@@ -158,17 +159,16 @@
     <script src="{{ asset('admin_theme/library/jquery.nicescroll/dist/jquery.nicescroll.min.js') }}"></script>
     <script src="{{ asset('admin_theme/library/moment/min/moment.min.js') }}"></script>
     <script src="{{ asset('admin_theme/js/stisla.js') }}"></script>
-    <script src="{{ asset('/admin_theme/library/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('admin_theme/library/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <!-- JS Libraies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"
         integrity="sha512-0QDLUJ0ILnknsQdYYjG7v2j8wERkKufvjBNmng/EdR/s/SE7X8cQ9y0+wMzuQT0lfXQ/NhG+zhmHNOWTUS3kMA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="{{ asset('jq-signature/jq-signature.min.') }}js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js">
+    <script src="{{ asset('jq-signature/jq-signature.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
-    <script src="{{ asset('/admin_theme/library/cleave.js/dist/cleave.min.js') }}"></script>
-    <script src="{{ asset('/admin_theme/library/cleave.js/dist/addons/cleave-phone.id.js') }}"></script>
+    <script src="{{ asset('admin_theme/library/cleave.js/dist/cleave.min.js') }}"></script>
+    <script src="{{ asset('admin_theme/library/cleave.js/dist/addons/cleave-phone.id.js') }}"></script>
     <script src="{{ asset('admin_theme/library/sweetalert/dist/sweetalert.min.js') }}"></script>
     <script src="{{ asset('admin_theme/library/datatables/media/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('admin_theme/library/selectric/public/jquery.selectric.min.js') }}"></script>
@@ -179,8 +179,8 @@
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.print.min.js"></script>
     <!-- Page Specific JS File -->
-    <script src="{{ asset('admin_theme/js/page/auth-register.js') }}"></script>
     <!-- Template JS File -->
+    <script src="{{ asset('admin_theme/js/page/auth-register.js') }}"></script>
     {{-- <script src="admin_theme/js/scripts.js"></script>
     <script src="admin_theme/js/custom.js"></script> --}}
     <script>
@@ -276,7 +276,7 @@
                     $("#jumlah_progli").remove()
                     $("#field_progli").append(
                         "<input required id='jumlah_progli' placeholder='Masukan Jumlah Progli' name='jumlah_progli' class='form-control' type='textarea'>"
-                        )
+                    )
 
                 }
             })
@@ -290,27 +290,25 @@
                     ['para', ['paragraph']]
                 ]
             });
-            // klik submit
-            // $(document).on('click', '#btn-save', function() {
-            //     // $('#signature').empty();
-            //     // var img = $('<img>').attr('src', dataUrl);
-            //     // $('#signature').append($('<p>').text("Here's your signature:"));
-            //     // $('#signature').append(img);
-            //     // console.log(sig.signature('toDataURL'));
-            //     // var mycanvas = document.getElementById('canvas');
-            //     var dataUrl = $('.js-signature').jqSignature('getDataURL');
-            //     var img = dataUrl;
-            //     // // // console.log(img)
-            //     var anchor = $("#signature");
-            //     anchor.val(img);
-            //     $("#id-form").submit();
-            // });
+
             $(document).on('submit', '#id-form', function(e) {
-                var dataUrl = $('.js-signature').jqSignature('getDataURL');
-                var img = dataUrl;
+                var blankSignature = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqgAAADICAYAAAAk0xMvAAAAAXNSR0IArs4c6QAACy9JREFUeF7t1jERAAAMArHi33Rt/JAq4EIHdo4AAQIECBAgQIBASGChLKIQIECAAAECBAgQOAPVExAgQIAAAQIECKQEDNRUHcIQIECAAAECBAgYqH6AAAECBAgQIEAgJWCgpuoQhgABAgQIECBAwED1AwQIECBAgAABAikBAzVVhzAECBAgQIAAAQIGqh8gQIAAAQIECBBICRioqTqEIUCAAAECBAgQMFD9AAECBAgQIECAQErAQE3VIQwBAgQIECBAgICB6gcIECBAgAABAgRSAgZqqg5hCBAgQIAAAQIEDFQ/QIAAAQIECBAgkBIwUFN1CEOAAAECBAgQIGCg+gECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgAABAgQIpAQM1FQdwhAgQIAAAQIECBiofoAAAQIECBAgQCAlYKCm6hCGAAECBAgQIEDAQPUDBAgQIECAAAECKQEDNVWHMAQIECBAgAABAgaqHyBAgAABAgQIEEgJGKipOoQhQIAAAQIECBAwUP0AAQIECBAgQIBASsBATdUhDAECBAgQIECAgIHqBwgQIECAAAECBFICBmqqDmEIECBAgAABAgQMVD9AgAABAgQIECCQEjBQU3UIQ4AAAQIECBAgYKD6AQIECBAgQIAAgZSAgZqqQxgCBAgQIECAAAED1Q8QIECAAAECBAikBAzUVB3CECBAgAABAgQIGKh+gAABAgQIECBAICVgoKbqEIYAAQIECBAgQMBA9QMECBAgQIAAAQIpAQM1VYcwBAgQIECAAAECBqofIECAAAECBAgQSAkYqKk6hCFAgAABAgQIEDBQ/QABAgQIECBAgEBKwEBN1SEMAQIECBAgQICAgeoHCBAgQIAAAQIEUgIGaqoOYQgQIECAAAECBAxUP0CAAAECBAgQIJASMFBTdQhDgAABAgQIECBgoPoBAgQIECBAgACBlICBmqpDGAIECBAgQIAAAQPVDxAgQIAAAQIECKQEDNRUHcIQIECAAAECBAgYqH6AAAECBAgQIEAgJWCgpuoQhgABAgQIECBAwED1AwQIECBAgAABAikBAzVVhzAECBAgQIAAAQIGqh8gQIAAAQIECBBICRioqTqEIUCAAAECBAgQMFD9AAECBAgQIECAQErAQE3VIQwBAgQIECBAgICB6gcIECBAgAABAgRSAgZqqg5hCBAgQIAAAQIEDFQ/QIAAAQIECBAgkBIwUFN1CEOAAAECBAgQIGCg+gECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgAABAgQIpAQM1FQdwhAgQIAAAQIECBiofoAAAQIECBAgQCAlYKCm6hCGAAECBAgQIEDAQPUDBAgQIECAAAECKQEDNVWHMAQIECBAgAABAgaqHyBAgAABAgQIEEgJGKipOoQhQIAAAQIECBAwUP0AAQIECBAgQIBASsBATdUhDAECBAgQIECAgIHqBwgQIECAAAECBFICBmqqDmEIECBAgAABAgQMVD9AgAABAgQIECCQEjBQU3UIQ4AAAQIECBAgYKD6AQIECBAgQIAAgZSAgZqqQxgCBAgQIECAAAED1Q8QIECAAAECBAikBAzUVB3CECBAgAABAgQIGKh+gAABAgQIECBAICVgoKbqEIYAAQIECBAgQMBA9QMECBAgQIAAAQIpAQM1VYcwBAgQIECAAAECBqofIECAAAECBAgQSAkYqKk6hCFAgAABAgQIEDBQ/QABAgQIECBAgEBKwEBN1SEMAQIECBAgQICAgeoHCBAgQIAAAQIEUgIGaqoOYQgQIECAAAECBAxUP0CAAAECBAgQIJASMFBTdQhDgAABAgQIECBgoPoBAgQIECBAgACBlICBmqpDGAIECBAgQIAAAQPVDxAgQIAAAQIECKQEDNRUHcIQIECAAAECBAgYqH6AAAECBAgQIEAgJWCgpuoQhgABAgQIECBAwED1AwQIECBAgAABAikBAzVVhzAECBAgQIAAAQIGqh8gQIAAAQIECBBICRioqTqEIUCAAAECBAgQMFD9AAECBAgQIECAQErAQE3VIQwBAgQIECBAgICB6gcIECBAgAABAgRSAgZqqg5hCBAgQIAAAQIEDFQ/QIAAAQIECBAgkBIwUFN1CEOAAAECBAgQIGCg+gECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgAABAgQIpAQM1FQdwhAgQIAAAQIECBiofoAAAQIECBAgQCAlYKCm6hCGAAECBAgQIEDAQPUDBAgQIECAAAECKQEDNVWHMAQIECBAgAABAgaqHyBAgAABAgQIEEgJGKipOoQhQIAAAQIECBAwUP0AAQIECBAgQIBASsBATdUhDAECBAgQIECAgIHqBwgQIECAAAECBFICBmqqDmEIECBAgAABAgQMVD9AgAABAgQIECCQEjBQU3UIQ4AAAQIECBAgYKD6AQIECBAgQIAAgZSAgZqqQxgCBAgQIECAAAED1Q8QIECAAAECBAikBAzUVB3CECBAgAABAgQIGKh+gAABAgQIECBAICVgoKbqEIYAAQIECBAgQMBA9QMECBAgQIAAAQIpAQM1VYcwBAgQIECAAAECBqofIECAAAECBAgQSAkYqKk6hCFAgAABAgQIEDBQ/QABAgQIECBAgEBKwEBN1SEMAQIECBAgQICAgeoHCBAgQIAAAQIEUgIGaqoOYQgQIECAAAECBAxUP0CAAAECBAgQIJASMFBTdQhDgAABAgQIECBgoPoBAgQIECBAgACBlICBmqpDGAIECBAgQIAAAQPVDxAgQIAAAQIECKQEDNRUHcIQIECAAAECBAgYqH6AAAECBAgQIEAgJWCgpuoQhgABAgQIECBAwED1AwQIECBAgAABAikBAzVVhzAECBAgQIAAAQIGqh8gQIAAAQIECBBICRioqTqEIUCAAAECBAgQMFD9AAECBAgQIECAQErAQE3VIQwBAgQIECBAgICB6gcIECBAgAABAgRSAgZqqg5hCBAgQIAAAQIEDFQ/QIAAAQIECBAgkBIwUFN1CEOAAAECBAgQIGCg+gECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgAABAgQIpAQM1FQdwhAgQIAAAQIECBiofoAAAQIECBAgQCAlYKCm6hCGAAECBAgQIEDAQPUDBAgQIECAAAECKQEDNVWHMAQIECBAgAABAgaqHyBAgAABAgQIEEgJGKipOoQhQIAAAQIECBAwUP0AAQIECBAgQIBASsBATdUhDAECBAgQIECAgIHqBwgQIECAAAECBFICBmqqDmEIECBAgAABAgQMVD9AgAABAgQIECCQEjBQU3UIQ4AAAQIECBAgYKD6AQIECBAgQIAAgZSAgZqqQxgCBAgQIECAAAED1Q8QIECAAAECBAikBAzUVB3CECBAgAABAgQIGKh+gAABAgQIECBAICVgoKbqEIYAAQIECBAgQMBA9QMECBAgQIAAAQIpAQM1VYcwBAgQIECAAAECBqofIECAAAECBAgQSAkYqKk6hCFAgAABAgQIEDBQ/QABAgQIECBAgEBKwEBN1SEMAQIECBAgQICAgeoHCBAgQIAAAQIEUgIGaqoOYQgQIECAAAECBAxUP0CAAAECBAgQIJASMFBTdQhDgAABAgQIECBgoPoBAgQIECBAgACBlICBmqpDGAIECBAgQIAAAQPVDxAgQIAAAQIECKQEDNRUHcIQIECAAAECBAgYqH6AAAECBAgQIEAgJWCgpuoQhgABAgQIECBAwED1AwQIECBAgAABAikBAzVVhzAECBAgQIAAAQIPCDEAyXM/m1YAAAAASUVORK5CYII=";
+                var currentSignature = $('.js-signature').jqSignature('getDataURL');
+                console.log(currentSignature);
+                if (currentSignature === blankSignature) {
+                    swal({
+                        title: "Gagal",
+                        text: "Mohon untuk mengisi TTD terlebih dahulu",
+                        icon: "error",
+                        button: "OK",
+                    });
+                    return false;
+                }
+                var img = currentSignature;
                 // // // console.log(img)
                 var anchor = $("#signature");
                 anchor.val(img);
+
                 e.preventDefault()
                 var formData = new FormData(this);
                 $.ajax({
@@ -332,19 +330,9 @@
                     },
                     error: function(data) {
                         console.log('Error', data);
-                        // $('#errnama').text('Mohon Mengisi Nama');
-                        // $('#errhp').text("nomor HP jangan kosong");
-                        // $('#errsehat').text(
-                        //     'cek ukuran/jenis file, harus pdf, dan maksimal 1MB');
-                        // $('#errfotorek').text(
-                        //     'cek ukuran/jenis file, harus pdf/jpg/png, dan maksimal 1MB');
-                        // $('#errtugas').text(
-                        //     'cek ukuran/jenis file, harus pdf, dan maksimal 1MB');
-                        // $('#btn-save').html(
-                        //     'Gagal Simpan, mohon diperbaiki lalu klik saya lagi'
-                        // );
                     }
                 });
+
             });
             $.ajaxSetup({
                 headers: {
@@ -352,8 +340,6 @@
                 }
             });
         });
-        //   $(document).ready(() => {            
-        // })    
     </script>
 
 </body>

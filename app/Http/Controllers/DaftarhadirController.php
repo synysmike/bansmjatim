@@ -151,7 +151,7 @@ class DaftarhadirController extends Controller
                 ->addColumn('tand', function ($data) {
                     $ttd = $data->ttd;
                     if (!empty($data->ttd)) {
-                    return '<img width="100" src="/public/app/public/' . $ttd . '" alt="">';
+                    return '<img width="100" src="/' . $ttd . '" alt="">';
                     } else {
                         return '-';
                     }
@@ -214,7 +214,7 @@ class DaftarhadirController extends Controller
                 ->addIndexColumn()
                 ->addColumn('ttd', function ($data) {
                     $ttd = $data->ttd;
-                    return '<img width="100" src="storage/app/public/' . $ttd . '" alt="">';
+                return '<img width="100" src="/' . $ttd . '" alt="">';
                 })
                 ->rawColumns(['ttd'])
                 ->make(true);
@@ -235,40 +235,40 @@ class DaftarhadirController extends Controller
 
         $mytime = Carbon::now('Asia/Jakarta');
 
-        // if ($request->file('pernyataan')) {
-        //     $file_nyata = $request->file('pernyataan');
-        //     $extension_nyata = $file_nyata->getClientOriginalExtension();
-        //     $filename_nyata = "surat_pernyataan/".time() . "_" . $nia . "_pernyataan." . $extension_nyata;
-        //     $validator['pernyataan'] = $filename_nyata;
-        //     // Storage::disk('public')->put($filename_nyata, $file_nyata);
-        //     $file_nyata->storeAs('pernyataan', $filename_nyata);            
-        // }
+        if ($request->file('pernyataan')) {
+            $file_nyata = $request->file('pernyataan');
+            $extension_nyata = $file_nyata->getClientOriginalExtension();
+            $filename_nyata = "surat_pernyataan/" . time() . "_" . $nia . "_pernyataan." . $extension_nyata;
+            $validator['pernyataan'] = $filename_nyata;
+            // Storage::disk('public')->put($filename_nyata, $file_nyata);
+            $file_nyata->storeAs('pernyataan', $filename_nyata);
+        }
 
-        // if ($request->file('surat_sehat')) {
-        //     $file_sehat = $request->file('surat_sehat');
-        //     $extension_sehat = $file_sehat->getClientOriginalExtension();
-        //     $filename_sehat = "surat_sehat/".time() . "_" . $nia . "_surat_sehat." . $extension_sehat;
-        //     $validator['surat_sehat'] = $filename_sehat;
-        //     // Storage::disk('public')->put($filename_sehat, $file_sehat);
-        //     $file_sehat->storeAs('surat_sehat', $filename_sehat);            
-        // }
+        if ($request->file('surat_sehat')) {
+            $file_sehat = $request->file('surat_sehat');
+            $extension_sehat = $file_sehat->getClientOriginalExtension();
+            $filename_sehat =  time() . "_" . $nia . "_surat_sehat." . $extension_sehat;
+            $validator['surat_sehat'] = $filename_sehat;
+            // Storage::disk('public')->put($filename_sehat, $file_sehat);
+            $file_sehat->storeAs('surat_sehat', $filename_sehat);
+        }
 
         if ($request->file('surat_tugas')) {
             $file_tugas = $request->file('surat_tugas');
             $extension_tugas = $file_tugas->getClientOriginalExtension();
-            $filename_tugas = "surat_tugas/".time() . "_" . $nia . "_surat_tugas." . $extension_tugas;
+            $filename_tugas = time() . "_" . $nia . "_surat_tugas." . $extension_tugas;
             $validator['surat_tugas'] = $filename_tugas;
             // Storage::disk('public')->put($filename_tugas, $file_tugas);
             $file_tugas->storeAs('surat_tugas', $filename_tugas);            
         }
-        // if ($request->file('fotorek')) {
-        //     $file_fotorek = $request->file('fotorek');
-        //     $extension_fotorek = $file_fotorek->getClientOriginalExtension();
-        //     $filename_fotorek = "fotorek/".time() . "_" . $nia . "_fotorek." . $extension_fotorek;
-        //     $validator['fotorek'] = $filename_fotorek;
-        //     // Storage::disk('public')->put($filename_tugas,$filename_tugas);
-        //     $file_fotorek->storeAs('fotorek', $filename_fotorek);            
-        // }
+        if ($request->file('fotorek')) {
+            $file_fotorek = $request->file('fotorek');
+            $extension_fotorek = $file_fotorek->getClientOriginalExtension();
+            $filename_fotorek = time() . "_" . $nia . "_fotorek." . $extension_fotorek;
+            $validator['fotorek'] = $filename_fotorek;
+            // Storage::disk('public')->put($filename_tugas,$filename_tugas);
+            $file_fotorek->storeAs('fotorek', $filename_fotorek);
+        }
         if ($request->nia_ass) {
             $nia = $request->nia_ass;
             $ass = asesor::where('nia', $nia)->first();
@@ -317,12 +317,7 @@ class DaftarhadirController extends Controller
             $file = 'ttdKesanggupan/' . $signatureFileName;
             // file_put_contents($file, $ttd);
             Storage::disk('public')->put($file, $ttd);
-            // if ($request->file('surat_tugas')) {
 
-            //    $st = [ 'surat_tugas'=>$filename_tugas];
-            // }else{
-            //     $st = ['surat_tugas' => null];
-            // }
             $unit = Daftarhadir::updateOrCreate(
                 [
                     // fix this issue {
@@ -349,7 +344,12 @@ class DaftarhadirController extends Controller
                     'kepulauan' => $request->kepulauan,
                     'jumlah_progli' => $request->jumlah_progli,
                     'daftar_progli' => $request->daftar_progli,
-                    // $st,
+                    'surat_tugas' => $filename_tugas ?? null,
+                    'fotorek' => $filename_fotorek ?? null,
+                    'pernyataan' => $filename_nyata ?? null,
+                    'surat_sehat' => $filename_sehat ?? null,
+                    'kelas' => $request->kelas,
+                    'kelompok' => $request->kelompok,
                     'npwp' => $request->npwp,
                     'norek' => $request->norek,
                     'nama_bank' => $request->nama_bank,
