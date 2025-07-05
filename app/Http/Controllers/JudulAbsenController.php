@@ -19,14 +19,15 @@ class JudulAbsenController extends Controller
     {
         //
         $tittle = "judul dh";
-        $data = judul_absen::all();
+        $data = judul_absen::all()->sortByDesc('created_at');
         if ($request->ajax()) {
             return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($data) {
                 $rp = '<a target="_blank" href="report_dh/' . $data->id . '" class="btn btn-success" id="goto">Report</a> ';
                 $form = ' <a href="/presensi/' . $data->id . '" target="_blank" class="btn btn-primary btn-icon icon-right">lihat form</a>';
-                $btn = $rp . $form;
+                $edit = '<a  class="btn btn-warning btn-icon icon-right" id="edit" data-id="' . $data->id . '" data-judul="' . $data->judul . '" data-tanggal="' . $data->tanggal . '" data-active="' . $data->activate . '">Edit</a>';
+                $btn = $rp . $form . $edit;
                 return $btn;
             })
                 ->addColumn('act', function ($data) {
@@ -63,21 +64,34 @@ class JudulAbsenController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
 
-        // $cek = $request->all();
-        // dd($cek);
-        //
-        $id = 1;
-        $inpid =  ['id' => $id];
-        $unit = judul_absen::updateOrCreate( 
-            $inpid,           
-            [
+        $inpid = [
+            'id' => $request->id
+        ];
+        if ($request->id) {
+            $inpid = [
+                'id' => $request->id
+            ];
+
+            $unit = judul_absen::updateOrCreate(
+                $inpid,
+                [
                 'judul'=>$request->judul,
                 'tanggal'=>$request->tanggal,
                 'activate'=>$request->active
                 
 
             ]);
+        } else {
+            $unit = judul_absen::updateOrCreate(
+                [
+                    'judul' => $request->judul,
+                    'tanggal' => $request->tanggal,
+                    'activate' => $request->active
+                ]
+            );
+        }
         return response()->json($unit);
     }
 
@@ -90,6 +104,18 @@ class JudulAbsenController extends Controller
     public function show(judul_absen $judul_absen)
     {
         //
+        judul_absen::where('id', $judul_absen->id)->first();
+        $tittle = $judul_absen->judul;
+        $tanggal = $judul_absen->tanggal;
+        $act = $judul_absen->activate;
+        $mytime = now('Asia/Jakarta');
+        $data = [
+            'judul' => $tittle,
+            'tanggal' => $tanggal,
+            'activate' => $act,
+            'waktu' => $mytime,
+        ];
+        dd($data);
     }
 
     /**

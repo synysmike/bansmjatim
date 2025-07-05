@@ -39,7 +39,7 @@
                                         <div class="invalid-feedback">
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary btn-icon icon-right"
+                                    <button type="submit" id="btn-save" form="id-form" class="btn btn-primary btn-icon icon-right"
                                         id="btn-save">simpan</button>
                                         <button id="list" class= 'btn btn-outline-info'> Daftar absen</button>
                                 </div>
@@ -95,15 +95,15 @@
 @endsection
 @push('js-custom')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="admin_theme/library/datatables/media/js/jquery.dataTables.min.js"></script>
-    <script src="admin_theme/library/jquery-ui-dist/jquery-ui.min.js"></script>
-    <script src="/admin_theme/library/bootstrap-daterangepicker/daterangepicker.js"></script>
-    <script src="admin_theme/library/sweetalert/dist/sweetalert.min.js"></script>
-    <script src="/admin_theme/library/summernote/dist/summernote-bs4.js"></script>
+    <script src="{{ asset('admin_theme/library/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('admin_theme/library/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('admin_theme/library/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('admin_theme/library/summernote/dist/summernote-bs4.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"
         integrity="sha512-0QDLUJ0ILnknsQdYYjG7v2j8wERkKufvjBNmng/EdR/s/SE7X8cQ9y0+wMzuQT0lfXQ/NhG+zhmHNOWTUS3kMA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="{{ asset('jq-signature/jq-signature.min.') }}js"></script>
+    <script src="{{ asset('jq-signature/jq-signature.min.js') }}"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
@@ -143,7 +143,7 @@
                 processing: true,
                 serverSide: true, //aktifkan server-side 
                 ajax: {
-                    url: "/presensi", // ambil data
+                    url: "{{ url()->current() }}", // this page url
                     type: 'GET'
                 },
                 columns: [{
@@ -192,6 +192,8 @@
             table.buttons(0, null).container().prependTo(
                 table.table().container()
             );
+
+            
             $(document).on('submit', '#id-form', function(e) {
                 e.preventDefault();
                 var dataUrl = $('.js-signature').jqSignature('getDataURL');
@@ -201,9 +203,10 @@
                 anchor.val(img);
                 // console.log(cek.val());
                 var formData = new FormData(this);
+                console.log(formData);
                 $.ajax({
                     type: "POST",
-                    url: "/presensi",
+                    url: "{{ URL::to('presensi/') }}",
                     data: formData,
                     dataType: 'json',
                     processData: false,

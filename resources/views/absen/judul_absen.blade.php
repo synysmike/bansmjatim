@@ -17,12 +17,8 @@
                                 <form id="id-form">
                                     <div class="col-8">
                                         <div class="form-group pb-3">
-                                            <label>Masukan nama kegiatan baru</label>
+                                            <label>Nama Kegiatan</label>
                                             <input name="judul" id="judul" type="text" class="form-control">
-                                        </div>
-                                        <div class="form-group pb-3">
-                                            <label>Nama kegiatan saat ini</label>
-                                            <input type="text" class="form-control" >
                                         </div>
                                         <div class="form-group pb-3">
                                             <label>Pilih Tanggal</label>
@@ -193,29 +189,32 @@
                     }
                 });
                 
-                // var cb = document.getElementById('aktif')
-                // cb.addEventListener('change', (e) => {
-                //     this.checkboxValue = e.target.checked ? '1' : '0';
-                //     console.log(this.checkboxValue);
-                //     cb.value = this.checkboxValue;
-                // })
-
-                //datatable yajra
+                $(document).on('click', '#edit', function(e) {
+                    e.preventDefault();
+                    var id = $(this).data('id');
+                    var judul = $(this).data('judul');
+                    var tanggal = $(this).data('tanggal');
+                    var active = $(this).data('active');
+                    // console.log(id,judul,tanggal,active);
+                    $("#judul").val(judul);
+                    $("#datepicker").val(tanggal);
+                    $("#tanggal").val(tanggal);
+                    $("#aktif").prop("checked", active == 1 ? true : false);
+                    $("#active").val(active);
+                    var inp_id = "<input name='id' id='id' type='text' class='form-control' value='" + id + "' hidden>";
+                    $('#id-form').append(inp_id);
+                });
                 $(document).on('submit', '#id-form', function(e) {
-                    // this takes care of disabling the form's submission
-                    //     e.preventDefault();
-                    //     var formData = new FormData(this);
-                    //     console.log('bisa kok');
-
-                    //     // the rest of your code...
-                    // });
-
-
                     e.preventDefault()
                     var tgl = $("#datepicker").val();
                     var cek = $("#tanggal").val(tgl);
                     // console.log(cek.val());
                     var formData = new FormData(this);
+                    if ($("#id").length>0) {
+                        // console.log('ada id');
+                        formData.append('id', $("#id").val());
+                    } 
+
 
                     $.ajax({
                         type: "POST",
@@ -234,6 +233,7 @@
                             swal("Berhasil",
                                 "Berkas telah tersimpan",
                                 "success");
+                            table.ajax.reload();
                         },
                         error: function(data) {
                             console.log('Error', data);

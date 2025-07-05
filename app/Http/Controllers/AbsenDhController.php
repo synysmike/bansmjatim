@@ -22,34 +22,25 @@ class AbsenDhController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $link) {}
+    public function view(Request $request, $link)
     {
-        //
-        $judul = judul_absen::where('id',1)->first();
+
+        // dd($link);
+        $judul = judul_absen::where('id', $link)->first();
+
         $tittle = $judul->judul;
-        $tanggal= $judul->tanggal;
-        $act= $judul->activate;
-        $mytime = Carbon::now('Asia/Jakarta');
-        $format_tgl = date("d-m-Y", strtotime($tanggal));
+        $tanggal = $judul->tanggal;
         $data = absen_dh::join('tbm_nama_sekretariat', 'tbm_nama_sekretariat.id', '=', 'tbr_dhabsen.id_nama')
-        ->where('tbr_dhabsen.tanggal',$tanggal)
-        ->get(['tbr_dhabsen.*', 'tbm_nama_sekretariat.nama']);
+            ->where('tbr_dhabsen.tanggal', $tanggal)
+            ->where('tbr_dhabsen.nama_judul', $tittle)
+            ->get(['tbr_dhabsen.*', 'tbm_nama_sekretariat.nama'])->sortByDesc('created_at');
 
-        // $users = User::join('posts', 'users.id', '=', 'posts.user_id')
-        // ->get(['users.*', 'posts.descrption']);
-
-        // $data = DB::table('tbr_dhabsen')
-        //     ->select('tbr_dhabsen.id', 'tbm_nama_sekretariat.nama', 'tbm_nama_sekretariat.unit')
-        //     ->join('tbm_nama_sekretariat', 'tbm_nama_sekretariat.id', '=', 'tbr_dhabsen.id_nama')
-        //     ->get();
-
-        // dd($data);
-        $namas = nama_sekretariat::all();
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('ttd', function ($data) {
-                    $cek =  URL::to('public/app/public/' . $data->ttd);
+                $cek =  URL::to($data->ttd);
                     if (!empty($data->ttd)) {
                         return '<img width="170" src="' . $cek . '" />';
                     } else {
@@ -59,66 +50,12 @@ class AbsenDhController extends Controller
                 ->rawColumns(['ttd'])
                 ->make(true);
         }
-        // dd($form);
-        return view('absen.dh_absen', compact('tittle', 'namas','format_tgl','act'));
-        // dd($cek);
-    }
-    public function view(Request $request, $link)
-    {
-        // dd("bisa kok");
-        //
-        $id = $link;
-        dd($id);
-        // $judul = judul_absen::where('id', 1)->first();
-        // $tittle = $judul->judul;
-        // $tanggal = $judul->tanggal;
-        // $act = $judul->activate;
-        // $mytime = Carbon::now('Asia/Jakarta');
-        // $format_tgl = date("d-m-Y", strtotime($tanggal));
-        // $data = absen_dh::join('tbm_nama_sekretariat', 'tbm_nama_sekretariat.id', '=', 'tbr_dhabsen.id_nama')
-        // ->where('tbr_dhabsen.tanggal', $tanggal)
-        //     ->get(['tbr_dhabsen.*', 'tbm_nama_sekretariat.nama']);
-
-        // // $namas = nama_sekretariat::all();
-        // if ($request->ajax()) {
-        //     return DataTables::of($data)
-        //         ->addIndexColumn()
-        //         ->addColumn('action', function ($data) {
-        //             $goto = '<a target="_blank" href="report_dh/' . $data->id . '" class="btn btn-success" id="goto">Report</a>';
-        //             return $goto;
-        //         })
-        //         ->rawColumns(['action'])
-        //         ->make(true);
-        // }
-        // return view('absen.dh_absen', compact('tittle', 'namas', 'format_tgl', 'act'));
-        // $users = User::join('posts', 'users.id', '=', 'posts.user_id')
-        // ->get(['users.*', 'posts.descrption']);
-
-        // $data = DB::table('tbr_dhabsen')
-        //     ->select('tbr_dhabsen.id', 'tbm_nama_sekretariat.nama', 'tbm_nama_sekretariat.unit')
-        //     ->join('tbm_nama_sekretariat', 'tbm_nama_sekretariat.id', '=', 'tbr_dhabsen.id_nama')
-        //     ->get();
-
-        // dd($data);
-        // dd($form);
-        // dd($cek);
-    }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return view('absen.report', compact('tittle'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\Storeabsen_dhRequest  $request
-     * @return \Illuminate\Http\Response
-     */
+    public function create() {}
+
+
     public function store(Request $request)
     {
         // untuk TTD
@@ -149,9 +86,39 @@ class AbsenDhController extends Controller
      * @param  \App\Models\absen_dh  $absen_dh
      * @return \Illuminate\Http\Response
      */
-    public function show(absen_dh $absen_dh)
+    public function show(Request $request, $link)
     {
         //
+        // dd($link);
+        $judul = judul_absen::where('id', $link)->first();
+        $tittle = $judul->judul;
+        $tanggal = $judul->tanggal;
+        $act = $judul->activate;
+        $mytime = Carbon::now('Asia/Jakarta');
+        $format_tgl = date("d-m-Y", strtotime($tanggal));
+        $data = absen_dh::join('tbm_nama_sekretariat', 'tbm_nama_sekretariat.id', '=', 'tbr_dhabsen.id_nama')
+            ->where('tbr_dhabsen.tanggal', $tanggal)
+            ->where('tbr_dhabsen.nama_judul', $tittle)
+            ->get(['tbr_dhabsen.*', 'tbm_nama_sekretariat.nama'])->sortByDesc('created_at');
+
+        $namas = nama_sekretariat::all();
+        if ($request->ajax()) {
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('ttd', function ($data) {
+                    $cek =  URL::to($data->ttd);
+                    if (!empty($data->ttd)) {
+                        return '<img width="170" src="' . $cek . '" />';
+                    } else {
+                        return '-';
+                    }
+                })
+                ->rawColumns(['ttd'])
+                ->make(true);
+        }
+        // dd($form);
+        return view('absen.dh_absen', compact('tittle', 'namas', 'format_tgl', 'act'));
+        // dd($cek);
     }
 
     /**

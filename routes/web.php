@@ -70,7 +70,7 @@ Route::resource('/asesor', AsesorController::class);
 Route::resource('/presensi', AbsenDhController::class);
 Route::resource('/sekretariat', NamaSekretariatController::class);
 Route::resource('/judul_absen', JudulAbsenController::class);
-Route::get('/report-dh/{link}', [AbsenDhController::class, 'view']);
+Route::get('/report_dh/{link}', [AbsenDhController::class, 'view']);
 Route::get('/total', [VerifikasiController::class, 'total']);
 Route::get('/status', [DetilsekolahController::class, 'status']);
 Route::post('/perbaikan', [DetilsekolahController::class, 'perbaikan']);
