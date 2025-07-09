@@ -49,11 +49,9 @@ class DaftarhadirController extends Controller
 
             $ass =
             asesor::select('nia', 'nama_tanpa_gelar')
-            ->where([
-                ['soft_delete', '=', 0],
-                ['status_asesor', '=', 1],
-                // Add more conditions here if needed
-            ])->get();
+                ->where('soft_delete', 0)
+                ->get();
+            // ->where('soft_delete', 0)->get();
             array_unshift($compact, 'ass');
 
             $data = Daftarhadir::with('nia_asesor')
