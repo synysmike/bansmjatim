@@ -36,6 +36,8 @@ class DaftarhadirController extends Controller
         $compact = array('unit', 'theads', 'judul', 'kategori', 'form', 'link', 'kat');
         $isi = explode(",", $datanya->tabel);
         $konten = $isi;
+
+        // dd($konten);
         //date today
         $today = $mytime->format('d-m-Y');
         if (in_array("nama_asesor", $isi)) {
@@ -87,7 +89,7 @@ class DaftarhadirController extends Controller
             ->whereIn("nama_field", $konten)
             ->get();
 
-
+        // dd($form);
         //load yajra datatable
         if ($request->ajax()) {
             return DataTables::of($data)
@@ -288,6 +290,7 @@ class DaftarhadirController extends Controller
                     // fix this issue {
                     'kat_dh' => $request->kat_dh,
                     'nia' => $nia,
+                    'nik' => $request->nik,
                     'nama' => $nama,
                     'hp' => $request->hp,
                     'kelas' => $kelas,
@@ -329,6 +332,7 @@ class DaftarhadirController extends Controller
                     'kabkota' => $request->asal,
                     'kat_dh' => $request->kat_dh,
                     'bidang' => $request->bidang,
+                    'nik' => $request->nik,
                     'npsn' => $request->npsn,
                     'nama_lembaga' => $request->nama_lembaga,
                     'tempat_lahir' => $request->tempat_lahir,
