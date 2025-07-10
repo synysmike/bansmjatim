@@ -111,6 +111,11 @@ class DaftarhadirController extends Controller
         // dd($ass);
         return view('daftarhadir.form', compact($compact));
     }
+    public function print_form()
+    {
+        return view('daftarhadir.print');
+
+    }
     public function view(Request $request, $link)
     {
         $datanya = Config::where('link', $link)->first();

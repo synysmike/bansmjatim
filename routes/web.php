@@ -99,6 +99,7 @@ Route::resource('/config', ConfigController::class);
 
 // dynamic URL get from config_table
 Route::get('form/{link}', [DaftarhadirController::class,'index']);
+Route::get('print', [DaftarhadirController::class,'print_form']);
 Route::post('form/{link}', [DaftarhadirController::class,'store']);
 // Route::post('/form/{link}/{id}', [DaftarhadirController::class,'show']);
 
