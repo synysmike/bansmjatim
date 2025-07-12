@@ -71,7 +71,7 @@
             <tr>
                 <td width="40%"></td>
                 <td style="padding-left:7em">
-                    <p>Surabaya, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
+                    <p>Surabaya, {{ \Carbon\Carbon::parse($row->created_at)->translatedFormat('d F Y') }}</p>
                     <p>Yang menyatakan,</p>
                     @if (!empty($row->ttd) && file_exists(public_path($row->ttd)))
                         <img src="{{ public_path($row->ttd) }}" alt="QR Signature" width="100">
