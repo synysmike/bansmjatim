@@ -1,117 +1,89 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="UTF-8">
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 40px;
-    }
-    table {
-      width: 600px;
-      border-collapse: collapse;
-      margin: 0 auto;
-    }
-    th, td {
-      padding: 8px;
-      font-size: 12px;
-    }
-    .kop img {
-      width: 100px;
-    }
-    .footer {
-      font-size: 10px;
-      margin-top: 20px;
-    }
-    ol {
-      padding-left: 1.5em;
-    }
-  </style>
-</head>
-<body>
+@foreach ($data as $row)
+    <div style="page-break-after: always;">
+        {{-- Include Header --}}
+        @include('daftarhadir.print_head')
 
-  <table>
-    <tr style="border-bottom: 3px solid black;">
-      <td width="21%" style="text-align: center;">
-        <img src="kop-surat.png" alt="Logo" class="kop">
-      </td>
-      <td>
-        <span>BADAN AKREDITASI NASIONAL</span><br>
-        <span>PENDIDIKAN ANAK USIA DINI, PENDIDIKAN DASAR, DAN PENDIDIKAN MENENGAH</span><br>
-        <span>PROVINSI JAWA TIMUR</span><br>
-        <span>BBPMP Provinsi Jawa Timur, Gedung RA. Kartini Lantai 4</span><br>
-        <span>Jl. Ketintang Wiyata No. 15 Surabaya, 60231</span><br>
-        <span>Email : jatim@ban-pdm.id</span><br>
-        <span>Web : https://www.banpdmjatim.id/</span>
-      </td>
-    </tr>
-  </table>
+        {{-- Body Content --}}
+        <h2 style="text-align:center;">BIODATA NARASUMBER</h2>
+        <table>
+            <tr>
+                <td width="30%">Nama</td>
+                <td width="3%">:</td>
+                <td>{{ $row->nama ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td>NIP</td>
+                <td>:</td>
+                <td>{{ $row->nip ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td>Tempat/Tgl Lahir</td>
+                <td>:</td>
+                <td>{{ $row->tgl_lahir ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td>Pangkat/Golongan</td>
+                <td>:</td>
+                <td>{{ $row->pangkat ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td>Unit Kerja</td>
+                <td>:</td>
+                <td>{{ $row->unit ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td>Jabatan</td>
+                <td>:</td>
+                <td>{{ $row->jabatan ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td>Unsur</td>
+                <td>:</td>
+                <td>{{ $row->unsur ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td>Alamat Kantor</td>
+                <td>:</td>
+                <td>{{ $row->alamat_kantor ?? '-' }}</td>
+            </tr>
+            {{-- <tr><td>Nama Bank</td><td>:</td><td>{{ $row->bank ?? '-' }}</td></tr> --}}
+            <tr>
+                <td>Nomor Rekening (BRI)</td>
+                <td>:</td>
+                <td>{{ $row->norek ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td>NIK</td>
+                <td>:</td>
+                <td>{{ $row->nik ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td>NPWP</td>
+                <td>:</td>
+                <td>{{ $row->npwp ?? '-' }}</td>
+            </tr>
+        </table>
 
-  <h3 style="text-align:center;">SURAT TUGAS ASESOR<br>NOMOR : [No Surat]</h3>
+        {{-- Signature or Additional Block --}}
+        <p>Demikian pernyataan ini saya buat dengan sebenarnya.</p>
+        {{-- ...signature table... --}}
+        <table>
+            <tr>
+                <td width="40%"></td>
+                <td style="padding-left:7em">
+                    <p>Surabaya, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
+                    <p>Yang menyatakan,</p>
+                    @if (!empty($row->ttd) && file_exists(public_path($row->ttd)))
+                        <img src="{{ public_path($row->ttd) }}" alt="QR Signature" width="100">
+                    @else
+                        <span style="font-size:12px; color:#888;">No signature available</span>
+                    @endif
 
-  <p>Badan Akreditasi Nasional Pendidikan Anak Usia Dini, Pendidikan Dasar, dan Pendidikan Menengah Provinsi Jawa Timur menugaskan kepada :</p>
-
-  <table>
-    <tr>
-      <td width="30%" style="padding-left:10em">Nama</td>
-      <td width="1%">:</td>
-      <td width="1%">1.</td>
-      <td>John Doe (NIA 123456)</td>
-    </tr>
-    <!-- Tambahkan baris tambahan sesuai kebutuhan -->
-    <tr>
-      <td style="padding-left:10em">Jabatan</td>
-      <td>:</td>
-      <td colspan="2">Asesor</td>
-    </tr>
-  </table>
-
-  <p>Untuk melaksanakan Pra Visitasi / Assesmen Kecukupan Visitasi Tahap I pada tanggal 01 Juli 2025 s.d 05 Juli 2025 dan Visitasi DASMEN Tahap I pada tanggal 06 Juli 2025 s.d 10 Juli 2025 di :</p>
-
-  <table border="1">
-    <tr>
-      <th>No.</th>
-      <th>NPSN</th>
-      <th>Nama S/M</th>
-      <th>Kabupaten/Kota</th>
-    </tr>
-    <tr>
-      <td>1.</td>
-      <td>12345678</td>
-      <td>SD Negeri Contoh</td>
-      <td>Kab. Surabaya</td>
-    </tr>
-    <!-- Tambahkan baris sekolah sesuai kebutuhan -->
-  </table>
-
-  <p>Masing-masing asesor melaksanakan tugas sebagai berikut:</p>
-  <ol>
-    <li>Penilaian dokumen dan deskripsi kinerja asesi melalui aplikasi Sispena.</li>
-    <li>Visitasi ke sekolah/madrasah/program pendidikan kesetaraan.</li>
-    <li>Menggali data dan informasi secara objektif.</li>
-    <li>Melakukan penilaian kinerja melalui aplikasi Sispena.</li>
-    <li>Menyampaikan catatan dan saran hasil visitasi melalui aplikasi Sispena.</li>
-  </ol>
-
-  <p>Surat tugas ini diberikan untuk dilaksanakan sebagaimana mestinya.</p>
-
-  <table>
-    <tr>
-      <td width="40%"></td>
-      <td style="padding-left:7em">
-        <p>Surabaya, 11 Juli 2025</p>
-        <p>Ketua Badan Akreditasi Nasional<br>Pendidikan Anak Usia Dini, Pendidikan Dasar,<br>dan Pendidikan Menengah</p>
-        <p>Provinsi Jawa Timur</p>
-        <img src="qr_ttd_example.png" alt="QR Signature" width="100">
-        <p style="font-weight:bold;">Dr. Jane Example</p>
-      </td>
-    </tr>
-  </table>
-
-  <div class="footer">
-    Dicetak pada: 11 Juli 2025 | Registered Letter ID : abcdef1234567890
-  </div>
-
-</body>
-</html>
+                    <p style="font-weight:bold;">{{ $row->nama ?? '-' }}</p>
+                </td>
+            </tr>
+        </table>
+        {{-- Include Footer --}}
+        @include('daftarhadir.print_foot', ['record_id' => $row->id])
+    </div>
+@endforeach

@@ -33,9 +33,11 @@ class ConfigController extends Controller
                     $valId = $confs->id;
                     $url = Crypt::encrypt($valId);
                 $red = ' <a href="/form/' . $confs->link . '" target="_blank" class="btn btn-outline-secondary"> View Form</a>';
+                $btn2 = ' <a href="/cetak-dh/' . $confs->link . '" target="_blank" class="btn btn-outline-primary"> Cetak Form</a>';
                 $btn = ' <a href="/list-dh/' . $confs->link . '" data-id="' . $url . '" target="_blank" class="btn btn-success"> Report</a>';
                     $btn1 = ' <a href="javascript:void(0)" data-id="' . $valId . '" class="btn btn-info show-btn"> Edit</a>';
-                    $aksi = $red . $btn . $btn1 . ' <a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-danger del-btn"> Hapus</a>';
+
+                $aksi = $red . $btn . $btn1 . $btn2 . ' <a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-danger del-btn"> Hapus</a>';
                     return $aksi;
                 })
                 ->rawColumns(['aksi'])

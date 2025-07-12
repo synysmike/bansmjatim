@@ -111,9 +111,58 @@ class DaftarhadirController extends Controller
         // dd($ass);
         return view('daftarhadir.form', compact($compact));
     }
+    public function cetak($link)
+    {
+        $datanya = Config::where('link', $link)->first();
+        $isi = explode(",", $datanya->tabel);
+        $kat = $datanya->kategori;
+        $link = $datanya->link;
+        // $compact = array('unit', 'theads', 'tittle', 'link');
+
+        if (in_array("nama_asesor", $isi)) {
+            unset($isi[0]);
+            array_unshift($isi, 'nama');
+            array_unshift($isi, 'nia');
+            array_push($isi, 'created_at');
+            // dd($isi);
+            $data = Daftarhadir::with('nia_asesor')
+                ->where('kat_dh',  $kat)
+                ->orderBy('created_at', 'DESC')->get();
+        } else {
+            $data = Daftarhadir::where('kat_dh', $kat)
+                ->orderBy('created_at', 'DESC')->get();
+        }
+        // declarate datatable columns
+        $unit = $isi;
+        array_unshift($unit, 'DT_RowIndex');
+        array_push($unit, 'created_at');
+        array_push($unit, 'tand');
+        //declarate tittle
+        $tittle = $datanya->kategori;
+        // declare theads
+        $theads = $isi;
+        array_unshift($theads, 'No.');
+        array_push($theads, 'Tanggal');
+        array_push($theads, 'ttd');
+        $pdf = Pdf::loadView('daftarhadir.print', compact('data', 'unit', 'theads', 'tittle', 'link'))
+            ->setPaper('a4');
+
+        return $pdf->stream('form.pdf');
+    }
+
     public function print_form()
     {
-        return view('daftarhadir.print');
+        ini_set('memory_limit', '512M');
+        // Sample data to pass to the view
+
+
+        // Load the view and pass data
+        $pdf = Pdf::loadView('daftarhadir.print');
+
+        // Stream the PDF back to browser or download
+        return $pdf->stream('form.pdf');
+        // or return $pdf->download('invoice.pdf');
+        // return view('daftarhadir.print');
 
     }
     public function view(Request $request, $link)

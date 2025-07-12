@@ -82,7 +82,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 // public access
 Route::post('/list-form', [DaftarhadirController::class, 'listForm']);
 // Route::get('/tbl-dh', [DaftarhadirController::class, 'tbl_dh']);
-Route::get('/cetak-dh', [DaftarhadirController::class, 'cetak']);
+Route::get('/cetak-dh/{link}', [DaftarhadirController::class, 'cetak']);
 Route::get('/list-dh/{link}', [DaftarhadirController::class, 'view']);
 Route::get('/selectlist/{id}', [DaftarhadirController::class, 'selectlist']);
 Route::get('/kesanggupan', [DaftarhadirController::class, 'kesediaan']);
