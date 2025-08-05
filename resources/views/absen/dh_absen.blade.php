@@ -18,7 +18,8 @@
                                 <div class="col-8">
                                     <div class="form-group pb-3">
                                         <label>Pilih Nama :</label>
-                                        <input hidden class="form-control" type="text" name="judul" value="{{ $tittle }}">
+                                        <input hidden class="form-control" type="text" name="judul"
+                                            value="{{ $tittle }}">
                                         {{-- <input hidden class="form-control" type="text" name="" value="{{ $tittle }}"> --}}
                                         <select required id="select-nama" name="nama" class="form-control">
                                             <option value="">--Pilih Nama--</option>
@@ -39,14 +40,14 @@
                                         <div class="invalid-feedback">
                                         </div>
                                     </div>
-                                    <button type="submit" id="btn-save" form="id-form" class="btn btn-primary btn-icon icon-right"
-                                        id="btn-save">simpan</button>
-                                        <button id="list" class= 'btn btn-outline-info'> Daftar absen</button>
+                                    <button type="submit" id="btn-save" form="id-form"
+                                        class="btn btn-primary btn-icon icon-right" id="btn-save">simpan</button>
+                                    <button id="list" class= 'btn btn-outline-info'> Daftar absen</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -103,26 +104,31 @@
         integrity="sha512-0QDLUJ0ILnknsQdYYjG7v2j8wERkKufvjBNmng/EdR/s/SE7X8cQ9y0+wMzuQT0lfXQ/NhG+zhmHNOWTUS3kMA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('jq-signature/jq-signature.min.js') }}"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.print.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"
+        integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Page Specific JS File -->
     {{-- <script src="admin_theme/js/page/bootstrap-modal.js"></script> --}}
     <script>
         $(document).ready(function() {
             var cek = "{{ $act }}";
-            if(cek == 0){
+            if (cek == 0) {
                 // console.log();
-                $("#kolom *").prop('disabled',true);
+                $("#kolom *").prop('disabled', true);
                 $("#kolom *").hide()
-                $("#kolom").append("<p>Form absen masih belum dibuka, silahkan menghubungi <a href='https://wa.me/6281332444088' target='_blank'>Teguh</a> Atau <a href='https://wa.me/6287712813719' target='_blank'>Guntur</a></p>")
+                $("#kolom").append(
+                    "<p>Form absen masih belum dibuka, silahkan menghubungi <a href='https://wa.me/6281332444088' target='_blank'>Teguh</a> Atau <a href='https://wa.me/6287712813719' target='_blank'>Guntur</a></p>"
+                    )
             }
             // console.log(cek);
-            
+
             $("#select-nama").select2();
             //modal button
             $(document).on('click', '#list', function(e) {
@@ -149,33 +155,33 @@
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
-                        width : '5%'
+                        width: '5%'
                     },
 
                     {
                         data: 'nama',
                         name: 'nama',
-                        
+
                     },
                     {
                         data: 'tanggal',
                         name: 'tanggal',
-                        
+
                     },
 
                     {
                         data: 'nama_judul',
                         name: 'nama_judul',
-                        
+
                     },
                     {
                         data: 'ttd',
                         name: 'ttd',
-                        width : '10%'
+                        width: '10%'
                     },
 
-                ],               
-                
+                ],
+
                 aLengthMenu: [
                     [10, 50, 100, 200, -1],
                     [10, 50, 100, 200, "All"]
@@ -193,7 +199,7 @@
                 table.table().container()
             );
 
-            
+
             $(document).on('submit', '#id-form', function(e) {
                 e.preventDefault();
                 var dataUrl = $('.js-signature').jqSignature('getDataURL');
@@ -214,7 +220,7 @@
                     success: function(data) {
                         $('#id-form').trigger(
                             "reset");
-                            $('.js-signature').jqSignature('clearCanvas');
+                        $('.js-signature').jqSignature('clearCanvas');
                         // window.location.reload()
                         $('#btn-save').html('Tersimpan');
                         //Reload Total Finansial Planing

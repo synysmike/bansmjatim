@@ -48,7 +48,7 @@ class DaftarhadirController extends Controller
             // dd($isi);
 
             $ass =
-            asesor::select('nia', 'nama_tanpa_gelar')
+                asesor::select('nia', 'nama_tanpa_gelar')
                 ->where('soft_delete', 0)
                 ->get();
             // ->where('soft_delete', 0)->get();
@@ -56,10 +56,10 @@ class DaftarhadirController extends Controller
 
             $data = Daftarhadir::with('nia_asesor')
                 ->where(
-                [
-                    ['kat_dh', '=', $datanya->kategori],
-                    ['tanggal', '=', $today]
-                ]
+                    [
+                        ['kat_dh', '=', $datanya->kategori],
+                        ['tanggal', '=', $today]
+                    ]
                 )
                 ->orderBy('created_at', 'DESC')->get();
         } else {
@@ -180,8 +180,8 @@ class DaftarhadirController extends Controller
             array_push($isi, 'created_at');
             // dd($isi);
             $data = Daftarhadir::with('nia_asesor')
-            ->where('kat_dh',  $datanya->kategori)
-            ->orderBy('created_at', 'DESC')->get();
+                ->where('kat_dh',  $datanya->kategori)
+                ->orderBy('created_at', 'DESC')->get();
         } else {
             $data = Daftarhadir::where('kat_dh', $datanya->kategori)
                 ->orderBy('created_at', 'DESC')->get();
@@ -205,7 +205,7 @@ class DaftarhadirController extends Controller
                 ->addColumn('tand', function ($data) {
                     $ttd = $data->ttd;
                     if (!empty($data->ttd)) {
-                    return '<img width="100" src="/' . $ttd . '" alt="">';
+                        return '<img width="100" src="/' . $ttd . '" alt="">';
                     } else {
                         return '-';
                     }
@@ -258,7 +258,7 @@ class DaftarhadirController extends Controller
         return response()->json($unit);
     }
 
-    
+
     public function dhtable(Request $request)
     {
         $tittle = 'Daftar Hadir';
@@ -268,7 +268,7 @@ class DaftarhadirController extends Controller
                 ->addIndexColumn()
                 ->addColumn('ttd', function ($data) {
                     $ttd = $data->ttd;
-                return '<img width="100" src="/' . $ttd . '" alt="">';
+                    return '<img width="100" src="/' . $ttd . '" alt="">';
                 })
                 ->rawColumns(['ttd'])
                 ->make(true);
@@ -280,7 +280,7 @@ class DaftarhadirController extends Controller
     {
         //
         $nia = $request->nia_ass;
-        $validator = $request->validate([            
+        $validator = $request->validate([
             // 'fotorek' => 'file|mimes:pdf,PDF,jpg,jpeg,png|max:1028|nullable',
             'surat_tugas' => 'file|mimes:pdf,PDF|max:1028|nullable',
             // 'surat_sehat' => 'file|mimes:pdf,PDF|max:1028|nullable',
@@ -313,7 +313,15 @@ class DaftarhadirController extends Controller
             $filename_tugas = time() . "_" . $nia . "_surat_tugas." . $extension_tugas;
             $validator['surat_tugas'] = $filename_tugas;
             // Storage::disk('public')->put($filename_tugas, $file_tugas);
-            $file_tugas->storeAs('surat_tugas', $filename_tugas);            
+            $file_tugas->storeAs('surat_tugas', $filename_tugas);
+        }
+        if ($request->file('surat_ketua')) {
+            $file_ketua = $request->file('surat_ketua');
+            $extension_ketua = $file_ketua->getClientOriginalExtension();
+            $filename_ketua = time() . "_" . $nia . "_surat_ketua." . $extension_ketua;
+            $validator['surat_ketua'] = $filename_ketua;
+            // Storage::disk('public')->put($filename_ketua, $file_ketua);
+            $file_ketua->storeAs('surat_ketua', $filename_ketua);
         }
         if ($request->file('fotorek')) {
             $file_fotorek = $request->file('fotorek');
@@ -401,6 +409,7 @@ class DaftarhadirController extends Controller
                     'jumlah_progli' => $request->jumlah_progli,
                     'daftar_progli' => $request->daftar_progli,
                     'surat_tugas' => $filename_tugas ?? null,
+                    'surat_ketua' => $filename_ketua ?? null,
                     'fotorek' => $filename_fotorek ?? null,
                     'pernyataan' => $filename_nyata ?? null,
                     'surat_sehat' => $filename_sehat ?? null,
