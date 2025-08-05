@@ -347,6 +347,7 @@ class DaftarhadirController extends Controller
             $unit = Daftarhadir::updateOrCreate(
                 [
                     // fix this issue {
+                    'nia' => $nia,
                     'nama' => $nama,
                     'ttd' => $file,
                     'hp' => $request->hp,
