@@ -158,15 +158,28 @@ class DaftarhadirController extends Controller
 
 
             foreach ($filter as $field) {
-                if ($field === 'ttd') {
-                    $ttdPath = $row->$field ? public_path($row->$field) : null;
+                // if ($field === 'ttd') {
+                //     $ttdPath = $row->$field ? public_path($row->$field) : null;
 
-                    if ($ttdPath && is_file($ttdPath)) {
-                        $imageData = base64_encode(file_get_contents($ttdPath));
-                        $mimeType = mime_content_type($ttdPath);
-                        $tbl .= '<td class="isi"><img width="20" src="data:' . $mimeType . ';base64,' . $imageData . '" alt=""></td>';
-                    } else {
-                        $tbl .= '<td class="isi">-</td>';
+                //     if ($ttdPath && is_file($ttdPath)) {
+                //         $imageData = base64_encode(file_get_contents($ttdPath));
+                //         $mimeType = mime_content_type($ttdPath);
+                //         $tbl .= '<td class="isi"><img width="20" src="data:' . $mimeType . ';base64,' . $imageData . '" alt=""></td>';
+                //     } else {
+                //         $tbl .= '<td class="isi">-</td>';
+                //     }
+                // } else {
+                //     $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
+                // }
+                if ($field === 'ttd') {
+                    $fullPath = public_path($row->$field);
+
+                    if (!is_file($fullPath)) {
+                        dd("File not found:", $fullPath);
+                    }
+
+                    if (!is_readable($fullPath)) {
+                        dd("File not readable:", $fullPath);
                     }
                 } else {
                     $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
