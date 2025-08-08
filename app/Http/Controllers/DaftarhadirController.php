@@ -187,6 +187,8 @@ class DaftarhadirController extends Controller
                 //     $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
                 // }
             }
+            $info = getimagesize($fullPath);
+            dd($info);
 
 
 
