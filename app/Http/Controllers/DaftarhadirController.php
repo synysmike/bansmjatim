@@ -162,7 +162,9 @@ class DaftarhadirController extends Controller
                     $ttdPath = $row->$field ? public_path($row->$field) : null;
 
                     if ($ttdPath && is_file($ttdPath)) {
-                        $tbl .= '<td class="isi"><img width="20" src="' . $ttdPath . '" alt=""></td>';
+                        $imageData = base64_encode(file_get_contents($ttdPath));
+                        $mimeType = mime_content_type($ttdPath);
+                        $tbl .= '<td class="isi"><img width="20" src="data:' . $mimeType . ';base64,' . $imageData . '" alt=""></td>';
                     } else {
                         $tbl .= '<td class="isi">-</td>';
                     }
