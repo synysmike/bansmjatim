@@ -116,7 +116,7 @@ class DaftarhadirController extends Controller
     public function dh_export(Request $request, $link)
     {
         ini_set('memory_limit', '1024M');
-        set_time_limit(1000); // 5 minutes
+        set_time_limit(5000); // 5 minutes
 
         $datanya = Config::where('link', $link)->firstOrFail();
 
