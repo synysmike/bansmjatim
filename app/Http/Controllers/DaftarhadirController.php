@@ -194,7 +194,8 @@ class DaftarhadirController extends Controller
 
         // $compact = compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link');
         // return view('daftarhadir.export', $compact);
-
+        $info = getimagesize($fullPath);
+        dd($info);
         $pdf = Pdf::loadView('daftarhadir.export', compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link'))->setPaper('a4', 'landscape');
 
         return $pdf->stream('export.pdf');
