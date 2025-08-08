@@ -181,9 +181,10 @@ class DaftarhadirController extends Controller
                     if (!is_readable($fullPath)) {
                         dd("File not readable:", $fullPath);
                     }
-                } else {
-                    $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
                 }
+                // else {
+                //     $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
+                // }
             }
 
 
