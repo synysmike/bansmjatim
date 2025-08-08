@@ -147,17 +147,11 @@ class DaftarhadirController extends Controller
         $filter = array_merge($isi, ['ttd']);
 
         // set key for tbody
-
-
-
         $tbl = '';
 
         foreach ($data as $index => $row) {
             $tbl .= '<tr>';
             $tbl .= '<td class"isi">' . ($index + 1) . '</td>'; // Row number
-
-
-
             foreach ($filter as $field) {
                 if ($field === 'ttd') {
                     $ttdPath = $row->$field ? public_path($row->$field) : null;
@@ -172,26 +166,7 @@ class DaftarhadirController extends Controller
                 } else {
                     $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
                 }
-                // if ($field === 'ttd') {
-                //     $fullPath = public_path($row->$field);
-
-                // if (!is_file($fullPath)) {
-                //     dd("File not found:", $fullPath);
-                // }
-
-                // if (!is_readable($fullPath)) {
-                //     dd("File not readable:", $fullPath);
-                // }
-                // }
-                // else {
-                //     $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
-                // }
             }
-            // $info = getimagesize($fullPath);
-            // dd($info);
-
-
-
             $tbl .= '</tr>';
         }
 
@@ -201,7 +176,7 @@ class DaftarhadirController extends Controller
         $zip = new \ZipArchive;
         $zipPath = storage_path('app/public/all_chunks.zip');
         $zip->open($zipPath, \ZipArchive::CREATE);
-        $chunkSize = 50;
+        $chunkSize = 20;
         $chunks = $data->chunk($chunkSize);
         foreach ($chunks as $i => $chunk) {
             $pdf = Pdf::loadView('daftarhadir.export', compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link'), ['data' => $chunk])->setPaper('a4', 'landscape');

@@ -38,13 +38,14 @@
         .table-bordered {
             width: 100%;
             border-collapse: collapse;
+            font-size: 10px;
         }
 
         .table-bordered th,
         .table-bordered td {
             border: 1px solid #333;
             padding: 8px;
-            font-size: 14px;
+            font-size: 10px;
             text-align: center;
         }
 
