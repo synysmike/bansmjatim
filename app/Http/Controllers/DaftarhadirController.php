@@ -176,7 +176,7 @@ class DaftarhadirController extends Controller
         $zip = new \ZipArchive;
         $zipPath = storage_path('app/public/all_chunks.zip');
         $zip->open($zipPath, \ZipArchive::CREATE);
-        $chunkSize = 20;
+        $chunkSize = 10;
         $chunks = $data->chunk($chunkSize);
         foreach ($chunks as $i => $chunk) {
             $pdf = Pdf::loadView('daftarhadir.export', compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link'), ['data' => $chunk])->setPaper('a4', 'landscape');
