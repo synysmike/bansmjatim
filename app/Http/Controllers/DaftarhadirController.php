@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 use App\Http\Requests\StoreDaftarhadirRequest;
 use App\Http\Requests\UpdateDaftarhadirRequest;
 
@@ -137,8 +138,8 @@ class DaftarhadirController extends Controller
 
         $dataQuery = Daftarhadir::where('kat_dh', $kat)->orderBy('created_at', 'DESC');
         $data = in_array("nama_asesor", $isi)
-            ? $dataQuery->with('nia_asesor')->take(50)->get()
-            : $dataQuery->take(1000)->get();
+            ? $dataQuery->with('nia_asesor')->get()
+            : $dataQuery->get();
 
         // Declare columns
         $unit = array_merge(['DT_RowIndex'], $isi, ['tand']);
@@ -197,9 +198,28 @@ class DaftarhadirController extends Controller
         // $compact = compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link');
         // return view('daftarhadir.export', $compact);
 
-        $pdf = Pdf::loadView('daftarhadir.export', compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link'))->setPaper('a4', 'landscape');
+        $zip = new \ZipArchive;
+        $zipPath = storage_path('app/public/all_chunks.zip');
+        $zip->open($zipPath, \ZipArchive::CREATE);
+        $chunkSize = 50;
+        $chunks = $data->chunk($chunkSize);
+        foreach ($chunks as $i => $chunk) {
+            $pdf = Pdf::loadView('daftarhadir.export', compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link'), ['data' => $chunk])->setPaper('a4', 'landscape');
+            $filePath = storage_path("app/public/{$kat}_{$i}.pdf");
+            $pdf->save($filePath);
+            $zip->addFile($filePath, "{$kat}_{$i}.pdf");
+        }
 
-        return $pdf->stream('export.pdf');
+        $zip->close();
+
+        // Clean up temp PDFs
+        foreach ($chunks as $i => $chunk) {
+            @unlink(storage_path("app/temp_{$kat}_{$i}.pdf"));
+        }
+        return response()->download($zipPath)->deleteFileAfterSend(true);
+        // $pdf = Pdf::loadView('daftarhadir.export', compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link'))->setPaper('a4', 'landscape');
+
+        // return $pdf->stream('export.pdf');
     }
     public function cetak($link)
     {
