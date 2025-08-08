@@ -153,27 +153,25 @@ class DaftarhadirController extends Controller
 
         foreach ($data as $index => $row) {
             $tbl .= '<tr>';
-            $tbl .= '<td class="isi">' . ($index + 1) . '</td>'; // Row number
+            $tbl .= '<td class"isi">' . ($index + 1) . '</td>'; // Row number
+
+
 
             foreach ($filter as $field) {
-                $relativePath = $row->$field; // e.g., 'ttd/user1.png'
-                // $fullPath = public_path($relativePath);
+                if ($field === 'ttd') {
+                    $ttdPath = $row->$field ? public_path($row->$field) : null;
 
-                // if (is_file($fullPath)) {
-                //     $tbl .= '<td class="isi"><img width="50" src="' . $fullPath  . '" alt=""></td>';
-                // } else {
-                //     $tbl .= '<td class="isi">-</td>';
-                // }
-                $fullPath = public_path($row->$field);
-
-                if (!is_file($fullPath)) {
-                    dd("File not found:", $fullPath);
-                }
-
-                if (!is_readable($fullPath)) {
-                    dd("File not readable:", $fullPath);
+                    if ($ttdPath && is_file($ttdPath)) {
+                        $tbl .= '<td class="isi"><img width="20" src="' . $ttdPath . '" alt=""></td>';
+                    } else {
+                        $tbl .= '<td class="isi">-</td>';
+                    }
+                } else {
+                    $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
                 }
             }
+
+
 
             $tbl .= '</tr>';
         }
