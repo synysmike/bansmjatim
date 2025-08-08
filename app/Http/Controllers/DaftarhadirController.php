@@ -173,14 +173,15 @@ class DaftarhadirController extends Controller
                 // }
                 if ($field === 'ttd') {
                     $fullPath = public_path($row->$field);
+                    $info = getimagesize($fullPath);
+                    dd($info);
+                    // if (!is_file($fullPath)) {
+                    //     dd("File not found:", $fullPath);
+                    // }
 
-                    if (!is_file($fullPath)) {
-                        dd("File not found:", $fullPath);
-                    }
-
-                    if (!is_readable($fullPath)) {
-                        dd("File not readable:", $fullPath);
-                    }
+                    // if (!is_readable($fullPath)) {
+                    //     dd("File not readable:", $fullPath);
+                    // }
                 }
                 // else {
                 //     $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
@@ -194,8 +195,7 @@ class DaftarhadirController extends Controller
 
         // $compact = compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link');
         // return view('daftarhadir.export', $compact);
-        $info = getimagesize($fullPath);
-        dd($info);
+
         $pdf = Pdf::loadView('daftarhadir.export', compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link'))->setPaper('a4', 'landscape');
 
         return $pdf->stream('export.pdf');
