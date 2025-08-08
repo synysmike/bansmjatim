@@ -157,7 +157,8 @@ class DaftarhadirController extends Controller
 
             foreach ($filter as $field) {
                 $ttdPath = public_path($row->$field);
-                if (file_exists($ttdPath)) {
+
+                if (is_file($ttdPath)) {
                     $tbl .= '<td class="isi"><img width="50" src="' . $ttdPath . '" alt=""></td>';
                 } else {
                     $tbl .= '<td class="isi">-</td>';
