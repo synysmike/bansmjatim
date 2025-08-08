@@ -156,10 +156,11 @@ class DaftarhadirController extends Controller
             $tbl .= '<td class="isi">' . ($index + 1) . '</td>'; // Row number
 
             foreach ($filter as $field) {
-                $ttdPath = public_path($row->$field);
+                $relativePath = $row->$field; // e.g., 'ttd/user1.png'
+                $fullPath = public_path($relativePath);
 
-                if (is_file($ttdPath)) {
-                    $tbl .= '<td class="isi"><img width="50" src="' . $ttdPath . '" alt=""></td>';
+                if (is_file($fullPath)) {
+                    $tbl .= '<td class="isi"><img width="50" src="' . $fullPath  . '" alt=""></td>';
                 } else {
                     $tbl .= '<td class="isi">-</td>';
                 }
