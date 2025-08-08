@@ -173,8 +173,7 @@ class DaftarhadirController extends Controller
                 // }
                 if ($field === 'ttd') {
                     $fullPath = public_path($row->$field);
-                    $info = getimagesize($fullPath);
-                    dd($info);
+
                     // if (!is_file($fullPath)) {
                     //     dd("File not found:", $fullPath);
                     // }
