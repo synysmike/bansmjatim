@@ -111,6 +111,69 @@ class DaftarhadirController extends Controller
         // dd($ass);
         return view('daftarhadir.form', compact($compact));
     }
+
+    public function dh_export(Request $request, $link)
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(1000); // 5 minutes
+
+        $datanya = Config::where('link', $link)->firstOrFail();
+
+        $isi = explode(",", $datanya->tabel);
+        $kat = $datanya->kategori;
+        $link = $datanya->link;
+        $tittle = $datanya->judul;
+
+        // Adjust columns if "nama_asesor" is present
+        if (in_array("nama_asesor", $isi)) {
+            unset($isi[array_search("nama_asesor", $isi)]);
+            array_unshift($isi, 'nama', 'nia');
+        }
+
+        array_push($isi, 'created_at');
+
+        // Fetch data
+        // $dataQuery  = Daftarhadir::where('kat_dh', $kat)->orderBy('created_at', 'DESC')->take(100)->get();
+
+        $dataQuery = Daftarhadir::where('kat_dh', $kat)->orderBy('created_at', 'DESC');
+        $data = in_array("nama_asesor", $isi)
+            ? $dataQuery->with('nia_asesor')->take(50)->get()
+            : $dataQuery->take(1500)->get();
+
+        // Declare columns
+        $unit = array_merge(['DT_RowIndex'], $isi, ['tand']);
+        $theads = array_merge(['No.'], $isi, ['ttd']);
+        $filter = array_merge($isi, ['ttd']);
+
+        // set key for tbody
+
+
+
+        $tbl = '';
+
+        foreach ($data as $index => $row) {
+            $tbl .= '<tr>';
+            $tbl .= '<td class"isi">' . ($index + 1) . '</td>'; // Row number
+
+            foreach ($filter as $field) {
+                if ($field === 'ttd') {
+                    $ttd = $row->$field ? asset($row->$field) : '-';
+                    $tbl .= '<td class"isi"><img width="20" src="' . $ttd . '" alt=""></td>';
+                } else {
+                    $tbl .= '<td class"isi">' . ($row->$field ?? '-') . '</td>';
+                }
+            }
+
+            $tbl .= '</tr>';
+        }
+
+        // $compact = compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link');
+        // return view('daftarhadir.export', $compact);
+
+        $pdf = Pdf::loadView('daftarhadir.export', compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link'))->setPaper('a4', 'landscape');
+
+        return $pdf->stream('export.pdf');
+    }
     public function cetak($link)
     {
         $datanya = Config::where('link', $link)->first();
@@ -150,27 +213,26 @@ class DaftarhadirController extends Controller
         return $pdf->stream('form.pdf');
     }
 
+
     public function print_form()
     {
         ini_set('memory_limit', '512M');
         // Sample data to pass to the view
-
-
         // Load the view and pass data
         $pdf = Pdf::loadView('daftarhadir.print');
-
         // Stream the PDF back to browser or download
         return $pdf->stream('form.pdf');
         // or return $pdf->download('invoice.pdf');
         // return view('daftarhadir.print');
-
     }
     public function view(Request $request, $link)
     {
+
         $datanya = Config::where('link', $link)->first();
         $isi = explode(",", $datanya->tabel);
         $kat = $datanya->kategori;
         $link = $datanya->link;
+        // dd($link);
         $compact = array('unit', 'theads', 'tittle', 'link');
 
         if (in_array("nama_asesor", $isi)) {
@@ -628,55 +690,6 @@ class DaftarhadirController extends Controller
             }
         }
         $record['tanggal'] = $mytime->format('d-m-Y');
-        // if ($request->file('pernyataan')) {
-        //     $file_nyata = $request->file('pernyataan');
-        //     $extension_nyata = $file_nyata->getClientOriginalExtension();
-        //     $filename_nyata = "surat_pernyataan/" . time() . "_" . $nia . "_pernyataan." . $extension_nyata;
-        //     $validator['pernyataan'] = $filename_nyata;
-        //     // Storage::disk('public')->put($filename_nyata, $file_nyata);
-        //     $file_nyata->storeAs('pernyataan', $filename_nyata);
-        //     $record['pernyataan'] = $filename_nyata;
-        // }
-
-        // if ($request->file('surat_sehat')) {
-        //     $file_sehat = $request->file('surat_sehat');
-        //     $extension_sehat = $file_sehat->getClientOriginalExtension();
-        //     $filename_sehat = "surat_sehat/" . time() . "_" . $nia . "_surat_sehat." . $extension_sehat;
-        //     $validator['surat_sehat'] = $filename_sehat;
-        //     // Storage::disk('public')->put($filename_sehat, $file_sehat);
-        //     $file_sehat->storeAs('surat_sehat', $filename_sehat);
-        //     $record['surat_sehat'] = $filename_sehat;
-        // }
-
-        // if ($request->file('surat_tugas')) {
-        //     $file_tugas = $request->file('surat_tugas');
-        //     $extension_tugas = $file_tugas->getClientOriginalExtension();
-        //     $filename_tugas = "surat_tugas/" . time() . "_" . $nia . "_surat_tugas." . $extension_tugas;
-        //     $validator['surat_tugas'] = $filename_tugas;
-        //     // Storage::disk('public')->put($filename_tugas, $file_tugas);
-        //     $file_tugas->storeAs('surat_tugas', $filename_tugas);
-        //     $record['surat_tugas'] = $filename_tugas;
-        // }
-        // if ($request->file('fotorek')) {
-        //     $file_fotorek = $request->file('fotorek');
-        //     $extension_fotorek = $file_fotorek->getClientOriginalExtension();
-        //     $filename_fotorek = "fotorek/" . time() . "_" . $nia . "_fotorek." . $extension_fotorek;
-        //     $validator['fotorek'] = $filename_fotorek;
-        //     // Storage::disk('public')->put($filename_tugas,$filename_tugas);
-        //     $file_fotorek->storeAs('fotorek', $filename_fotorek);
-        //     $record['fotorek'] = $filename_fotorek;
-        // }
-        // untuk TTD
-        // $signature = $request->signature;
-        // $signatureFileName = uniqid() . '.png';
-        // $signature = str_replace('data:image/png;base64,', '', $signature);
-        // $signature = str_replace(' ', '+', $signature);
-        // $ttd = base64_decode($signature);
-        // $file = 'ttdSosialisasi/' . $signatureFileName;
-        // // Storage::disk('public')->put($file, $ttd);
-        // $ttd->storeAs('ttdSosialisasi', $signatureFileName);
-        // $record['ttd'] = $file;
-
         $unit = Daftarhadir::updateOrCreate($record);
         return response()->json($unit);
     }

@@ -36,12 +36,6 @@
             </div>
         </div>
     </section>
-
-
-
-
-
-    
 @endsection
 
 @push('js-custom')
@@ -80,16 +74,6 @@
             });
             //datatable yajra
             var dt = $('#table-1').dataTable({
-                layout: {
-                    topStart: {
-                        buttons: [{
-                            text: 'My button',
-                            action: function(e, dt, node, config) {
-                                alert('Button activated');
-                            }
-                        }]
-                    }
-                },
                 processing: true,
                 serverSide: true, //aktifkan server-side 
                 ajax: {
@@ -99,14 +83,16 @@
                 layout: {
                     topStart: {
                         buttons: [{
-                            text: 'My button',
-                            className: 'red',
+                            text: 'Cetak',
+                            className: 'btn btn-info',
                             action: function(e, dt, node, config) {
-                                alert('Button activated');
+                                window.location.href = "{{ URL::to('export-dh/' . $link) }}";
                             }
                         }]
                     }
                 },
+
+
 
                 columns: columns,
                 aLengthMenu: [

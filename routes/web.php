@@ -47,11 +47,11 @@ use App\Http\Controllers\NamaSekretariatController;
 
 
 
-Route::get('/visitasi',function(){
-return redirect("http://202.51.106.30/visitasi/");
+Route::get('/visitasi', function () {
+    return redirect("http://202.51.106.30/visitasi/");
 });
-Route::get('/asesor',function(){
-return redirect("http://202.51.106.30/asesor/");
+Route::get('/asesor', function () {
+    return redirect("http://202.51.106.30/asesor/");
 });
 
 
@@ -83,6 +83,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/list-form', [DaftarhadirController::class, 'listForm']);
 // Route::get('/tbl-dh', [DaftarhadirController::class, 'tbl_dh']);
 Route::get('/cetak-dh/{link}', [DaftarhadirController::class, 'cetak']);
+Route::get('/export-dh/{link}', [DaftarhadirController::class, 'dh_export']);
 Route::get('/list-dh/{link}', [DaftarhadirController::class, 'view']);
 Route::get('/selectlist/{id}', [DaftarhadirController::class, 'selectlist']);
 Route::get('/kesanggupan', [DaftarhadirController::class, 'kesediaan']);
@@ -98,18 +99,18 @@ Route::post('/sesi1', [DaftarhadirController::class, 'postsesi1']);
 Route::resource('/config', ConfigController::class);
 
 // dynamic URL get from config_table
-Route::get('form/{link}', [DaftarhadirController::class,'index']);
-Route::get('print', [DaftarhadirController::class,'print_form']);
-Route::post('form/{link}', [DaftarhadirController::class,'store']);
+Route::get('form/{link}', [DaftarhadirController::class, 'index']);
+Route::get('print', [DaftarhadirController::class, 'print_form']);
+Route::post('form/{link}', [DaftarhadirController::class, 'store']);
 // Route::post('/form/{link}/{id}', [DaftarhadirController::class,'show']);
 
-Route::get('link/{red}', [UrlController::class,'redirect']);
-Route::get('link/{link}', [UrlController::class,'show']);
-Route::get('link/', [UrlController::class,'index']);
-Route::post('link/', [UrlController::class,'store']);
+Route::get('link/{red}', [UrlController::class, 'redirect']);
+Route::get('link/{link}', [UrlController::class, 'show']);
+Route::get('link/', [UrlController::class, 'index']);
+Route::post('link/', [UrlController::class, 'store']);
 
-Route::get('list-form/', [FormController::class,'index']);
-Route::get('list-form/list/', [FormController::class,'get_form']);
+Route::get('list-form/', [FormController::class, 'index']);
+Route::get('list-form/list/', [FormController::class, 'get_form']);
 
 // Route::resource('/link', UrlController::class);
 // Route::resource('/kinerja', KinerjaController::class);
@@ -142,5 +143,4 @@ Route::middleware(['auth', 'role:kpa|admin'])->group(function () {
     // Route::resource('gallery', GalleryController::class);
     Route::get('/bmps', [SekolahController::class, 'bmps']);
     Route::post('/bmps', [SekolahController::class, 'bmps']);
-    
 });
