@@ -153,15 +153,14 @@ class DaftarhadirController extends Controller
 
         foreach ($data as $index => $row) {
             $tbl .= '<tr>';
-            $tbl .= '<td class"isi">' . ($index + 1) . '</td>'; // Row number
+            $tbl .= '<td class="isi">' . ($index + 1) . '</td>'; // Row number
 
             foreach ($filter as $field) {
-                if ($field === 'ttd') {
-                    $ttdPath = $row->$field ? public_path($row->$field) : null;
-                    // $ttd = $row->$field ? asset($row->$field) : '-';
-                    $tbl .= $ttdPath ? '<img width="50" src="' . $ttdPath . '" alt="">' : '-';
+                $ttdPath = public_path($row->$field);
+                if (file_exists($ttdPath)) {
+                    $tbl .= '<td class="isi"><img width="50" src="' . $ttdPath . '" alt=""></td>';
                 } else {
-                    $tbl .= '<td class"isi">' . ($row->$field ?? '-') . '</td>';
+                    $tbl .= '<td class="isi">-</td>';
                 }
             }
 
