@@ -157,8 +157,9 @@ class DaftarhadirController extends Controller
 
             foreach ($filter as $field) {
                 if ($field === 'ttd') {
-                    $ttd = $row->$field ? asset($row->$field) : '-';
-                    $tbl .= '<td class"isi"><img width="50" src="' . $ttd . '" alt=""></td>';
+                    $ttdPath = $row->$field ? public_path($row->$field) : null;
+                    // $ttd = $row->$field ? asset($row->$field) : '-';
+                    $tbl .= $ttdPath ? '<img width="50" src="' . $ttdPath . '" alt="">' : '-';
                 } else {
                     $tbl .= '<td class"isi">' . ($row->$field ?? '-') . '</td>';
                 }
