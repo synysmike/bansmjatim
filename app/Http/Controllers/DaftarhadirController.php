@@ -115,8 +115,7 @@ class DaftarhadirController extends Controller
 
     public function dh_export(Request $request, $link)
     {
-        ini_set('memory_limit', '1024M');
-        set_time_limit(5000); // 5 minutes
+
 
         $datanya = Config::where('link', $link)->firstOrFail();
 
@@ -176,8 +175,10 @@ class DaftarhadirController extends Controller
         $zip = new \ZipArchive;
         $zipPath = storage_path('app/public/all_chunks.zip');
         $zip->open($zipPath, \ZipArchive::CREATE);
-        $chunkSize = 50;
+        $chunkSize = 20;
         $chunks = $data->chunk($chunkSize);
+        ini_set('memory_limit', '2048M');
+        set_time_limit(5000); // 5 minutes
         foreach ($chunks as $i => $chunk) {
             $tbl = '';
             foreach ($chunk as $index => $row) {
