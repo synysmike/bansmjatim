@@ -139,7 +139,7 @@ class DaftarhadirController extends Controller
         $dataQuery = Daftarhadir::where('kat_dh', $kat)->orderBy('created_at', 'DESC');
         $data = in_array("nama_asesor", $isi)
             ? $dataQuery->with('nia_asesor')->get()
-            : $dataQuery->take(100)->get();
+            : $dataQuery->get();
 
         // Declare columns
         $unit = array_merge(['DT_RowIndex'], $isi, ['tand']);
@@ -176,7 +176,7 @@ class DaftarhadirController extends Controller
         $zip = new \ZipArchive;
         $zipPath = storage_path('app/public/all_chunks.zip');
         $zip->open($zipPath, \ZipArchive::CREATE);
-        $chunkSize = 10;
+        $chunkSize = 50;
         $chunks = $data->chunk($chunkSize);
         foreach ($chunks as $i => $chunk) {
             $tbl = '';
