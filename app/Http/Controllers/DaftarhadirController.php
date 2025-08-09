@@ -147,28 +147,28 @@ class DaftarhadirController extends Controller
         $filter = array_merge($isi, ['ttd']);
 
         // set key for tbody
-        $tbl = '';
+        // $tbl = '';
 
-        foreach ($data as $index => $row) {
-            $tbl .= '<tr>';
-            $tbl .= '<td class"isi">' . ($index + 1) . '</td>'; // Row number
-            foreach ($filter as $field) {
-                if ($field === 'ttd') {
-                    $ttdPath = $row->$field ? public_path($row->$field) : null;
+        // foreach ($data as $index => $row) {
+        //     $tbl .= '<tr>';
+        //     $tbl .= '<td class"isi">' . ($index + 1) . '</td>'; // Row number
+        //     foreach ($filter as $field) {
+        //         if ($field === 'ttd') {
+        //             $ttdPath = $row->$field ? public_path($row->$field) : null;
 
-                    if ($ttdPath && is_file($ttdPath)) {
-                        $imageData = base64_encode(file_get_contents($ttdPath));
-                        $mimeType = mime_content_type($ttdPath);
-                        $tbl .= '<td class="isi"><img width="50" src="data:' . $mimeType . ';base64,' . $imageData . '" alt=""></td>';
-                    } else {
-                        $tbl .= '<td class="isi">-</td>';
-                    }
-                } else {
-                    $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
-                }
-            }
-            $tbl .= '</tr>';
-        }
+        //             if ($ttdPath && is_file($ttdPath)) {
+        //                 $imageData = base64_encode(file_get_contents($ttdPath));
+        //                 $mimeType = mime_content_type($ttdPath);
+        //                 $tbl .= '<td class="isi"><img width="50" src="data:' . $mimeType . ';base64,' . $imageData . '" alt=""></td>';
+        //             } else {
+        //                 $tbl .= '<td class="isi">-</td>';
+        //             }
+        //         } else {
+        //             $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
+        //         }
+        //     }
+        //     $tbl .= '</tr>';
+        // }
 
         // $compact = compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link');
         // return view('daftarhadir.export', $compact);
@@ -179,6 +179,30 @@ class DaftarhadirController extends Controller
         $chunkSize = 10;
         $chunks = $data->chunk($chunkSize);
         foreach ($chunks as $i => $chunk) {
+            $tbl = '';
+            foreach ($chunk as $index => $row) {
+                $tbl .= '<tr>';
+                $tbl .= '<td class="isi">' . ($index + 1) . '</td>'; // Row number
+
+                foreach ($filter as $field) {
+                    if ($field === 'ttd') {
+                        $ttdPath = $row->$field ? public_path($row->$field) : null;
+
+                        if ($ttdPath && is_file($ttdPath)) {
+                            $imageData = base64_encode(file_get_contents($ttdPath));
+                            $mimeType = mime_content_type($ttdPath);
+                            $tbl .= '<td class="isi"><img width="50" src="data:' . $mimeType . ';base64,' . $imageData . '" alt=""></td>';
+                        } else {
+                            $tbl .= '<td class="isi">-</td>';
+                        }
+                    } else {
+                        $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
+                    }
+                }
+
+                $tbl .= '</tr>';
+            }
+
             $pdf = Pdf::loadView('daftarhadir.export', [
                 'tbl' => $tbl,
                 'data' => $chunk,
@@ -194,6 +218,7 @@ class DaftarhadirController extends Controller
         }
 
 
+
         $zip->close();
 
         // Clean up temp PDFs
@@ -205,6 +230,38 @@ class DaftarhadirController extends Controller
 
         // return $pdf->stream('export.pdf');
     }
+
+
+    function generateTableHtml($data, $filter)
+    {
+        $tbl = '';
+
+        foreach ($data as $index => $row) {
+            $tbl .= '<tr>';
+            $tbl .= '<td class="isi">' . ($index + 1) . '</td>'; // Row number
+
+            foreach ($filter as $field) {
+                if ($field === 'ttd') {
+                    $ttdPath = $row->$field ? public_path($row->$field) : null;
+
+                    if ($ttdPath && is_file($ttdPath)) {
+                        $imageData = base64_encode(file_get_contents($ttdPath));
+                        $mimeType = mime_content_type($ttdPath);
+                        $tbl .= '<td class="isi"><img width="50" src="data:' . $mimeType . ';base64,' . $imageData . '" alt=""></td>';
+                    } else {
+                        $tbl .= '<td class="isi">-</td>';
+                    }
+                } else {
+                    $tbl .= '<td class="isi">' . ($row->$field ?? '-') . '</td>';
+                }
+            }
+
+            $tbl .= '</tr>';
+        }
+
+        return $tbl;
+    }
+
     public function cetak($link)
     {
         $datanya = Config::where('link', $link)->first();
