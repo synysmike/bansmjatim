@@ -179,11 +179,20 @@ class DaftarhadirController extends Controller
         $chunkSize = 10;
         $chunks = $data->chunk($chunkSize);
         foreach ($chunks as $i => $chunk) {
-            $pdf = Pdf::loadView('daftarhadir.export', compact('tbl', 'data', 'unit', 'theads', 'tittle', 'link'), ['data' => $chunk])->setPaper('a4', 'landscape');
+            $pdf = Pdf::loadView('daftarhadir.export', [
+                'tbl' => $tbl,
+                'data' => $chunk,
+                'unit' => $unit,
+                'theads' => $theads,
+                'tittle' => $tittle,
+                'link' => $link,
+            ])->setPaper('a4', 'landscape');
+
             $filePath = storage_path("app/public/{$kat}_{$i}.pdf");
             $pdf->save($filePath);
             $zip->addFile($filePath, "{$kat}_{$i}.pdf");
         }
+
 
         $zip->close();
 
