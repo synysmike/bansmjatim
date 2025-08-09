@@ -139,7 +139,7 @@ class DaftarhadirController extends Controller
         $dataQuery = Daftarhadir::where('kat_dh', $kat)->orderBy('created_at', 'DESC');
         $data = in_array("nama_asesor", $isi)
             ? $dataQuery->with('nia_asesor')->get()
-            : $dataQuery->get();
+            : $dataQuery->take(100)->get();
 
         // Declare columns
         $unit = array_merge(['DT_RowIndex'], $isi, ['tand']);
