@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
+use Imagick;
 use App\Http\Requests\StoreDaftarhadirRequest;
 use App\Http\Requests\UpdateDaftarhadirRequest;
 
@@ -113,6 +114,14 @@ class DaftarhadirController extends Controller
         return view('daftarhadir.form', compact($compact));
     }
 
+
+    private function convertPngToSvg($pngPath)
+    {
+        $imagick = new Imagick($pngPath);
+        $imagick->setImageFormat('svg');
+
+        return $imagick->getImageBlob(); // SVG content
+    }
     public function dh_export(Request $request, $link)
     {
 
@@ -190,9 +199,8 @@ class DaftarhadirController extends Controller
                         $ttdPath = $row->$field ? public_path($row->$field) : null;
 
                         if ($ttdPath && is_file($ttdPath)) {
-                            $imageData = base64_encode(file_get_contents($ttdPath));
-                            $mimeType = mime_content_type($ttdPath);
-                            $tbl .= '<td class="isi"><img width="50" src="data:' . $mimeType . ';base64,' . $imageData . '" alt=""></td>';
+                            $svgContent = $this->convertPngToSvg($ttdPath);
+                            $tbl .= '<td class="isi"><img width="50" src="' . $svgContent . '" alt=""></td>';
                         } else {
                             $tbl .= '<td class="isi">-</td>';
                         }
