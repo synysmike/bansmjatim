@@ -115,17 +115,38 @@ class DaftarhadirController extends Controller
     }
 
 
-    private function convertPngToSvg($pngPath)
+    private function convertPngToSvg(string $pngPath): ?string
     {
-        $imagick = new Imagick($pngPath);
-        $imagick->setImageFormat('svg');
+        if (!extension_loaded('imagick')) {
+            throw new \RuntimeException('Imagick extension is not installed.');
+        }
 
-        return $imagick->getImageBlob(); // SVG content
+        if (!is_file($pngPath)) {
+            throw new \InvalidArgumentException("File not found: {$pngPath}");
+        }
+
+        try {
+            $imagick = new \Imagick($pngPath);
+
+            // Optional: flatten image to remove transparency
+            $imagick->setImageBackgroundColor('white');
+            $imagick = $imagick->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
+
+            $imagick->setImageFormat('svg');
+
+            return $imagick->getImageBlob(); // SVG content
+        } catch (\Exception $e) {
+            // Log or handle error gracefully
+            \Log::error("SVG conversion failed: " . $e->getMessage());
+            return null;
+        }
     }
+
+
+
+
     public function dh_export(Request $request, $link)
     {
-
-
         $datanya = Config::where('link', $link)->firstOrFail();
 
         $isi = explode(",", $datanya->tabel);
