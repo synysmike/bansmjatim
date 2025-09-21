@@ -17,7 +17,7 @@
         integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- CSS Libraries -->
-    <link rel="stylesheet" href="{{ asset('admin_theme/library/selectric/public/selectric.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin_theme/library/selectric/selectric.css') }}">
     <!-- Template CSS -->
     <link rel="stylesheet" href="{{ asset('admin_theme/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_theme/css/components.css') }}">
@@ -171,7 +171,7 @@
     <script src="{{ asset('admin_theme/library/cleave.js/dist/addons/cleave-phone.id.js') }}"></script>
     <script src="{{ asset('admin_theme/library/sweetalert/dist/sweetalert.min.js') }}"></script>
     <script src="{{ asset('admin_theme/library/datatables/media/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/selectric/public/jquery.selectric.min.js') }}"></script>
+    <script src="{{ asset('admin_theme/library/selectric/jquery.selectric.min.js') }}"></script>
     <script src="{{ asset('admin_theme/library/jquery.pwstrength/jquery.pwstrength.min.js') }}"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>

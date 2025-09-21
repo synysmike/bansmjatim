@@ -19,7 +19,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- CSS Libraries -->
-    <link rel="stylesheet" href="admin_theme/library/selectric/public/selectric.css">
+    <link rel="stylesheet" href="admin_theme/library/selectric/selectric.css">
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="admin_theme/css/style.css">
@@ -230,7 +230,7 @@
 
     <script src="{{ asset('admin_theme/library/sweetalert/dist/sweetalert.min.js') }}"></script>
     <script src="{{ asset('admin_theme/library/datatables/media/js/jquery.dataTables.min.js') }}"></script>
-    <script src="admin_theme/library/selectric/public/jquery.selectric.min.js"></script>
+    <script src="admin_theme/library/selectric/jquery.selectric.min.js"></script>
     <script src="admin_theme/library/jquery.pwstrength/jquery.pwstrength.min.js"></script>
 
     <!-- Page Specific JS File -->
