@@ -125,8 +125,10 @@ Route::resource('/absen', AbsenController::class);
 // Route::get('/assetlists{list}', [ConfigFormController::class, 'assetlists']);
 
 Route::get('/ordal_berita', [BeritaController::class, 'ordal_berita']);
+Route::post('/ordal_berita', [BeritaController::class, 'store']);
 Route::post('/kategori', [BeritaController::class, 'store_kat']);
 Route::get('/kategori', [BeritaController::class, 'get_kat']);
+Route::get('/get-kat', [BeritaController::class, 'get_katlist']);
 Route::get('/kategori/{id}/edit', [BeritaController::class, 'edit_kat']);
 Route::delete('/kategori/{id}', [BeritaController::class, 'destroy_kat']);
 

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/admin_theme/library/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.css" />
 @endpush
 
 @section('admin-container')
@@ -26,7 +27,6 @@
                 <div class="col-12 ">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Input Text</h4>
                             <button class="btn btn-primary" type="button" data-toggle="modal" id = "tambah">Tambah
                                 Berita</button>
                             <button class="btn btn-primary" type="button" data-toggle="modal" id = "kategori">Tambah
@@ -36,7 +36,7 @@
                         <div class="card-body">
 
                             <div class="table-responsive">
-                                <table class="table table-striped" id="table-1">
+                                <<table id="beritaTable" class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th class="text-center">
@@ -45,22 +45,11 @@
                                             <th>Judul</th>
                                             <th>Gambar</th>
                                             <th>Isi</th>
-                                            <th>Link</th>
+
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @foreach ($data as $item)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $item->judul }}</td>
-                                                <td>{{ $item->gmb }}</td>
-                                                <td>{{ $item->isi }}</td>
-                                                <td><a href="{{ url('form/' . $item->slug) }}" target="_blank"
-                                                        class="btn btn-primary">Lihat Form</a></td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+
+                                    </table>
                             </div>
                         </div>
 
@@ -125,7 +114,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="my-modal-title">Title</h5>
+                    <h5 id="berita-modal-tittle" class="modal-title" id="my-modal-title">Title</h5>
                     <button class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -133,52 +122,38 @@
                 <div class="modal-body">
                     <form id="id-form" enctype="multipart/form-data">
                         <div class="col-md-12 col-lg-12">
-                            <div class="section-title">Config table</div>
                             <div class="form-group">
-                                <label>Pilih nama tabel</label>
-                                {{-- @php
-                                    $list = [];
-                                @endphp --}}
-                                <p>Field form terpasang :
-                                </p>
-
-
-                                <select name="tabel[]" id="select-form" class="form-control" multiple="multiple">
-                                </select>
-                            </div>
-                        </div>
-                        <input hidden class='form-control' type="text" name="tag[]" id="tag">
-
-                        <div class="col-md-12 col-lg-12">
-                            <div class="section-title">Config form</div>
-                            <div class="form-group">
-                                <label>Set judul form</label>
+                                <label>Judul Berita</label>
                                 <input class='form-control' type="text" name="judul" id="judul">
                                 <input id='id' type='hidden' class='form-control' placeholder='npsn'
                                     name='id' value=''>
                             </div>
                             <div class="form-group">
-                                <label>Kategori Form</label>
-                                <input class='form-control' type="text" name="kat" id="kat">
+                                <label>Pilih Gambar</label>
+                                <input class='form-control' type="file" name="gmb" id="gmb">
+                                <img id="image" src="" alt="Picture" hidden
+                                    style="max-width: 100%; margin-top: 10px;">
+
                             </div>
                             <div class="form-group">
-                                <label>link controller</label>
-                                <input class='form-control' type="text" name="link" id="link">
+                                <button type="button" id="cropBtn" class="btn btn-primary">Crop & Preview</button>
+                                <img hidden id="croppedPreview" src="" alt="Cropped Image"
+                                    style="margin-top: 10px; max-width: 100%;">
+
+                            </div>
+                            <div class="form-group">
+                                <label for="kategori">Kategori Form</label>
+                                <select class="form-control" name="kategori" id="list-kategori" style="width: 100%">
+                                    <option value="">Pilih Kategori</option>
+                                </select>
                             </div>
 
-
-                            {{-- <div class='form-group'>
-                                <label for='jumlah_progli'>
-                                    Jumlah Progli
-                                </label>
-                                <input required id='jumlah_progli' name='jumlah_progli' class='form-control'
-                                    type='textarea'>
-
-                                <div class='invalid-feedback'></div>
-                            </div> --}}
+                            <div class="form-group">
+                                <label>Isi Berita</label>
+                                <textarea name="isi" id="isi" cols="30" rows="10"></textarea>
+                            </div>
                             <div class="form-group">
                                 <button type="submit" id="btn-save" class="btn btn-info"> Simpan</button>
-                                <a hide id="rdr" class="btn btn-primary btn-lg" target="_blank"> lihat form</a>
                             </div>
                         </div>
 
@@ -207,15 +182,184 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
 
+    <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
+
 
 
 
     <script>
         $(document).ready(function() {
+            $('#beritaTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '/ordal_berita',
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex'
+                    },
+                    {
+                        data: 'judul',
+                        name: 'judul'
+                    },
+                    {
+                        data: 'gambar',
+                        name: 'gambar',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'isi',
+                        name: 'isi'
+                    }
+                ]
+            });
 
             $('#tambah').click(function() {
                 $('#berita').modal('show');
+                $('#berita-modal-tittle').text('Tambah Berita');
+                $('#isi').summernote({
+                    height: 200
+                });
+                let cropper;
+
+                $('#gmb').on('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = $('#image');
+                            img.attr('src', e.target.result).removeAttr('hidden');
+
+                            // Destroy previous cropper instance if exists
+                            if (cropper) {
+                                cropper.destroy();
+                            }
+
+                            // Wait for image to load before initializing Cropper
+                            img.on('load', function() {
+                                cropper = new Cropper(this, {
+                                    aspectRatio: 1, // Optional: square crop
+                                    viewMode: 1,
+                                    autoCropArea: 0.8,
+                                    responsive: true,
+                                    background: false
+                                });
+                            });
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        $('#image').attr('hidden', true).attr('src', '');
+                        if (cropper) {
+                            cropper.destroy();
+                            cropper = null;
+                        }
+                    }
+                });
+                $('#cropBtn').on('click', function() {
+                    if (cropper) {
+                        const canvas = cropper.getCroppedCanvas({
+                            width: 300, // optional: set desired output size
+                            height: 300
+                        });
+
+                        // Show preview
+                        const croppedDataUrl = canvas.toDataURL('image/png');
+                        $('#croppedPreview').removeAttr('hidden');
+                        $('#croppedPreview').attr('src', croppedDataUrl);
+
+                        // Optional: convert to Blob for upload
+                        canvas.toBlob(function(blob) {
+                            // You can now send `blob` via AJAX or FormData
+                            console.log('Blob ready:', blob);
+                        }, 'image/png');
+                    }
+                });
+
+                $('#list-kategori').select2({
+                    placeholder: "Pilih Kategori",
+                    allowClear: true,
+                    ajax: {
+                        url: '/get-kat',
+                        dataType: 'json',
+                        delay: 250,
+                        processResults: function(data) {
+                            return {
+                                results: data.map(function(item) {
+                                    return {
+                                        id: item.id, // use item.id for value
+                                        text: item.nama // use item.nama for display
+                                    };
+                                })
+                            };
+                        },
+                        cache: true
+                    }
+                });
             });
+
+            // ** TAMBAH BERITA ** //
+            $(document).on('submit', '#id-form', function(e) {
+                e.preventDefault();
+
+                const form = this;
+                const formData = new FormData();
+
+                // Append all fields except empty 'id'
+                $(form).serializeArray().forEach(function(field) {
+                    if (field.name === 'id' && !field.value.trim()) {
+                        // Skip empty id
+                        return;
+                    }
+                    formData.append(field.name, field.value);
+                });
+
+                // Append file inputs manually
+                const fileInput = form.querySelector('#gmb');
+                if (fileInput && fileInput.files.length > 0) {
+                    formData.append('gmb', fileInput.files[0]);
+                }
+
+                // Append cropped image if available
+                const croppedImage = document.getElementById('croppedPreview').src;
+                if (croppedImage && croppedImage.startsWith('data:image')) {
+                    const byteString = atob(croppedImage.split(',')[1]);
+                    const mimeString = croppedImage.split(',')[0].split(':')[1].split(';')[0];
+                    const ab = new ArrayBuffer(byteString.length);
+                    const ia = new Uint8Array(ab);
+                    for (let i = 0; i < byteString.length; i++) {
+                        ia[i] = byteString.charCodeAt(i);
+                    }
+                    const blob = new Blob([ab], {
+                        type: mimeString
+                    });
+                    formData.append('croppedImage', blob, 'croppedImage.png');
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/ordal_berita",
+                    data: formData,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        console.log(data);
+                        $('#id-form').trigger("reset");
+                        $('#btn-save').html('Simpan');
+                        swal("Berhasil", "Data Berita Tersimpan", "success");
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    },
+                    error: function(data) {
+                        console.log('Error', data);
+                    }
+                });
+            });
+
+
+
+
             $('#kategori').click(function() {
                 $('#createCategory').modal('show');
                 $('#tabel-kategori').DataTable({
@@ -282,7 +426,7 @@
                 }
             });
 
-            // ** SIMPAN DATA * / 
+            // ** SIMPAN DATA KATEGORI* / 
             $(document).on('submit', '#category-form', function(e) {
                 e.preventDefault()
                 var formData = new FormData(this);
@@ -298,8 +442,7 @@
                     success: function(data) {
                         // console.log(response);
                         $('#category-form').trigger("reset");
-                        $('#createCategory').modal(
-                            "hide");
+                        $('#category-form input[name="id"]').val('');
                         $('#btn-save').html('Simpan');
                         //Reload Total Finansial Planing
                         swal("Berhasil",

@@ -5,21 +5,21 @@
 
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="SemiColonWeb" />
-    <link rel="shortcut icon" type="image/x-icon" href="/public/public/images/ban.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('public_assets/images/ban.png') }}" />
     <!-- Stylesheets
  ============================================= -->
     <link
         href="https://fonts.googleapis.com/css?family=Lato:300,400,400i,700|Poppins:300,400,500,600,700|PT+Serif:400,400i&display=swap"
         rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="/public/public/css/bootstrap.css" type="text/css" />
-    <link rel="stylesheet" href="/public/public/style.css" type="text/css" />
-    <link rel="stylesheet" href="/public/public/css/swiper.css" type="text/css" />
-    <link rel="stylesheet" href="/public/public/css/dark.css" type="text/css" />
-    <link rel="stylesheet" href="/public/public/css/font-icons.css" type="text/css" />
-    <link rel="stylesheet" href="/public/public/css/animate.css" type="text/css" />
-    <link rel="stylesheet" href="/public/public/css/magnific-popup.css" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('public_assets/css/bootstrap.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('public_assets/style.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('public_assets/css/swiper.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('public_assets/css/dark.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('public_assets/css/font-icons.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('public_assets/css/animate.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('public_assets/css/magnific-popup.css') }}" type="text/css" />
 
-    <link rel="stylesheet" href="/public/public/css/custom.css" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('public_assets/css/custom.css') }}" type="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Document Title
@@ -43,12 +43,12 @@
                         <!-- Logo
       ============================================= -->
                         <div id="logo">
-                            <a href="http://ci-bansm.test/" class="standard-logo"
-                                data-dark-logo="/public/public/images/ban.png"><img src="/public/public/images/ban.png"
-                                    alt="Canvas Logo"></a>
-                            <a href="http://ci-bansm.test/" class="retina-logo"
-                                data-dark-logo="/public/public/images/ban.png"><img src="/public/public/images/ban.png"
-                                    alt="Canvas Logo"></a>
+                            <a href="/" class="standard-logo"
+                                data-dark-logo="{{ asset('public_assets/images/ban.png') }}"><img
+                                    src="{{ asset('public_assets/images/ban.png') }}" alt="Canvas Logo"></a>
+                            <a href="/" class="retina-logo"
+                                data-dark-logo="{{ asset('public_assets/images/ban.png') }}"><img
+                                    src="{{ asset('public_assets/images/ban.png') }}" alt="Canvas Logo"></a>
                         </div><!-- #logo end -->
                         <div class="header-misc">
                         </div>
@@ -86,22 +86,23 @@
                                     <source src='' type='video/webm' />
                                     <source src='' type='video/mp4' />
                                 </video>
-                                <div class="video-overlay" style="background-color: rgba(0,0,0,0.55);"></div>
+                                <div class="video-overlay" style="background-color: hsla(54, 14%, 15%, 0.562);"></div>
                             </div>
                         </div>
                     </div>
                     <div class="slider-arrow-left"><i class="icon-angle-left"></i></div>
                     <div class="slider-arrow-right"><i class="icon-angle-right"></i></div>
                 </div>
-                <a href="/public/public/#" data-scrollto="#content" data-offset="100" class="one-page-arrow dark"><i
-                        class="icon-angle-down infinite animated fadeInDown"></i></a>
+                <a href="{{ asset('public_assets/#') }}" data-scrollto="#content" data-offset="100"
+                    class="one-page-arrow dark"><i class="icon-angle-down infinite animated fadeInDown"></i></a>
             </div>
         </section>
         <div class="section">
             <div class="container clearfix">
                 <div class="row align-items-center col-mb-50">
                     <div class="col-md-4 center">
-                        <img data-animate="fadeInLeft" src="/public/public/images/ketua.jpeg" alt="Iphone">
+                        <img data-animate="fadeInLeft" src="{{ asset('public_assets/images/ketua.jpeg') }}"
+                            alt="Iphone">
                     </div>
                     <div class="col-md-8 text-center text-md-start">
                         <div class="heading-block border-bottom-0">
@@ -342,7 +343,8 @@
                             <h3>MEKANISME AKREDITASI</h3>
                         </div>
                         <div class="entry-image">
-                            <a href="#"><img src="/public/public/images/meka.png" alt="Blog Single"></a>
+                            <a href="#"><img src="{{ asset('public_assets/images/meka.png') }}"
+                                    alt="Blog Single"></a>
                         </div>
                         <div class="fancy-title title-center title-border topmargin-sm">
                             <h3></h3>
@@ -361,7 +363,7 @@
                         <p></p>
                         <p></p>
                         <div class="entry-image">
-                            <a href="#"><img height="120" src="/public/public/images/hak.JPG"
+                            <a href="#"><img height="120" src="{{ asset('public_assets/images/hak.JPG') }}"
                                     alt="Blog Single"></a>
                         </div>
                         <div class="fancy-title title-center title-border topmargin-sm">
@@ -472,24 +474,24 @@
 
     </div><!-- #wrapper end -->
     <!-- jQuery -->
-    <script src="/public/public/assets2/plugins/jquery/jquery.min.js"></script>
+    <script src="{{ asset('public_assets/assets2/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap 4 -->
-    <script src="/public/public/assets2/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('public_assets/assets2/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
-    <script src="/public/public/assets2/dist/js/adminlte.min.js"></script>
+    <script src="{{ asset('public_assets/assets2/dist/js/adminlte.min.js') }}"></script>
     <!-- Summernote -->
-    <script src="/public/public/assets2/plugins/summernote/summernote-bs4.min.js"></script>
+    <script src="{{ asset('public_assets/assets2/plugins/summernote/summernote-bs4.min.js') }}"></script>
     <!-- CodeMirror -->
-    <script src="/public/public/assets2/plugins/codemirror/codemirror.js"></script>
-    <script src="/public/public/assets2/plugins/codemirror/mode/css/css.js"></script>
-    <script src="/public/public/assets2/plugins/codemirror/mode/xml/xml.js"></script>
-    <script src="/public/public/assets2/plugins/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script src="{{ asset('public_assets/assets2/plugins/codemirror/codemirror.js') }}"></script>
+    <script src="{{ asset('public_assets/assets2/plugins/codemirror/mode/css/css.js') }}"></script>
+    <script src="{{ asset('public_assets/assets2/plugins/codemirror/mode/xml/xml.js') }}"></script>
+    <script src="{{ asset('public_assets/assets2/plugins/codemirror/mode/htmlmixed/htmlmixed.js') }}"></script>
     <!-- AdminLTE for demo purposes -->
-    <!-- <script src="/public/public/2/dist/js/demo.js"></script> -->
+    <!-- <script src="{{ asset('public_assets/2/dist/js/demo.js') }}"></script> -->
     <!-- Page specific script -->
 
 
-    <script>
+    {{-- <script>
         $(function() {
             // Summernote
             $('#summernote').summernote()
@@ -501,17 +503,17 @@
             });
 
         })
-    </script>
+    </script> --}}
 
 
     <!-- JavaScripts
  ============================================= -->
-    <script src="/public/public/js/jquery.js"></script>
-    <script src="/public/public/js/plugins.min.js"></script>
+    <script src="{{ asset('public_assets/js/jquery.js') }}"></script>
+    <script src="{{ asset('public_assets/js/plugins.min.js') }}"></script>
 
     <!-- Footer Scripts
  ============================================= -->
-    <script src="/public/public/js/functions.js"></script>
+    <script src="{{ asset('public_assets/js/functions.js') }}"></script>
     <!-- Go To Top
  ============================================= -->
     <div id="gotoTop" class="icon-angle-up"></div>

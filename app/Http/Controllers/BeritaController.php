@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\berita;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Requests\StoreberitaRequest;
@@ -37,7 +38,17 @@ class BeritaController extends Controller
         $data = berita::all();
         if ($request->ajax()) {
             return DataTables::of($data)
-                ->addIndexColumn();
+                ->addIndexColumn()
+                ->addColumn('gambar', function ($row) {
+                    if ($row->gmb) {
+                        $url = asset($row->gmb); // uses public path directly
+                        return '<img src="' . $url . '" width="100" class="img-thumbnail" />';
+                    }
+                    return '<span class="text-muted">No Image</span>';
+                })
+
+                ->rawColumns(['gambar'])
+                ->make(true);
         }
         return view('berita.ordal', compact('data', 'tittle'));
 
@@ -52,11 +63,52 @@ class BeritaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'isi' => 'required|string',
+            'kategori' => 'required|exists:kategori,id',
+            'croppedImage' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
+        $imagePath = null;
+        if ($request->hasFile('croppedImage')) {
+            $image = $request->file('croppedImage');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $destinationPath = public_path('images/berita');
+
+            // Ensure the folder exists
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
+            $image->move($destinationPath, $imageName);
+
+            // Save relative path for use in views or database
+            $imagePath = 'images/berita/' . $imageName;
+        }
+
+        $berita = Berita::create([
+            'judul' => $request->judul,
+            'isi' => $request->isi,
+            'id_kat' => $request->kategori,
+            'gmb' => $imagePath,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Berita berhasil disimpan.',
+            'data' => $berita
+        ]);
     }
 
 
+
+    public function get_katlist()
+    {
+        // $kategori = Kategori::all();
+        $kategori = Kategori::select('id', 'nama')->get();
+        return response()->json($kategori);
+    }
     public function get_kat(Request $request)
     {
         if ($request->ajax()) {
@@ -76,7 +128,7 @@ class BeritaController extends Controller
     public function store_kat(Request $request)
     {
         //
-        Kategori::updateOrCreate(
+        $kategori = Kategori::updateOrCreate(
             ['id' => $request->id],
             [
                 'nama' => $request->categoryName,
@@ -85,6 +137,11 @@ class BeritaController extends Controller
                 'updated_at' => now()
             ]
         );
+        return response()->json([
+            'success' => true,
+            'message' => 'Kategori berhasil disimpan.',
+            'data' => $kategori
+        ]);
     }
 
     public function edit_kat($id)
