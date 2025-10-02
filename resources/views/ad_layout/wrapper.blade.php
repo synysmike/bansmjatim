@@ -6,6 +6,10 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $tittle }} - BAN-PDM Jatim</title>
+    <link rel="icon" type="image/png" href="{{ asset('ban.png') }}">
+    <meta property="og:image" content="{{ asset('ban.png') }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="{{ asset('ban.png') }}">
 
     <!-- General CSS Files -->
     <link rel="stylesheet" href="{{ asset('admin_theme/library/bootstrap/dist/css/bootstrap.min.css') }}">

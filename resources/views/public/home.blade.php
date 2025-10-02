@@ -18,7 +18,8 @@
     <link rel="stylesheet" href="{{ asset('public_assets/css/font-icons.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('public_assets/css/animate.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('public_assets/css/magnific-popup.css') }}" type="text/css" />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+        type="text/css" />
     <link rel="stylesheet" href="{{ asset('public_assets/css/custom.css') }}" type="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
