@@ -23,7 +23,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Form Judul Kegiatan ...</h5>
-                                <form id="id-form">
+                                <form id="id-form" enctype="multipart/form-data">
                                     <div class="col-8">
                                         <div class="form-group pb-3">
                                             <label>Nama Kegiatan</label>
