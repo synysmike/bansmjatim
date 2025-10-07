@@ -287,6 +287,7 @@
 
                         }
                     });
+                    return false;
                 });
 
                 $.ajaxSetup({
