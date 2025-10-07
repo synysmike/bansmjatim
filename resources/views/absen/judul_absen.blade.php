@@ -1,18 +1,9 @@
     @extends('ad_layout.wrapper')
     @push('css-custom')
-        <!-- DataTables Core CSS -->
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-
-        <!-- Summernote CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs4.min.css">
-
-        <!-- Bootstrap Daterangepicker CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-daterangepicker@3.1.0/daterangepicker.css">
-
-        <!-- DataTables Buttons Extension CSS -->
+        <link rel="stylesheet" href="admin_theme/library/datatables/media/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="/admin_theme/library/summernote/dist/summernote-bs4.css">
+        <link rel="stylesheet" href="/admin_theme/library/bootstrap-daterangepicker/daterangepicker.css">
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
-
-        <!-- Select2 CSS -->
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     @endpush
     @section('admin-container')
@@ -23,7 +14,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Form Judul Kegiatan ...</h5>
-                                <form id="id-form" enctype="multipart/form-data">
+                                <form id="id-form">
                                     <div class="col-8">
                                         <div class="form-group pb-3">
                                             <label>Nama Kegiatan</label>
@@ -95,44 +86,22 @@
     @endsection
 
     @push('js-custom')
-        <!-- Select2 -->
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-        <!-- DataTables Core -->
-        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-        <!-- jQuery UI -->
-        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-
-        <!-- Bootstrap Daterangepicker -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap-daterangepicker@3.1.0/daterangepicker.min.js"></script>
-
-        <!-- SweetAlert -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert@2.1.2/dist/sweetalert.min.js"></script>
-
-        <!-- Summernote -->
-        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs4.min.js"></script>
-
-        <!-- jQuery Validate -->
+        <script src="admin_theme/library/datatables/media/js/jquery.dataTables.min.js"></script>
+        <script src="admin_theme/library/jquery-ui-dist/jquery-ui.min.js"></script>
+        <script src="/admin_theme/library/bootstrap-daterangepicker/daterangepicker.js"></script>
+        <script src="admin_theme/library/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="/admin_theme/library/summernote/dist/summernote-bs4.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"
             integrity="sha512-0QDLUJ0ILnknsQdYYjG7v2j8wERkKufvjBNmng/EdR/s/SE7X8cQ9y0+wMzuQT0lfXQ/NhG+zhmHNOWTUS3kMA=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-        <!-- jQuery Validate Additional Methods -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/additional-methods.min.js"></script>
-
-        <!-- jqSignature (if available via CDN) -->
-        <script src="https://cdn.jsdelivr.net/npm/jq-signature@1.1.2/jq-signature.min.js"></script>
-
-        <!-- DataTables Buttons -->
+        <script src="{{ asset('jq-signature/jq-signature.min.') }}js"></script>
         <script src="https://cdn.datatables.net/buttons/2.3.4/js/dataTables.buttons.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.html5.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.print.min.js"></script>
-
-        <!-- PDFMake for DataTables export -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-
+        <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.print.min.js"></script>
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
         <!-- Page Specific JS File -->
         {{-- <script src="admin_theme/js/page/bootstrap-modal.js"></script> --}}
         <script>
@@ -287,7 +256,6 @@
 
                         }
                     });
-                    return false;
                 });
 
                 $.ajaxSetup({
