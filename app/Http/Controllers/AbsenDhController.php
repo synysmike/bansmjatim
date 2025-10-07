@@ -27,7 +27,7 @@ class AbsenDhController extends Controller
     {
 
         // dd($link);
-        $judul = judul_absen::where('id', $link)->first();
+        $judul = judul_absen::where('url', $link)->first();
 
         $tittle = $judul->judul;
         $tanggal = $judul->tanggal;
@@ -40,7 +40,7 @@ class AbsenDhController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('ttd', function ($data) {
-                $cek =  URL::to($data->ttd);
+                    $cek =  URL::to($data->ttd);
                     if (!empty($data->ttd)) {
                         return '<img width="170" src="' . $cek . '" />';
                     } else {
@@ -90,7 +90,7 @@ class AbsenDhController extends Controller
     {
         //
         // dd($link);
-        $judul = judul_absen::where('id', $link)->first();
+        $judul = judul_absen::where('url', $link)->first();
         $tittle = $judul->judul;
         $tanggal = $judul->tanggal;
         $act = $judul->activate;

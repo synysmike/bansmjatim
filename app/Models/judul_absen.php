@@ -9,6 +9,5 @@ class judul_absen extends Model
 {
     // use HasFactory;
     protected $table = 'tbm_judul_absen';
-    protected $fillable = ['judul','tanggal','activate'];
-
+    protected $fillable = ['judul', 'tanggal', 'url',  'activate'];
 }

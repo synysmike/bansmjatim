@@ -22,14 +22,14 @@ class JudulAbsenController extends Controller
         $data = judul_absen::all()->sortByDesc('created_at');
         if ($request->ajax()) {
             return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function ($data) {
-                $rp = '<a target="_blank" href="report_dh/' . $data->id . '" class="btn btn-success" id="goto">Report</a> ';
-                $form = ' <a href="/presensi/' . $data->id . '" target="_blank" class="btn btn-primary btn-icon icon-right">lihat form</a>';
-                $edit = '<a  class="btn btn-warning btn-icon icon-right" id="edit" data-id="' . $data->id . '" data-judul="' . $data->judul . '" data-tanggal="' . $data->tanggal . '" data-active="' . $data->activate . '">Edit</a>';
-                $btn = $rp . $form . $edit;
-                return $btn;
-            })
+                ->addIndexColumn()
+                ->addColumn('action', function ($data) {
+                    $rp = '<a target="_blank" href="report_dh/' . $data->id . '" class="btn btn-success" id="goto">Report</a> ';
+                    $form = ' <a href="/presensi/' . $data->url . '" target="_blank" class="btn btn-primary btn-icon icon-right">lihat form</a>';
+                    $edit = '<a  class="btn btn-warning btn-icon icon-right" id="edit" data-id="' . $data->id . '" data-judul="' . $data->judul . '" data-tanggal="' . $data->tanggal . '" data-active="' . $data->activate . '">Edit</a>';
+                    $btn = $rp . $form . $edit;
+                    return $btn;
+                })
                 ->addColumn('act', function ($data) {
                     if ($data->activate == 1) {
                         # code...
@@ -66,9 +66,7 @@ class JudulAbsenController extends Controller
     {
         // dd($request->all());
 
-        $inpid = [
-            'id' => $request->id
-        ];
+
         if ($request->id) {
             $inpid = [
                 'id' => $request->id
@@ -77,16 +75,17 @@ class JudulAbsenController extends Controller
             $unit = judul_absen::updateOrCreate(
                 $inpid,
                 [
-                'judul'=>$request->judul,
-                'tanggal'=>$request->tanggal,
-                'activate'=>$request->active
-                
-
-            ]);
+                    'judul' => $request->judul,
+                    'url' => $request->url,
+                    'tanggal' => $request->tanggal,
+                    'activate' => $request->active
+                ]
+            );
         } else {
             $unit = judul_absen::updateOrCreate(
                 [
                     'judul' => $request->judul,
+                    'url' => $request->url,
                     'tanggal' => $request->tanggal,
                     'activate' => $request->active
                 ]
