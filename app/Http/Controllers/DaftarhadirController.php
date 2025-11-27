@@ -83,7 +83,7 @@ class DaftarhadirController extends Controller
         //declarate datatable columns
         $unit = $isi;
         array_unshift($unit, 'DT_RowIndex');
-
+        array_push($unit, 'cetak');
         // dd($unit);
         $form = Form::select('tag_field')
             ->whereIn("nama_field", $konten)
@@ -107,7 +107,16 @@ class DaftarhadirController extends Controller
                 //     $url = Crypt::encrypt($data->id);
                 //     return '<a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-info show-btn"> Edit</a>';
                 // })
-                // ->rawColumns(['ttd'])
+                ->addColumn('cetak', function ($data) {
+                    $id = $data->id;
+                    return '<a href="https://banpdmjatim.id/print_biodata/rakorda?_token=' . $id . '" 
+                target="_blank" 
+                class="btn btn-primary">
+                Cetak
+            </a>';
+                })
+
+                ->rawColumns(['cetak'])
                 ->make(true);
         }
         // dd($ass);

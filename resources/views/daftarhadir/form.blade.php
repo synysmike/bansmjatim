@@ -324,9 +324,25 @@
                             "reset");
                         $('#btn-save').html('Tersimpan');
                         //Reload Total Finansial Planing
-                        swal("Berhasil",
-                            "Berkas telah tersimpan",
-                            "success");
+                        swal({
+  title: "Berhasil",
+  text: "Berkas telah tersimpan",
+  icon: "success",
+  buttons: {
+    cancel: "Tutup",
+    print: {
+      text: "Cetak Hasil",
+      value: "print",
+    }
+  }
+}).then((value) => {
+  if (value === "print") {
+    var id = data.id;
+    window.location.href = `https://banpdmjatim.id/print_biodata/rakorda?_token=${id}`;
+  }
+});
+
+
                     },
                     error: function(data) {
                         console.log('Error', data);
