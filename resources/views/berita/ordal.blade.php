@@ -37,7 +37,7 @@
                         <div class="card-body">
 
                             <div class="table-responsive">
-                                <<table id="beritaTable" class="table table-bordered">
+                                <table id="beritaTable" class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th class="text-center">
@@ -46,6 +46,7 @@
                                             <th>Judul</th>
                                             <th>Gambar</th>
                                             <th>Isi</th>
+                                            <th>Action</th>
 
                                         </tr>
                                     </thead>
@@ -212,70 +213,138 @@
                     {
                         data: 'isi',
                         name: 'isi'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
                     }
                 ]
             });
 
+            // Global cropper instance
+            let cropper = null;
+
+            // Function to initialize cropper
+            function initCropper(imageElement) {
+                // Destroy previous cropper instance if exists
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                // Remove any existing load handlers to prevent duplicates
+                $(imageElement).off('load.cropperInit');
+
+                // Check if image is already loaded
+                if (imageElement.complete && imageElement.naturalHeight !== 0) {
+                    // Image is already loaded, initialize immediately
+                    cropper = new Cropper(imageElement, {
+                        aspectRatio: 1, // Optional: square crop
+                        viewMode: 1,
+                        autoCropArea: 0.8,
+                        responsive: true,
+                        background: false
+                    });
+                } else {
+                    // Wait for image to load before initializing Cropper
+                    $(imageElement).on('load.cropperInit', function() {
+                        if (!cropper) {
+                            cropper = new Cropper(imageElement, {
+                                aspectRatio: 1, // Optional: square crop
+                                viewMode: 1,
+                                autoCropArea: 0.8,
+                                responsive: true,
+                                background: false
+                            });
+                        }
+                    });
+                }
+            }
+
+            // Function to reset form
+            function resetBeritaForm() {
+                $('#id-form')[0].reset();
+                $('#id').val('');
+                $('#berita-modal-tittle').text('Tambah Berita');
+                $('#image').attr('hidden', true).attr('src', '');
+                $('#croppedPreview').attr('hidden', true).attr('src', '');
+                $('#list-kategori').val(null).trigger('change');
+                if ($('#isi').summernote('code')) {
+                    $('#isi').summernote('code', '');
+                }
+                // Destroy cropper if exists
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+                // Clear file input
+                $('#gmb').val('');
+            }
+
+            // Initialize summernote
+            $('#isi').summernote({
+                height: 200
+            });
+
+            // Handle file input change (for both add and edit)
+            $(document).on('change', '#gmb', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = $('#image');
+                        img.attr('src', e.target.result).removeAttr('hidden');
+                        // Hide cropped preview when new image is selected
+                        $('#croppedPreview').attr('hidden', true).attr('src', '');
+                        // Initialize cropper
+                        initCropper(img[0]);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    $('#image').attr('hidden', true).attr('src', '');
+                    if (cropper) {
+                        cropper.destroy();
+                        cropper = null;
+                    }
+                }
+            });
+
+            // Handle crop button click
+            $(document).on('click', '#cropBtn', function() {
+                if (cropper) {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 800, // Better quality for preview
+                        height: 800
+                    });
+
+                    // Show preview
+                    const croppedDataUrl = canvas.toDataURL('image/png');
+                    $('#croppedPreview').removeAttr('hidden');
+                    $('#croppedPreview').attr('src', croppedDataUrl);
+                    $('#clearCropBtn').show();
+
+                    swal("Success", "Gambar berhasil di-crop! Preview ditampilkan di bawah.", "success");
+                } else {
+                    swal("Warning", "Silakan pilih gambar terlebih dahulu.", "warning");
+                }
+            });
+
+            // Handle clear crop button
+            $(document).on('click', '#clearCropBtn', function() {
+                $('#croppedPreview').attr('hidden', true).attr('src', '');
+                $('#clearCropBtn').hide();
+                // Reinitialize cropper if image exists
+                if ($('#image').attr('src')) {
+                    initCropper($('#image')[0]);
+                }
+            });
+
             $('#tambah').click(function() {
+                resetBeritaForm();
                 $('#berita').modal('show');
                 $('#berita-modal-tittle').text('Tambah Berita');
-                $('#isi').summernote({
-                    height: 200
-                });
-                let cropper;
-
-                $('#gmb').on('change', function(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const img = $('#image');
-                            img.attr('src', e.target.result).removeAttr('hidden');
-
-                            // Destroy previous cropper instance if exists
-                            if (cropper) {
-                                cropper.destroy();
-                            }
-
-                            // Wait for image to load before initializing Cropper
-                            img.on('load', function() {
-                                cropper = new Cropper(this, {
-                                    aspectRatio: 1, // Optional: square crop
-                                    viewMode: 1,
-                                    autoCropArea: 0.8,
-                                    responsive: true,
-                                    background: false
-                                });
-                            });
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        $('#image').attr('hidden', true).attr('src', '');
-                        if (cropper) {
-                            cropper.destroy();
-                            cropper = null;
-                        }
-                    }
-                });
-                $('#cropBtn').on('click', function() {
-                    if (cropper) {
-                        const canvas = cropper.getCroppedCanvas({
-                            width: 300, // optional: set desired output size
-                            height: 300
-                        });
-
-                        // Show preview
-                        const croppedDataUrl = canvas.toDataURL('image/png');
-                        $('#croppedPreview').removeAttr('hidden');
-                        $('#croppedPreview').attr('src', croppedDataUrl);
-
-                        // Optional: convert to Blob for upload
-                        canvas.toBlob(function(blob) {
-                            // You can now send `blob` via AJAX or FormData
-                            console.log('Blob ready:', blob);
-                        }, 'image/png');
-                    }
-                });
 
                 $('#list-kategori').select2({
                     placeholder: "Pilih Kategori",
@@ -299,19 +368,101 @@
                 });
             });
 
-            // ** TAMBAH BERITA ** //
+            // ** EDIT BERITA ** //
+            $(document).on('click', '.editBeritaBtn', function() {
+                let id = $(this).data('id');
+                
+                // Reset form first
+                resetBeritaForm();
+                
+                $.get('/admin/berita/' + id + '/edit', function(data) {
+                    $('#berita').modal('show');
+                    $('#berita-modal-tittle').text('Edit Berita');
+                    $('#id').val(data.id);
+                    $('#judul').val(data.judul);
+                    $('#isi').summernote('code', data.isi);
+                    
+                    // Set kategori
+                    if (data.id_kat) {
+                        // Fetch kategori list first
+                        $.get('/get-kat', function(kategoris) {
+                            var kategori = kategoris.find(k => k.id == data.id_kat);
+                            if (kategori) {
+                                $('#list-kategori').empty();
+                                var option = new Option(kategori.nama, kategori.id, true, true);
+                                $('#list-kategori').append(option).trigger('change');
+                            }
+                        });
+                    }
+                    
+                    // Show existing image if available
+                    if (data.gmb) {
+                        const imageUrl = '{{ asset("") }}' + data.gmb;
+                        const img = $('#image');
+                        
+                        // Wait for image to load before initializing cropper
+                        img.on('load', function() {
+                            // Only initialize if image is visible and cropper doesn't exist
+                            if (!cropper && !img.attr('hidden')) {
+                                initCropper(img[0]);
+                            }
+                        });
+                        
+                        img.attr('src', imageUrl).removeAttr('hidden');
+                        
+                        // If image is already loaded (cached), initialize immediately
+                        if (img[0].complete && img[0].naturalHeight !== 0) {
+                            setTimeout(function() {
+                                if (!cropper) {
+                                    initCropper(img[0]);
+                                }
+                            }, 100);
+                        }
+                    }
+                });
+            });
+
+            // ** DELETE BERITA ** //
+            $(document).on('click', '.deleteBeritaBtn', function() {
+                let id = $(this).data('id');
+                swal({
+                    title: "Apakah Anda yakin?",
+                    text: "Data berita akan dihapus secara permanen!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: '/admin/berita/' + id,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                swal("Berhasil", "Berita berhasil dihapus!", "success");
+                                $('#beritaTable').DataTable().ajax.reload();
+                            },
+                            error: function(xhr) {
+                                swal("Error", "Gagal menghapus berita.", "error");
+                            }
+                        });
+                    }
+                });
+            });
+
+            // ** TAMBAH/UPDATE BERITA ** //
             $(document).on('submit', '#id-form', function(e) {
                 e.preventDefault();
 
                 const form = this;
                 const formData = new FormData();
+                const beritaId = $('#id').val();
+                const isEdit = beritaId && beritaId.trim() !== '';
 
-                // Append all fields except empty 'id'
+                // Append all fields
                 $(form).serializeArray().forEach(function(field) {
-                    if (field.name === 'id' && !field.value.trim()) {
-                        // Skip empty id
-                        return;
-                    }
                     formData.append(field.name, field.value);
                 });
 
@@ -337,24 +488,28 @@
                     formData.append('croppedImage', blob, 'croppedImage.png');
                 }
 
+                const url = isEdit ? '/admin/berita/' + beritaId : '/ordal_berita';
+                const method = isEdit ? 'PUT' : 'POST';
+                formData.append('_method', method);
+                formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+
                 $.ajax({
-                    type: "POST",
-                    url: "/ordal_berita",
+                    type: method,
+                    url: url,
                     data: formData,
                     dataType: 'json',
                     processData: false,
                     contentType: false,
                     success: function(data) {
                         console.log(data);
-                        $('#id-form').trigger("reset");
-                        $('#btn-save').html('Simpan');
-                        swal("Berhasil", "Data Berita Tersimpan", "success");
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
+                        $('#berita').modal('hide');
+                        resetBeritaForm();
+                        swal("Berhasil", isEdit ? "Berita berhasil diperbarui!" : "Berita berhasil disimpan!", "success");
+                        $('#beritaTable').DataTable().ajax.reload();
                     },
                     error: function(data) {
                         console.log('Error', data);
+                        swal("Error", "Terjadi kesalahan saat menyimpan data.", "error");
                     }
                 });
             });

@@ -53,4 +53,24 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the name of the unique identifier for the user.
+     *
+     * @return string
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'username';
+    }
+    
+    /**
+     * Get the guard name for the model.
+     *
+     * @return string|null
+     */
+    public function getGuardName()
+    {
+        return 'web';
+    }
 }

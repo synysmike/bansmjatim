@@ -29,16 +29,19 @@
                 <h4 class="text-dark font-weight-normal">Selamat Datang Di <span class="font-weight-bold">BAN-S/M Provinsi Jawa Timur</span>
                 </h4>
                 <p class="text-muted"></p>
-                <form method="post" action="/login" class="needs-validation" novalidate="">
+                <form method="POST" action="{{ route('authenticate') }}" class="needs-validation" novalidate="">
                     @csrf
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <div class="invalid-feedback">
-                            Please fill in your email
-                        </div>
-                        <input id="username" type="email" class="form-control" name="username" tabindex="1"
-                        value="{{ old('username') }}"    required autofocus>
-                        
+                        @error('username')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
+                        <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" 
+                               name="username" tabindex="1" value="{{ old('username') }}" required autofocus
+                               placeholder="Masukkan username Anda">
+                        @error('username')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="form-group">

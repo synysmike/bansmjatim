@@ -41,30 +41,48 @@ class AuthController extends Controller
     }
     public function authenticate(Request $request){
         $request->validate([
-            'username'=>'required',
-            'password'=>'required'
+            'username' => 'required|string',
+            'password' => 'required|string'
         ]);
-        $credentials = $request->only('username','password');
-        if(auth::attempt($credentials)){
+
+        $credentials = [
+            'username' => $request->username,
+            'password' => $request->password,
+        ];
+
+        $remember = $request->has('remember');
+
+        // Attempt authentication using username
+        if (Auth::attempt($credentials, $remember)) {
+            $request->session()->regenerate();
+            
             $user = Auth::user();
-            if($user->jabatan == 'kpa'){
-                $request->session()->regenerate();
-                return redirect()->intended('/sekolah');
-            }elseif($user->jabatan == 'lembaga'){
-                $request->session()->regenerate();
-                return redirect()->intended('/detilsekolah');
-            }elseif($user->jabatan == 'bmps'){
-                $request->session()->regenerate();
-                return redirect()->intended('/bmps');
-            }elseif($user->jabatan == 'sekre'){
-                $request->session()->regenerate();
-                return redirect()->intended('/verifikasi');
-            }elseif($user->jabatan == 'admin'){
-                $request->session()->regenerate();
-                return redirect()->intended('/verifikasi');
+            
+            // Check if user is soft deleted
+            if ($user->trashed()) {
+                Auth::logout();
+                return back()->with('loginError', 'Akun Anda telah dinonaktifkan. Silakan hubungi administrator.');
             }
+
+            // Redirect based on jabatan
+            if ($user->jabatan == 'kpa') {
+                $redirectPath = '/sekolah';
+            } elseif ($user->jabatan == 'lembaga') {
+                $redirectPath = '/detilsekolah';
+            } elseif ($user->jabatan == 'bmps') {
+                $redirectPath = '/bmps';
+            } elseif ($user->jabatan == 'sekre') {
+                $redirectPath = '/verifikasi';
+            } elseif ($user->jabatan == 'admin') {
+                $redirectPath = '/admin/home'; // Changed to admin home page
+            } else {
+                $redirectPath = '/verifikasi';
+            }
+
+            return redirect()->intended($redirectPath)->with('success', 'Login berhasil! Selamat datang, ' . $user->name);
         }
-        return back()->with('loginError','Login Gagal');
+
+        return back()->with('loginError', 'Username atau password salah. Silakan coba lagi.');
     }
     public function logout(Request $request){
         Auth::logout(); 

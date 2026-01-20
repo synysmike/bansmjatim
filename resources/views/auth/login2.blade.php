@@ -19,9 +19,33 @@
                 </div>
                 @endif
                 @if(session()->has('loginError'))
-                <div class="alert alert-danger alert-dismissable fade show" role="alert">
-                    {{ session('loginError') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error!</strong> {{ session('loginError') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                @endif
+                
+                @if(session()->has('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                @endif
+                
+                @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 @endif
                 <img src="/ban.png" alt="logo" width="80"
@@ -29,25 +53,32 @@
                 <h4 class="text-dark font-weight-normal">Selamat Datang Di <span class="font-weight-bold">BAN-S/M Provinsi Jawa Timur</span>
                 </h4>
                 <p class="text-muted"></p>
-                <form method="post" action="/login" class="needs-validation" novalidate="">
+                <form method="POST" action="{{ route('authenticate') }}" class="needs-validation" novalidate="">
                     @csrf
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <div class="invalid-feedback">
-                            Please fill in your email
-                        </div>
-                        <input id="username" type="email" class="form-control" name="username" tabindex="1"
-                        value="{{ old('username') }}"    required autofocus>                        
+                        @error('username')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
+                        <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" 
+                               name="username" tabindex="1" value="{{ old('username') }}" required autofocus
+                               placeholder="Masukkan username Anda">
+                        @error('username')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <div class="d-block">
                             <label for="password" class="control-label">Password</label>
                         </div>
-                        <input id="password" type="password" class="form-control" name="password"
-                            tabindex="2" required>
-                        <div class="invalid-feedback">
-                            please fill in your password
-                        </div>
+                        @error('password')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
+                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" 
+                               name="password" tabindex="2" required placeholder="Masukkan password Anda">
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>  
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">

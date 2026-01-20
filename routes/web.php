@@ -134,14 +134,44 @@ Route::delete('/kategori/{id}', [BeritaController::class, 'destroy_kat']);
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('user', UserController::class);
+    Route::resource('admin/home', App\Http\Controllers\Admin\AdminHomeController::class)->names('admin.home');
+    
+    // Super Admin Dashboard
+    Route::get('/admin/dashboard', [App\Http\Controllers\Admin\SuperAdminController::class, 'index'])->name('admin.dashboard');
+    
+    // Berita Management (Admin access)
+    Route::get('/admin/berita', [BeritaController::class, 'ordal_berita'])->name('admin.berita.index');
+    Route::post('/admin/berita', [BeritaController::class, 'store'])->name('admin.berita.store');
+    Route::get('/admin/berita/{id}/edit', [BeritaController::class, 'edit'])->name('admin.berita.edit');
+    Route::put('/admin/berita/{id}', [BeritaController::class, 'update'])->name('admin.berita.update');
+    Route::delete('/admin/berita/{id}', [BeritaController::class, 'destroy'])->name('admin.berita.destroy');
+    Route::get('/admin/berita/kategori', [BeritaController::class, 'get_kat'])->name('admin.berita.kategori');
+    Route::post('/admin/berita/kategori', [BeritaController::class, 'store_kat'])->name('admin.berita.kategori.store');
+    Route::get('/admin/berita/kategori/list', [BeritaController::class, 'get_katlist'])->name('admin.berita.kategori.list');
+    Route::get('/admin/berita/kategori/{id}/edit', [BeritaController::class, 'edit_kat'])->name('admin.berita.kategori.edit');
+    Route::delete('/admin/berita/kategori/{id}', [BeritaController::class, 'destroy_kat'])->name('admin.berita.kategori.destroy');
+    
+    // Staff/Sekretariat Management (Admin access)
+    Route::get('/admin/staff', [NamaSekretariatController::class, 'index'])->name('admin.staff.index');
+    Route::get('/admin/staff/create', [NamaSekretariatController::class, 'create'])->name('admin.staff.create');
+    Route::post('/admin/staff', [NamaSekretariatController::class, 'store'])->name('admin.staff.store');
+    Route::get('/admin/staff/{id}/edit', [NamaSekretariatController::class, 'edit'])->name('admin.staff.edit');
+    Route::put('/admin/staff/{id}', [NamaSekretariatController::class, 'update'])->name('admin.staff.update');
+    Route::delete('/admin/staff/{id}', [NamaSekretariatController::class, 'destroy'])->name('admin.staff.destroy');
+    
+    // Config Management (Admin access)
+    Route::get('/admin/config', [ConfigController::class, 'index'])->name('admin.config.index');
+    Route::post('/admin/config', [ConfigController::class, 'store'])->name('admin.config.store');
+    Route::get('/admin/config/{id}', [ConfigController::class, 'show'])->name('admin.config.show');
+    Route::delete('/admin/config/{id}', [ConfigController::class, 'destroy'])->name('admin.config.destroy');
 });
 
-Route::middleware(['auth', 'role:kpa'])->group(function () {
+Route::middleware(['auth', 'role:kpa|admin'])->group(function () {
     Route::resource('verifikasi', VerifikasiController::class);
     Route::get('/admin', [SekolahController::class, 'admin']);
 });
 
-Route::middleware(['auth', 'role:sekolah'])->group(function () {
+Route::middleware(['auth', 'role:sekolah|admin'])->group(function () {
     Route::resource('/detilsekolah', DetilSekolahController::class);
 });
 
