@@ -135,10 +135,79 @@ Route::delete('/kategori/{id}', [BeritaController::class, 'destroy_kat']);
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('user', UserController::class);
     Route::resource('admin/home', App\Http\Controllers\Admin\AdminHomeController::class)->names('admin.home');
-    
+
     // Super Admin Dashboard
     Route::get('/admin/dashboard', [App\Http\Controllers\Admin\SuperAdminController::class, 'index'])->name('admin.dashboard');
-    
+
+    // Deployment Helper Routes (for shared hosting like Rumahweb)
+    // These routes help you run artisan commands via web browser
+    Route::get('/admin/deployment/migrate', function () {
+        try {
+            \Artisan::call('migrate', ['--force' => true]);
+            $output = \Artisan::output();
+            return response()->json([
+                'success' => true,
+                'message' => 'Migrations completed successfully!',
+                'output' => $output
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Migration failed: ' . $e->getMessage()
+            ], 500);
+        }
+    })->name('admin.deployment.migrate');
+
+    Route::get('/admin/deployment/clear-cache', function () {
+        try {
+            \Artisan::call('cache:clear');
+            \Artisan::call('config:clear');
+            \Artisan::call('route:clear');
+            \Artisan::call('view:clear');
+            return response()->json([
+                'success' => true,
+                'message' => 'All caches cleared successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cache clear failed: ' . $e->getMessage()
+            ], 500);
+        }
+    })->name('admin.deployment.clear-cache');
+
+    Route::get('/admin/deployment/optimize', function () {
+        try {
+            \Artisan::call('config:cache');
+            \Artisan::call('route:cache');
+            \Artisan::call('view:cache');
+            return response()->json([
+                'success' => true,
+                'message' => 'Application optimized successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Optimization failed: ' . $e->getMessage()
+            ], 500);
+        }
+    })->name('admin.deployment.optimize');
+
+    Route::get('/admin/deployment/storage-link', function () {
+        try {
+            \Artisan::call('storage:link');
+            return response()->json([
+                'success' => true,
+                'message' => 'Storage link created successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Storage link failed: ' . $e->getMessage()
+            ], 500);
+        }
+    })->name('admin.deployment.storage-link');
+
     // Berita Management (Admin access)
     Route::get('/admin/berita', [BeritaController::class, 'ordal_berita'])->name('admin.berita.index');
     Route::post('/admin/berita', [BeritaController::class, 'store'])->name('admin.berita.store');
@@ -150,7 +219,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/berita/kategori/list', [BeritaController::class, 'get_katlist'])->name('admin.berita.kategori.list');
     Route::get('/admin/berita/kategori/{id}/edit', [BeritaController::class, 'edit_kat'])->name('admin.berita.kategori.edit');
     Route::delete('/admin/berita/kategori/{id}', [BeritaController::class, 'destroy_kat'])->name('admin.berita.kategori.destroy');
-    
+
     // Staff/Sekretariat Management (Admin access)
     Route::get('/admin/staff', [NamaSekretariatController::class, 'index'])->name('admin.staff.index');
     Route::get('/admin/staff/create', [NamaSekretariatController::class, 'create'])->name('admin.staff.create');
@@ -158,7 +227,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/staff/{id}/edit', [NamaSekretariatController::class, 'edit'])->name('admin.staff.edit');
     Route::put('/admin/staff/{id}', [NamaSekretariatController::class, 'update'])->name('admin.staff.update');
     Route::delete('/admin/staff/{id}', [NamaSekretariatController::class, 'destroy'])->name('admin.staff.destroy');
-    
+
     // Config Management (Admin access)
     Route::get('/admin/config', [ConfigController::class, 'index'])->name('admin.config.index');
     Route::post('/admin/config', [ConfigController::class, 'store'])->name('admin.config.store');
