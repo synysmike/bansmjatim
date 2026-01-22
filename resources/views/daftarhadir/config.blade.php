@@ -59,14 +59,12 @@
         </div>
     </section>
     <div id="my-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="my-modal-title"
-        aria-hidden="true">
+        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="my-modal-title">Title</h5>
-                    <button class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="id-form" enctype="multipart/form-data">
@@ -253,9 +251,11 @@
                 $("#rdr").attr("href", this.val)
             });
 
+            // Initialize Select2 with dropdownParent to fix modal issue
             var cek = $("#select-form").select2({
                 placeholder: "Pilih Kolom Input",
                 allowClear: true,
+                dropdownParent: $('#my-modal'), // Append dropdown to modal
                 ajax: {
                     url: "/list-form",
                     type: "post",
@@ -280,13 +280,45 @@
             // ** tambahDATA * / 
             $('#tambah').click(function() {
                 $('#id-form').attr("id", "id-form-tambah");
-                $("#my-modal").modal('show');
+                var modal = new bootstrap.Modal(document.getElementById('my-modal'));
+                modal.show();
                 $('#id-form').trigger("reset");
                 $("#select-form").val('').trigger('change');
-                cek.on("select2:close", function(e) {
-                    var vals = cek.val()
-                    $("#tag").val(vals)
-                    // console.log(vals)
+                
+                // Destroy and reinitialize Select2 when modal is shown to ensure dropdown works
+                $('#my-modal').one('shown.bs.modal', function() {
+                    // Destroy existing Select2 instance
+                    if ($("#select-form").hasClass("select2-hidden-accessible")) {
+                        $("#select-form").select2('destroy');
+                    }
+                    
+                    // Reinitialize Select2 with dropdownParent
+                    cek = $("#select-form").select2({
+                        placeholder: "Pilih Kolom Input",
+                        allowClear: true,
+                        dropdownParent: $('#my-modal'),
+                        ajax: {
+                            url: "/list-form",
+                            type: "post",
+                            dataType: 'json',
+                            data: function(params) {
+                                return {
+                                    search: params.term
+                                };
+                            },
+                            processResults: function(response) {
+                                return {
+                                    results: response
+                                };
+                            },
+                            cache: true
+                        }
+                    });
+                    
+                    cek.on("select2:close", function(e) {
+                        var vals = cek.val()
+                        $("#tag").val(vals)
+                    });
                 });
 
 
@@ -306,8 +338,10 @@
                         success: function(data) {
                             // console.log(response);
                             $('#id-form').trigger("reset");
-                            $('#my-modal').modal(
-                                "hide");
+                            var modal = bootstrap.Modal.getInstance(document.getElementById('my-modal'));
+                            if (modal) {
+                                modal.hide();
+                            }
                             $('#btn-save').html('Simpan');
                             var url = $("#link").val()
                             $("#rdr").show()
@@ -340,36 +374,68 @@
                 // console.log(data_id)
                 $.get("/config/" + data_id, function(data) {
                     $('#id-form').attr("id", "id-form-edit");
-                    $("#my-modal").modal('show');
+                    var modal = new bootstrap.Modal(document.getElementById('my-modal'));
+                    modal.show();
                     $('#id-form').trigger("reset");
-                    $.ajax({
-                        type: 'GET',
-                        url: 'selectlist/' + data_id
-                    }).then(function(data) {
-                        //Clearing selections
-                        cek.val(null).trigger('change');
-                        $("#tag").val(data)
-                        var columns = [];
-                        $.each(data, function(key, value) {
-                            var my_item = {};
-                            my_item.id = value;
-                            my_item.text = value;
-                            columns.push(my_item);
-                        });
-                        // console.log(columns);
-                        // data.category=[{id: "2", title: "sdsd"},{id: "2", title: "sdsd"}]; 
-                        for (i = 0; i < columns.length; ++i) {
-                            var currentObject = columns[i];
-                            var option = new Option(currentObject.text, currentObject.id,
-                                true, true);
-                            cek.append(option).trigger('change');
+                    
+                    // Destroy and reinitialize Select2 when modal is shown
+                    $('#my-modal').one('shown.bs.modal', function() {
+                        // Destroy existing Select2 instance
+                        if ($("#select-form").hasClass("select2-hidden-accessible")) {
+                            $("#select-form").select2('destroy');
                         }
-                    });
-                    cek.on("select2:close", function(e) {
-                        // cek.val().trigger('change');
-                        var vals = cek.val()
-                        $("#tag").val(vals)
-                        // console.log(vals)
+                        
+                        // Reinitialize Select2 with dropdownParent
+                        cek = $("#select-form").select2({
+                            placeholder: "Pilih Kolom Input",
+                            allowClear: true,
+                            dropdownParent: $('#my-modal'),
+                            ajax: {
+                                url: "/list-form",
+                                type: "post",
+                                dataType: 'json',
+                                data: function(params) {
+                                    return {
+                                        search: params.term
+                                    };
+                                },
+                                processResults: function(response) {
+                                    return {
+                                        results: response
+                                    };
+                                },
+                                cache: true
+                            }
+                        });
+                        
+                        $.ajax({
+                            type: 'GET',
+                            url: 'selectlist/' + data_id
+                        }).then(function(data) {
+                            //Clearing selections
+                            cek.val(null).trigger('change');
+                            $("#tag").val(data)
+                            var columns = [];
+                            $.each(data, function(key, value) {
+                                var my_item = {};
+                                my_item.id = value;
+                                my_item.text = value;
+                                columns.push(my_item);
+                            });
+                            // console.log(columns);
+                            // data.category=[{id: "2", title: "sdsd"},{id: "2", title: "sdsd"}]; 
+                            for (i = 0; i < columns.length; ++i) {
+                                var currentObject = columns[i];
+                                var option = new Option(currentObject.text, currentObject.id,
+                                    true, true);
+                                cek.append(option).trigger('change');
+                            }
+                        });
+                        
+                        cek.on("select2:close", function(e) {
+                            var vals = cek.val()
+                            $("#tag").val(vals)
+                        });
                     });
                     $('#judul').val(data.judul);
                     $('#id').val(data_id);

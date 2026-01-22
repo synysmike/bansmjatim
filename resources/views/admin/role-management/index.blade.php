@@ -27,12 +27,10 @@
                 <!-- Users Management -->
                 <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
-                        <div class="card-icon bg-primary">
-                            <i class="fas fa-users"></i>
-                        </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Users</h4>
+                                <i class="fas fa-users me-2"></i>
+                                <h4 class="mb-0">Users</h4>
                             </div>
                             <div class="card-body">
                                 {{ $usersCount }}
@@ -49,12 +47,10 @@
                 <!-- Roles Management -->
                 <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
-                        <div class="card-icon bg-success">
-                            <i class="fas fa-user-tag"></i>
-                        </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Roles</h4>
+                                <i class="fas fa-user-tag me-2"></i>
+                                <h4 class="mb-0">Roles</h4>
                             </div>
                             <div class="card-body">
                                 {{ $rolesCount }}
@@ -71,12 +67,10 @@
                 <!-- Permissions Management -->
                 <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
-                        <div class="card-icon bg-info">
-                            <i class="fas fa-key"></i>
-                        </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Permissions</h4>
+                                <i class="fas fa-key me-2"></i>
+                                <h4 class="mb-0">Permissions</h4>
                             </div>
                             <div class="card-body">
                                 {{ $permissionsCount }}

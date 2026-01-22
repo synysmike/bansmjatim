@@ -27,12 +27,10 @@
                 <!-- Home Page Management -->
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
-                        <div class="card-icon bg-primary">
-                            <i class="fas fa-home"></i>
-                        </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Home Page</h4>
+                                <i class="fas fa-home me-2"></i>
+                                <h4 class="mb-0">Home Page</h4>
                             </div>
                             <div class="card-body">
                                 Manage Content
@@ -49,12 +47,10 @@
                 <!-- Berita Management -->
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
-                        <div class="card-icon bg-success">
-                            <i class="fas fa-newspaper"></i>
-                        </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Berita</h4>
+                                <i class="fas fa-newspaper me-2"></i>
+                                <h4 class="mb-0">Berita</h4>
                             </div>
                             <div class="card-body">
                                 Manage News
@@ -71,12 +67,10 @@
                 <!-- Staff/Sekretariat Management -->
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
-                        <div class="card-icon bg-info">
-                            <i class="fas fa-users"></i>
-                        </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Staff</h4>
+                                <i class="fas fa-users me-2"></i>
+                                <h4 class="mb-0">Staff</h4>
                             </div>
                             <div class="card-body">
                                 Manage Staff
@@ -93,12 +87,10 @@
                 <!-- Config Management -->
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
-                        <div class="card-icon bg-warning">
-                            <i class="fas fa-cog"></i>
-                        </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Config</h4>
+                                <i class="fas fa-cog me-2"></i>
+                                <h4 class="mb-0">Config</h4>
                             </div>
                             <div class="card-body">
                                 Manage Config
@@ -115,12 +107,10 @@
                 <!-- Role & User Management -->
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
-                        <div class="card-icon bg-danger">
-                            <i class="fas fa-user-shield"></i>
-                        </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Role & User</h4>
+                                <i class="fas fa-user-shield me-2"></i>
+                                <h4 class="mb-0">Role & User</h4>
                             </div>
                             <div class="card-body">
                                 Manage Access
