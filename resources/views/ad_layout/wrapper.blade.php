@@ -24,6 +24,62 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="{{ asset('admin_theme/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_theme/css/components.css') }}">
+    
+    <!-- Custom Sidebar Styles -->
+    <style>
+        .sidebar-menu .menu-header {
+            padding: 10px 20px 5px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #98a6ad;
+            margin-top: 10px;
+        }
+        
+        .sidebar-menu .nav-item {
+            margin: 0;
+        }
+        
+        .sidebar-menu .nav-link {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-menu .nav-link i {
+            width: 20px;
+            margin-right: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+        
+        .sidebar-menu .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding-left: 25px;
+        }
+        
+        .sidebar-menu .dropdown-menu {
+            background-color: rgba(0, 0, 0, 0.1);
+            border: none;
+            padding: 0;
+        }
+        
+        .sidebar-menu .dropdown-menu .nav-link {
+            padding-left: 50px;
+            font-size: 14px;
+        }
+        
+        .sidebar-menu .dropdown-menu .nav-link:hover {
+            padding-left: 55px;
+        }
+        
+        .sidebar-menu .nav-item.active > .nav-link {
+            background-color: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+    </style>
 
     <!-- Start GA -->
     {{-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-94034622-3"></script> --}}
@@ -43,9 +99,9 @@
 
 <body class="layout-3">
     <div id="app">
-        <div class="main-wrapper container">
-            {{-- @include('ad_layout.nav')
-            @include('ad_layout.side') --}}
+        <div class="main-wrapper">
+            @include('ad_layout.nav')
+            @include('ad_layout.side')
             <!-- Content -->
             <div class="main-content">
 

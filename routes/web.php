@@ -2,6 +2,8 @@
 
 use App\Models\Config;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\KpaController;
 use App\Http\Controllers\UrlController;
 use App\Http\Controllers\AuthController;
@@ -143,8 +145,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // These routes help you run artisan commands via web browser
     Route::get('/admin/deployment/migrate', function () {
         try {
-            \Artisan::call('migrate', ['--force' => true]);
-            $output = \Artisan::output();
+            Artisan::call('migrate', ['--force' => true]);
+            $output = Artisan::output();
             return response()->json([
                 'success' => true,
                 'message' => 'Migrations completed successfully!',
@@ -160,10 +162,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/admin/deployment/clear-cache', function () {
         try {
-            \Artisan::call('cache:clear');
-            \Artisan::call('config:clear');
-            \Artisan::call('route:clear');
-            \Artisan::call('view:clear');
+            Artisan::call('cache:clear');
+            Artisan::call('config:clear');
+            Artisan::call('route:clear');
+            Artisan::call('view:clear');
             return response()->json([
                 'success' => true,
                 'message' => 'All caches cleared successfully!'
@@ -178,9 +180,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/admin/deployment/optimize', function () {
         try {
-            \Artisan::call('config:cache');
-            \Artisan::call('route:cache');
-            \Artisan::call('view:cache');
+            Artisan::call('config:cache');
+            Artisan::call('route:cache');
+            Artisan::call('view:cache');
             return response()->json([
                 'success' => true,
                 'message' => 'Application optimized successfully!'
@@ -195,7 +197,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/admin/deployment/storage-link', function () {
         try {
-            \Artisan::call('storage:link');
+            Artisan::call('storage:link');
             return response()->json([
                 'success' => true,
                 'message' => 'Storage link created successfully!'
@@ -233,6 +235,82 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/admin/config', [ConfigController::class, 'store'])->name('admin.config.store');
     Route::get('/admin/config/{id}', [ConfigController::class, 'show'])->name('admin.config.show');
     Route::delete('/admin/config/{id}', [ConfigController::class, 'destroy'])->name('admin.config.destroy');
+
+    // Role & User Management (Admin access)
+    Route::get('/admin/role-management', [App\Http\Controllers\Admin\RoleManagementController::class, 'index'])->name('admin.role-management.index');
+
+    // User Management Routes
+    Route::get('/admin/role-management/users', [App\Http\Controllers\Admin\RoleManagementController::class, 'users'])->name('admin.role-management.users');
+    Route::post('/admin/role-management/users', [App\Http\Controllers\Admin\RoleManagementController::class, 'storeUser'])->name('admin.role-management.store-user');
+    Route::get('/admin/role-management/users/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'getUser'])->name('admin.role-management.get-user');
+    Route::put('/admin/role-management/users/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'updateUser'])->name('admin.role-management.update-user');
+    Route::delete('/admin/role-management/users/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'destroyUser'])->name('admin.role-management.destroy-user');
+
+    // Role Management Routes
+    Route::get('/admin/role-management/roles', [App\Http\Controllers\Admin\RoleManagementController::class, 'roles'])->name('admin.role-management.roles');
+    Route::post('/admin/role-management/roles', [App\Http\Controllers\Admin\RoleManagementController::class, 'storeRole'])->name('admin.role-management.store-role');
+    Route::get('/admin/role-management/roles/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'getRole'])->name('admin.role-management.get-role');
+    Route::put('/admin/role-management/roles/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'updateRole'])->name('admin.role-management.update-role');
+    Route::delete('/admin/role-management/roles/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'destroyRole'])->name('admin.role-management.destroy-role');
+
+    // Permission Management Routes
+    Route::get('/admin/role-management/permissions', [App\Http\Controllers\Admin\RoleManagementController::class, 'permissions'])->name('admin.role-management.permissions');
+    Route::post('/admin/role-management/permissions', [App\Http\Controllers\Admin\RoleManagementController::class, 'storePermission'])->name('admin.role-management.store-permission');
+    Route::delete('/admin/role-management/permissions/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'destroyPermission'])->name('admin.role-management.destroy-permission');
+    Route::get('/admin/role-management/permissions/all', [App\Http\Controllers\Admin\RoleManagementController::class, 'getAllPermissions'])->name('admin.role-management.get-all-permissions');
+
+    // Database fix route
+    Route::get('/admin/role-management/fix-permissions-table', function () {
+        try {
+            // Check current structure
+            $tableInfo = DB::select("SHOW COLUMNS FROM permissions WHERE Field = 'id'");
+            if (empty($tableInfo)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID column not found'
+                ], 500);
+            }
+
+            $idColumn = $tableInfo[0];
+            $isAutoIncrement = strpos($idColumn->Extra, 'auto_increment') !== false;
+
+            if ($isAutoIncrement) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Table structure is correct. ID column is already AUTO_INCREMENT.',
+                    'current_structure' => $idColumn
+                ]);
+            }
+
+            // Try to fix it
+            DB::statement("ALTER TABLE permissions MODIFY id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT");
+
+            // Verify
+            $newTableInfo = DB::select("SHOW COLUMNS FROM permissions WHERE Field = 'id'");
+            $newIdColumn = $newTableInfo[0];
+            $newIsAutoIncrement = strpos($newIdColumn->Extra, 'auto_increment') !== false;
+
+            if ($newIsAutoIncrement) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Table structure fixed successfully! ID column is now AUTO_INCREMENT.',
+                    'old_structure' => $idColumn,
+                    'new_structure' => $newIdColumn
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to set AUTO_INCREMENT. You may need to fix it manually.',
+                    'structure' => $newIdColumn
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    })->name('admin.role-management.fix-permissions-table');
 });
 
 Route::middleware(['auth', 'role:kpa|admin'])->group(function () {

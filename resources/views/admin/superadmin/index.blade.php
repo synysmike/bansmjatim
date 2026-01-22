@@ -111,6 +111,28 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Role & User Management -->
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                    <div class="card card-statistic-1">
+                        <div class="card-icon bg-danger">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="card-wrap">
+                            <div class="card-header">
+                                <h4>Role & User</h4>
+                            </div>
+                            <div class="card-body">
+                                Manage Access
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ route('admin.role-management.index') }}" class="btn btn-danger btn-block">
+                                <i class="fas fa-arrow-right"></i> Manage
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Quick Stats -->
@@ -144,6 +166,12 @@
                                     <a href="{{ route('admin.config.index') }}" class="btn btn-outline-warning btn-lg btn-block mb-3">
                                         <i class="fas fa-cog"></i><br>
                                         Configuration
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="{{ route('admin.role-management.index') }}" class="btn btn-outline-danger btn-lg btn-block mb-3">
+                                        <i class="fas fa-user-shield"></i><br>
+                                        Role & User Management
                                     </a>
                                 </div>
                             </div>
