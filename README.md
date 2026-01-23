@@ -1,61 +1,176 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# BAN-PDM Provinsi Jawa Timur
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+A comprehensive web application for Badan Akreditasi Nasional - Pendidikan Dasar dan Menengah (BAN-PDM) Provinsi Jawa Timur. This Laravel-based system provides a modern, elegant interface for managing organizational content, news, staff information, and administrative tasks.
 
-## About Laravel
+## 🚀 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Public-Facing Website
+- **Home Page Management**: Dynamic hero section with customizable media (images/videos)
+- **News Management (Berita)**: Complete CRUD operations with image cropping and preview
+- **Staff Directory**: Manage and display staff information
+- **YouTube Integration**: Automatically fetch and display latest videos from YouTube channel
+- **Responsive Design**: Modern UI built with Tailwind CSS and Bootstrap 5
+- **Elegant Typography**: Professional font pairing (Playfair Display + Source Sans Pro)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Admin Panel
+- **Role & Permission Management**: Full user, role, and permission management using Spatie Laravel Permission
+- **Content Management**: Easy-to-use interface for managing all website content
+- **DataTables Integration**: Server-side processing for efficient data handling
+- **Image Cropping**: Built-in image cropping with Cropper.js for news and content
+- **Modern Dashboard**: Clean, elegant admin interface with Bootstrap 5
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Additional Features
+- **Attendance System (Daftar Hadir)**: Track visitor attendance
+- **Guest Book (Buku Tamu)**: Manage guest registrations
+- **PDF Export**: Generate PDF documents using DomPDF and mPDF
+- **Configuration Management**: Centralized configuration system
 
-## Learning Laravel
+## 🛠️ Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Framework**: Laravel 8.x
+- **PHP**: ^7.3
+- **Frontend**: 
+  - Bootstrap 5.3
+  - Tailwind CSS 2.2
+  - Font Awesome 6.1
+  - Google Fonts (Playfair Display, Source Sans Pro, Inter)
+- **JavaScript Libraries**:
+  - jQuery
+  - DataTables (Yajra Laravel DataTables)
+  - Select2
+  - Cropper.js
+- **Key Packages**:
+  - Spatie Laravel Permission (^5.10)
+  - Yajra Laravel DataTables (^9.21)
+  - Laravel Sanctum (^2.15)
+  - DomPDF (^2.2)
+  - mPDF (^2.1)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📋 Requirements
 
-## Laravel Sponsors
+- PHP >= 7.3
+- Composer
+- Node.js & npm (for frontend assets)
+- MySQL/MariaDB
+- Web server (Apache/Nginx)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## 🔧 Installation
 
-### Premium Partners
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd ban-pdm-jatim
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[OP.GG](https://op.gg)**
+2. **Install PHP dependencies**
+   ```bash
+   composer install
+   ```
 
-## Contributing
+3. **Install Node.js dependencies**
+   ```bash
+   npm install
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Environment setup**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-## Code of Conduct
+5. **Configure `.env` file**
+   - Set database credentials
+   - Configure app URL and other settings
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+6. **Run migrations**
+   ```bash
+   php artisan migrate
+   ```
 
-## Security Vulnerabilities
+7. **Seed database (optional)**
+   ```bash
+   php artisan db:seed
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+8. **Build frontend assets**
+   ```bash
+   npm run production
+   ```
 
-## License
+9. **Create storage symlink**
+   ```bash
+   php artisan storage:link
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+10. **Clear and cache configuration**
+    ```bash
+    php artisan config:clear
+    php artisan cache:clear
+    php artisan view:clear
+    php artisan route:clear
+    ```
+
+## 📁 Project Structure
+
+```
+├── app/
+│   ├── Http/Controllers/     # Application controllers
+│   │   ├── Admin/            # Admin panel controllers
+│   │   └── ...
+│   └── Models/               # Eloquent models
+├── resources/
+│   ├── views/
+│   │   ├── ad_layout/        # Admin layout templates
+│   │   ├── admin/            # Admin panel views
+│   │   ├── public/           # Public-facing views
+│   │   └── ...
+│   └── css/                  # Tailwind CSS source
+├── public/
+│   └── public_assets/        # Compiled assets
+├── routes/
+│   └── web.php               # Web routes
+└── database/
+    ├── migrations/           # Database migrations
+    └── seeders/             # Database seeders
+```
+
+## 🎨 Design Features
+
+- **Modern & Elegant UI**: Clean, professional design with smooth animations
+- **Responsive Layout**: Fully responsive across all devices
+- **Typography**: Elegant font pairing for enhanced readability
+- **Color Scheme**: Modern gradient backgrounds and consistent color palette
+- **User Experience**: Intuitive navigation and user-friendly interfaces
+
+## 🔐 Security
+
+- Laravel's built-in security features
+- CSRF protection
+- SQL injection prevention (Eloquent ORM)
+- XSS protection
+- Role-based access control (RBAC)
+
+## 📝 License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## 👨‍💻 Creator
+
+**Ir Teguh Solution**
+
+Developed with ❤️ for BAN-PDM Provinsi Jawa Timur
+
+---
+
+## 📞 Support
+
+For support, please contact the development team or create an issue in the repository.
+
+## 🙏 Acknowledgments
+
+- Laravel Framework
+- Bootstrap Team
+- Tailwind CSS
+- Spatie for Laravel Permission package
+- Yajra for Laravel DataTables package
+- All contributors and open-source libraries used in this project
