@@ -1,92 +1,85 @@
 @extends('ad_layout.wrapper')
 
 @push('css-custom')
-    <link rel="stylesheet" href="{{ asset('admin_theme/library/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin_theme/library/datatables.net-select-bs4/css/select.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
 @endpush
 
 @section('admin-container')
-    <section>
-        <div class="section-header">
-            <h1>{{ $tittle }}</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('admin.role-management.index') }}">Role Management</a></div>
-                <div class="breadcrumb-item">{{ $tittle }}</div>
+    <!-- Section Header -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-ubuntu font-bold text-admin-text-primary mb-2">{{ $tittle }}</h1>
+        <nav class="flex items-center space-x-2 text-sm text-admin-text-secondary">
+            <a href="{{ route('admin.dashboard') }}" class="hover:text-admin-primary transition-colors">Dashboard</a>
+            <span>/</span>
+            <a href="{{ route('admin.role-management.index') }}" class="hover:text-admin-primary transition-colors">Role Management</a>
+            <span>/</span>
+            <span class="text-admin-primary font-medium">{{ $tittle }}</span>
+        </nav>
+    </div>
+
+    <!-- Main Card -->
+    <div class="bg-white rounded-2xl shadow-admin overflow-hidden card-hover">
+        <div class="bg-gradient-to-r from-admin-primary to-admin-secondary p-6">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <h2 class="text-xl font-semibold text-white">Roles List</h2>
+                <button type="button" class="inline-flex items-center space-x-2 bg-white text-admin-primary px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all font-medium" onclick="showRoleModal()">
+                    <i class="fas fa-plus admin-icon"></i>
+                    <span>Add New Role</span>
+                </button>
             </div>
         </div>
 
-        <div class="section-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Roles List</h4>
-                            <div class="card-header-action">
-                                <button class="btn btn-primary" onclick="showRoleModal()">
-                                    <i class="fas fa-plus"></i> Add New Role
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped" id="rolesTable">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Role Name</th>
-                                            <th>Permissions</th>
-                                            <th>Users Count</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <table id="rolesTable" class="min-w-full divide-y divide-admin-border">
+                    <thead class="bg-gradient-to-r from-admin-primary to-admin-secondary">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">No</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Role Name</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Permissions</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Users Count</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-admin-border">
+                    </tbody>
+                </table>
             </div>
         </div>
-    </section>
+    </div>
+@endsection
 
-    <!-- Role Modal -->
-    <div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-labelledby="roleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+@push('modals')
+    <!-- Role Modal (Add/Edit) -->
+    <div id="roleModal" class="modal-wrapper modal-lg" data-open="false">
+        <div class="modal-backdrop" onclick="modalManager.close('roleModal')"></div>
+        <div class="modal-content-wrapper">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="roleModalLabel">Add New Role</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                <div class="bg-gradient-to-r from-admin-primary to-admin-secondary px-6 py-4 flex items-center justify-between">
+                    <h5 class="text-xl font-semibold text-white" id="roleModalLabel">Add New Role</h5>
+                    <button type="button" onclick="modalManager.close('roleModal')" class="text-white hover:text-gray-200 transition-colors" aria-label="Close">
+                        <i class="fas fa-times admin-icon-lg"></i>
                     </button>
                 </div>
                 <form id="roleForm">
-                    <div class="modal-body">
+                    <div class="p-6 overflow-y-auto flex-1 bg-white">
                         <input type="hidden" id="roleId" name="id">
-                        <div class="form-group">
-                            <label>Role Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="roleName" name="name" required>
-                            <div class="invalid-feedback"></div>
+                        <div class="mb-6">
+                            <label for="roleName" class="form-label">Role Name <span class="text-red-500">*</span></label>
+                            <input type="text" class="form-input" id="roleName" name="name" required placeholder="e.g. admin, editor">
+                            <div class="text-red-500 text-sm mt-1 hidden" id="roleNameError"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Permissions</label>
-                            <div class="row" id="permissionsContainer">
-                                <div class="col-12">
-                                    <div class="text-center py-3">
-                                        <div class="spinner-border text-primary" role="status">
-                                            <span class="sr-only">Loading...</span>
-                                        </div>
-                                        <p class="mt-2">Loading permissions...</p>
-                                    </div>
-                                </div>
+                        <div class="mb-6">
+                            <label class="form-label">Permissions</label>
+                            <div id="permissionsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto p-2 border border-admin-border rounded-lg">
+                                <div class="col-span-2 text-center py-4 text-admin-text-secondary text-sm">Loading permissions...</div>
                             </div>
-                            <small class="form-text text-muted">Select which pages/features this role can access</small>
+                            <p class="text-sm text-admin-text-secondary mt-1">Select which pages/features this role can access</p>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <div class="px-6 py-4 border-t border-admin-border flex items-center justify-end space-x-3 bg-white">
+                        <button type="button" onclick="modalManager.close('roleModal')" class="btn btn-secondary">Close</button>
                         <button type="submit" class="btn btn-primary">Save Role</button>
                     </div>
                 </form>
@@ -95,97 +88,92 @@
     </div>
 
     <!-- Permissions Management Modal -->
-    <div class="modal fade" id="permissionsModal" tabindex="-1" role="dialog" aria-labelledby="permissionsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+    <div id="permissionsModal" class="modal-wrapper modal-lg" data-open="false">
+        <div class="modal-backdrop" onclick="modalManager.close('permissionsModal')"></div>
+        <div class="modal-content-wrapper">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="permissionsModalLabel">Manage Permissions</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                <div class="bg-gradient-to-r from-admin-primary to-admin-secondary px-6 py-4 flex items-center justify-between">
+                    <h5 class="text-xl font-semibold text-white" id="permissionsModalTitle">Manage Permissions</h5>
+                    <button type="button" onclick="modalManager.close('permissionsModal')" class="text-white hover:text-gray-200 transition-colors" aria-label="Close">
+                        <i class="fas fa-times admin-icon-lg"></i>
                     </button>
                 </div>
                 <form id="permissionsForm">
-                    <div class="modal-body">
+                    <div class="p-6 overflow-y-auto flex-1 bg-white">
                         <input type="hidden" id="permissionRoleId" name="role_id">
-                        <div class="form-group">
-                            <label>Role: <strong id="permissionRoleName"></strong></label>
+                        <input type="hidden" id="permissionRoleNameInput" name="name" value="">
+                        <div class="mb-4">
+                            <label class="form-label">Role</label>
+                            <p class="font-semibold text-admin-text-primary text-lg" id="permissionRoleNameDisplay">—</p>
                         </div>
-                        <div class="form-group">
-                            <label>Select Permissions</label>
-                            <div class="row" id="permissionsModalContainer">
-                                <!-- Permissions will be loaded here -->
+                        <div class="mb-6">
+                            <label class="form-label">Select Permissions</label>
+                            <div id="permissionsModalContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto p-2 border border-admin-border rounded-lg">
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <div class="px-6 py-4 border-t border-admin-border flex items-center justify-end space-x-3 bg-white">
+                        <button type="button" onclick="modalManager.close('permissionsModal')" class="btn btn-secondary">Close</button>
                         <button type="submit" class="btn btn-primary">Save Permissions</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-@endsection
+@endpush
 
 @push('js-custom')
-    <script src="{{ asset('admin_theme/library/datatables/media/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+    <script src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
     <script>
-        let table;
+        const ROLES_BASE_URL = "{{ url('admin/role-management/roles') }}";
+        const STORE_ROLE_URL = "{{ route('admin.role-management.store-role') }}";
+        const GET_PERMISSIONS_URL = "{{ route('admin.role-management.get-all-permissions') }}";
+        let rolesTable;
         let isEditMode = false;
         let allPermissions = [];
 
-        // Load permissions dynamically
         function loadPermissions() {
             return $.ajax({
-                url: "{{ route('admin.role-management.get-all-permissions') }}",
-                type: 'GET',
-                success: function(response) {
-                    if (response.success) {
-                        allPermissions = response.permissions;
-                        renderPermissions();
-                    }
+                url: GET_PERMISSIONS_URL,
+                type: 'GET'
+            }).done(function(response) {
+                if (response.success) {
+                    allPermissions = response.permissions;
                 }
             });
         }
 
-        // Render permissions in the role modal
-        function renderPermissions(selectedPermissionIds = []) {
-            let html = '';
+        function renderPermissions(containerId, selectedPermissionIds) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            selectedPermissionIds = selectedPermissionIds || [];
             if (allPermissions.length === 0) {
-                html = '<div class="col-12"><p class="text-muted">No permissions available. Create permissions first.</p></div>';
-            } else {
-                allPermissions.forEach(function(permission) {
-                    const checked = selectedPermissionIds.includes(parseInt(permission.id)) ? 'checked' : '';
-                    html += `
-                        <div class="col-md-6 mb-2">
-                            <div class="form-check">
-                                <input class="form-check-input permission-checkbox" type="checkbox" 
-                                    value="${permission.id}" id="perm_${permission.id}" name="permissions[]" ${checked}>
-                                <label class="form-check-label" for="perm_${permission.id}">
-                                    ${permission.name}
-                                </label>
-                            </div>
-                        </div>
-                    `;
-                });
+                container.innerHTML = '<div class="col-span-2 text-admin-text-secondary text-sm py-2">No permissions available. Create permissions first.</div>';
+                return;
             }
-            $('#permissionsContainer').html(html);
+            const isModal = containerId === 'permissionsModalContainer';
+            const namePrefix = isModal ? 'perm_modal_' : 'perm_';
+            const checkboxClass = isModal ? 'permission-modal-checkbox' : 'permission-checkbox';
+            let html = '';
+            allPermissions.forEach(function(permission) {
+                const checked = selectedPermissionIds.indexOf(parseInt(permission.id)) !== -1 ? 'checked' : '';
+                html += `
+                    <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-admin-light cursor-pointer">
+                        <input type="checkbox" class="rounded border-admin-border text-admin-primary focus:ring-admin-primary ${checkboxClass}" value="${permission.id}" id="${namePrefix}${permission.id}" name="permissions[]" ${checked}>
+                        <span class="text-sm text-admin-text-primary">${permission.name}</span>
+                    </label>
+                `;
+            });
+            container.innerHTML = html;
         }
 
         $(document).ready(function() {
-            // Load permissions on page load
             loadPermissions();
 
-            table = $('#rolesTable').DataTable({
+            rolesTable = $('#rolesTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: {
-                    url: "{{ route('admin.role-management.roles') }}",
-                    type: 'GET'
-                },
+                ajax: { url: "{{ route('admin.role-management.roles') }}", type: 'GET' },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'name', name: 'name' },
@@ -206,167 +194,157 @@
             });
         });
 
-        function showRoleModal(roleId = null) {
-            isEditMode = roleId !== null;
-            $('#roleModalLabel').text(isEditMode ? 'Edit Role' : 'Add New Role');
-            $('#roleForm')[0].reset();
-            $('#roleId').val('');
-            $('.invalid-feedback').text('').hide();
-            $('.form-control').removeClass('is-invalid');
+        function showRoleModal(roleId) {
+            isEditMode = (roleId != null && roleId !== '');
+            document.getElementById('roleModalLabel').textContent = isEditMode ? 'Edit Role' : 'Add New Role';
+            document.getElementById('roleForm').reset();
+            document.getElementById('roleId').value = '';
+            var errEl = document.getElementById('roleNameError');
+            if (errEl) errEl.classList.add('hidden');
+            var nameEl = document.getElementById('roleName');
+            if (nameEl) nameEl.classList.remove('border-red-500');
 
-            // Reload permissions to get latest list
-            loadPermissions().then(function() {
-                if (isEditMode) {
-                    $.ajax({
-                        url: "{{ url('admin/role-management/roles') }}/" + roleId,
-                        type: 'GET',
-                        success: function(response) {
-                            if (response.success) {
-                                const role = response.role;
-                                $('#roleId').val(role.id);
-                                $('#roleName').val(role.name);
-                                
-                                // Render permissions with selected ones checked
-                                renderPermissions(role.permission_ids);
-                            }
+            if (isEditMode) {
+                loadPermissions().done(function() {
+                    $.get(ROLES_BASE_URL + '/' + roleId).done(function(response) {
+                        if (response.success && response.role) {
+                            var role = response.role;
+                            document.getElementById('roleId').value = role.id;
+                            document.getElementById('roleName').value = role.name || '';
+                            renderPermissions('permissionsContainer', role.permission_ids || []);
+                        } else {
+                            if (typeof showToast === 'function') showToast('Failed to load role.', 'error');
+                            else alert('Failed to load role.');
                         }
+                        if (typeof modalManager !== 'undefined') modalManager.open('roleModal');
+                    }).fail(function(xhr) {
+                        var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Failed to load role';
+                        if (typeof showToast === 'function') showToast(msg, 'error');
+                        else alert(msg);
                     });
-                } else {
-                    // Render permissions without any selected
-                    renderPermissions([]);
-                }
-            });
-
-            $('#roleModal').modal('show');
+                });
+            } else {
+                if (typeof modalManager !== 'undefined') modalManager.open('roleModal');
+                loadPermissions().done(function() {
+                    renderPermissions('permissionsContainer', []);
+                });
+            }
         }
 
         function saveRole() {
-            const formData = {
-                _token: '{{ csrf_token() }}',
-                name: $('#roleName').val(),
-                permissions: $('.permission-checkbox:checked').map(function() {
-                    return $(this).val();
-                }).get()
-            };
+            const roleId = document.getElementById('roleId').value;
+            const name = (document.getElementById('roleName').value || '').trim();
+            if (!name) {
+                if (typeof showToast === 'function') showToast('Role name is required.', 'error');
+                else alert('Role name is required.');
+                return;
+            }
+            const permissions = [];
+            document.querySelectorAll('.permission-checkbox:checked').forEach(function(cb) {
+                if (cb.value) permissions.push(cb.value);
+            });
 
-            const roleId = $('#roleId').val();
-            const url = roleId 
-                ? "{{ url('admin/role-management/roles') }}/" + roleId
-                : "{{ route('admin.role-management.store-role') }}";
+            const url = roleId ? ROLES_BASE_URL + '/' + roleId : STORE_ROLE_URL;
             const method = roleId ? 'PUT' : 'POST';
+            const data = { _token: '{{ csrf_token() }}', name: name, permissions: permissions };
 
             $.ajax({
                 url: url,
                 type: method,
-                data: formData,
+                data: data,
                 success: function(response) {
                     if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: response.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                        $('#roleModal').modal('hide');
-                        table.ajax.reload();
+                        if (typeof showToast === 'function') showToast(response.message || 'Role saved.', 'success');
+                        else alert(response.message || 'Role saved.');
+                        if (typeof modalManager !== 'undefined') modalManager.close('roleModal');
+                        rolesTable.ajax.reload();
+                    } else {
+                        var msg = (response && response.message) || 'Failed to save role';
+                        if (typeof showToast === 'function') showToast(msg, 'error');
+                        else alert(msg);
                     }
                 },
                 error: function(xhr) {
                     if (xhr.status === 422) {
-                        const errors = xhr.responseJSON.errors;
-                        $('.invalid-feedback').text('').hide();
-                        $('.form-control').removeClass('is-invalid');
-                        
-                        $.each(errors, function(key, value) {
-                            const input = $('#roleName');
-                            input.addClass('is-invalid');
-                            input.siblings('.invalid-feedback').text(value[0]).show();
-                        });
+                        var errors = xhr.responseJSON && xhr.responseJSON.errors;
+                        var errEl = document.getElementById('roleNameError');
+                        var nameEl = document.getElementById('roleName');
+                        if (errors && errors.name) {
+                            if (errEl) { errEl.textContent = errors.name[0]; errEl.classList.remove('hidden'); }
+                            if (nameEl) nameEl.classList.add('border-red-500');
+                        }
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: xhr.responseJSON?.message || 'An error occurred'
-                        });
+                        var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Failed to save role';
+                        if (typeof showToast === 'function') showToast(msg, 'error');
+                        else alert(msg);
                     }
                 }
             });
         }
 
         function managePermissions(roleId) {
-            // Reload permissions to get latest list
-            loadPermissions().then(function() {
-                $.ajax({
-                    url: "{{ url('admin/role-management/roles') }}/" + roleId,
-                    type: 'GET',
-                    success: function(response) {
-                        if (response.success) {
-                            const role = response.role;
-                            $('#permissionRoleId').val(role.id);
-                            $('#permissionRoleName').text(role.name);
-                            
-                            // Render permissions with selected ones checked
-                            let html = '';
-                            if (allPermissions.length === 0) {
-                                html = '<div class="col-12"><p class="text-muted">No permissions available. Create permissions first.</p></div>';
-                            } else {
-                                allPermissions.forEach(function(permission) {
-                                    const checked = role.permission_ids.includes(parseInt(permission.id)) ? 'checked' : '';
-                                    html += `
-                                        <div class="col-md-6 mb-2">
-                                            <div class="form-check">
-                                                <input class="form-check-input permission-modal-checkbox" type="checkbox" 
-                                                    value="${permission.id}" id="perm_modal_${permission.id}" name="permissions[]" ${checked}>
-                                                <label class="form-check-label" for="perm_modal_${permission.id}">
-                                                    ${permission.name}
-                                                </label>
-                                            </div>
-                                        </div>
-                                    `;
-                                });
-                            }
-                            $('#permissionsModalContainer').html(html);
-                            $('#permissionsModal').modal('show');
-                        }
+            if (!roleId) return;
+            loadPermissions().done(function() {
+                $.get(ROLES_BASE_URL + '/' + roleId).done(function(response) {
+                    if (response.success && response.role) {
+                        const role = response.role;
+                        const roleName = (role.name || '').trim() || ('Role #' + role.id);
+                        document.getElementById('permissionRoleId').value = role.id;
+                        document.getElementById('permissionRoleNameInput').value = roleName;
+                        document.getElementById('permissionRoleNameDisplay').textContent = roleName;
+                        document.getElementById('permissionsModalTitle').textContent = 'Manage Permissions: ' + roleName;
+                        renderPermissions('permissionsModalContainer', role.permission_ids || []);
+                        if (typeof modalManager !== 'undefined') modalManager.open('permissionsModal');
+                    } else {
+                        const msg = (response && response.message) || 'Failed to load role';
+                        if (typeof showToast === 'function') showToast(msg, 'error');
+                        else alert(msg);
                     }
+                }).fail(function(xhr) {
+                    const msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Failed to load role';
+                    if (typeof showToast === 'function') showToast(msg, 'error');
+                    else alert(msg);
                 });
             });
         }
 
         function savePermissions() {
-            const roleId = $('#permissionRoleId').val();
-            const permissions = $('.permission-modal-checkbox:checked').map(function() {
-                return $(this).val();
-            }).get();
+            const roleId = document.getElementById('permissionRoleId').value;
+            const roleName = document.getElementById('permissionRoleNameInput').value.trim();
+            if (!roleId) {
+                if (typeof showToast === 'function') showToast('Role ID is missing.', 'error');
+                else alert('Role ID is missing.');
+                return;
+            }
+            const permissions = [];
+            document.querySelectorAll('.permission-modal-checkbox:checked').forEach(function(cb) {
+                if (cb.value) permissions.push(cb.value);
+            });
 
             $.ajax({
-                url: "{{ url('admin/role-management/roles') }}/" + roleId,
+                url: ROLES_BASE_URL + '/' + roleId,
                 type: 'PUT',
                 data: {
                     _token: '{{ csrf_token() }}',
-                    name: $('#permissionRoleName').text(),
+                    name: roleName || ('Role #' + roleId),
                     permissions: permissions
                 },
                 success: function(response) {
                     if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: response.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                        $('#permissionsModal').modal('hide');
-                        table.ajax.reload();
+                        if (typeof showToast === 'function') showToast(response.message || 'Permissions saved.', 'success');
+                        else alert(response.message || 'Permissions saved.');
+                        if (typeof modalManager !== 'undefined') modalManager.close('permissionsModal');
+                        rolesTable.ajax.reload();
+                    } else {
+                        const msg = (response && response.message) || 'Failed to save';
+                        if (typeof showToast === 'function') showToast(msg, 'error');
+                        else alert(msg);
                     }
                 },
                 error: function(xhr) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: xhr.responseJSON?.message || 'Failed to save permissions'
-                    });
+                    const msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Failed to save permissions';
+                    if (typeof showToast === 'function') showToast(msg, 'error');
+                    else alert(msg);
                 }
             });
         }
@@ -376,48 +354,36 @@
         }
 
         function deleteRole(id) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ url('admin/role-management/roles') }}/" + id,
-                        type: 'DELETE',
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Deleted!',
-                                    text: response.message,
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-                                table.ajax.reload();
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error!',
-                                    text: response.message
-                                });
-                            }
-                        },
-                        error: function(xhr) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: xhr.responseJSON?.message || 'Failed to delete role'
-                            });
-                        }
-                    });
+            if (id === undefined || id === null || id === '' || id === 'undefined') {
+                if (typeof showToast === 'function') showToast('Invalid role. Cannot delete.', 'error');
+                else alert('Invalid role. Cannot delete.');
+                return;
+            }
+            var roleId = parseInt(id, 10);
+            if (isNaN(roleId) || roleId < 1) {
+                if (typeof showToast === 'function') showToast('Invalid role ID.', 'error');
+                else alert('Invalid role ID.');
+                return;
+            }
+            if (!confirm('Are you sure you want to delete this role? This cannot be undone.')) return;
+            $.ajax({
+                url: ROLES_BASE_URL + '/' + roleId,
+                type: 'DELETE',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    if (response.success) {
+                        if (typeof showToast === 'function') showToast(response.message || 'Role deleted.', 'success');
+                        else alert(response.message || 'Role deleted.');
+                        rolesTable.ajax.reload();
+                    } else {
+                        if (typeof showToast === 'function') showToast(response.message || 'Error', 'error');
+                        else alert(response.message || 'Error');
+                    }
+                },
+                error: function(xhr) {
+                    const msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Failed to delete role';
+                    if (typeof showToast === 'function') showToast(msg, 'error');
+                    else alert(msg);
                 }
             });
         }

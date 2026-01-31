@@ -19,29 +19,44 @@ class ConfigController extends Controller
      */
     public function index(Request $request)
     {
-        //
         $forms = Form::all();
         $confs = Config::all();
-        $tittle = "uji select2";
-        // $data = Config::where('id', '1')->first();        
-        // $newdata = explode(",", $confs->tabel);
-        // dd($data);
+        $tittle = $request->routeIs('admin.config.*') ? 'Configuration' : 'uji select2';
+
         if ($request->ajax()) {
+            $isAdmin = $request->routeIs('admin.config.*');
             return DataTables::of($confs)
                 ->addIndexColumn()
-                ->addColumn('aksi', function ($confs) {
+                ->addColumn('link', function ($confs) {
+                    $link = $confs->link ? trim($confs->link) : '';
+                    $fullUrl = $link !== '' ? url('/form/' . $link) : '';
+                    $display = $fullUrl !== '' ? e($fullUrl) : '—';
+                    if ($fullUrl === '') {
+                        return '<span class="text-admin-text-secondary">—</span>';
+                    }
+                    return '<button type="button" class="config-copy-link inline-flex items-center gap-2 text-left text-sm text-admin-primary hover:text-admin-secondary hover:underline break-all" data-url="' . e($fullUrl) . '" title="Klik untuk copy link"><span class="min-w-0 truncate max-w-[200px] sm:max-w-none">' . $display . '</span><i class="fas fa-copy admin-icon flex-shrink-0"></i></button>';
+                })
+                ->addColumn('aksi', function ($confs) use ($isAdmin) {
                     $valId = $confs->id;
                     $url = Crypt::encrypt($valId);
-                $red = ' <a href="/form/' . $confs->link . '" target="_blank" class="btn btn-outline-secondary"> View Form</a>';
-                $btn2 = ' <a href="/cetak-dh/' . $confs->link . '" target="_blank" class="btn btn-outline-primary"> Cetak Form</a>';
-                $btn = ' <a href="/list-dh/' . $confs->link . '" data-id="' . $url . '" target="_blank" class="btn btn-success"> Report</a>';
-                    $btn1 = ' <a href="javascript:void(0)" data-id="' . $valId . '" class="btn btn-info show-btn"> Edit</a>';
-
-                $aksi = $red . $btn . $btn1 . $btn2 . ' <a href="javascript:void(0)" data-id="' . $url . '" class="btn btn-danger del-btn"> Hapus</a>';
-                    return $aksi;
+                    $link = e($confs->link);
+                    $html = '<div class="action-dropdown">';
+                    $html .= '<button type="button" class="action-dropdown-toggle" aria-haspopup="true"><span>Actions</span><i class="fas fa-chevron-down admin-icon-sm"></i></button>';
+                    $html .= '<div class="action-dropdown-menu hidden">';
+                    $html .= '<a href="/form/' . $link . '" target="_blank"><i class="fas fa-external-link-alt admin-icon"></i> View Form</a>';
+                    $html .= '<a href="/list-dh/' . $link . '" target="_blank"><i class="fas fa-list admin-icon"></i> Report</a>';
+                    $html .= '<button type="button" data-id="' . $valId . '" class="text-left config-edit-btn"><i class="fas fa-edit admin-icon"></i> Edit</button>';
+                    $html .= '<a href="/cetak-dh/' . $link . '" target="_blank"><i class="fas fa-print admin-icon"></i> Cetak Form</a>';
+                    $html .= '<button type="button" data-id="' . $url . '" class="text-left text-red-600 config-del-btn"><i class="fas fa-trash admin-icon"></i> Hapus</button>';
+                    $html .= '</div></div>';
+                    return $html;
                 })
-                ->rawColumns(['aksi'])
+                ->rawColumns(['aksi', 'link'])
                 ->make(true);
+        }
+
+        if ($request->routeIs('admin.config.*')) {
+            return view('admin.config.index', compact('tittle', 'forms'));
         }
         return view('daftarhadir.config', compact('tittle', 'forms'));
     }

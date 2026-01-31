@@ -1,120 +1,139 @@
 @extends('ad_layout.wrapper')
 
 @push('css-custom')
-    <link rel="stylesheet" href="{{ asset('admin_theme/library/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin_theme/library/datatables.net-select-bs4/css/select.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endpush
 
 @section('admin-container')
-    <section>
-        <div class="section-header">
-            <h1>{{ $tittle }}</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('admin.role-management.index') }}">Role Management</a></div>
-                <div class="breadcrumb-item">{{ $tittle }}</div>
+    <!-- Section Header -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-ubuntu font-bold text-admin-text-primary mb-2">{{ $tittle }}</h1>
+        <nav class="flex items-center space-x-2 text-sm text-admin-text-secondary">
+            <a href="{{ route('admin.dashboard') }}" class="hover:text-admin-primary transition-colors">Dashboard</a>
+            <span>/</span>
+            <a href="{{ route('admin.role-management.index') }}" class="hover:text-admin-primary transition-colors">Role Management</a>
+            <span>/</span>
+            <span class="text-admin-primary font-medium">{{ $tittle }}</span>
+        </nav>
+    </div>
+
+    <!-- Main Card -->
+    <div class="bg-white rounded-2xl shadow-admin overflow-hidden card-hover">
+        <div class="bg-gradient-to-r from-admin-primary to-admin-secondary p-6">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <h2 class="text-xl font-semibold text-white">Users List</h2>
+                <button class="inline-flex items-center space-x-2 bg-white text-admin-primary px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all font-medium" onclick="showUserModal()">
+                    <i class="fas fa-plus admin-icon"></i>
+                    <span>Add New User</span>
+                </button>
             </div>
         </div>
 
-        <div class="section-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Users List</h4>
-                            <div class="card-header-action">
-                                <button class="btn btn-primary" onclick="showUserModal()">
-                                    <i class="fas fa-plus"></i> Add New User
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped" id="usersTable">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Username</th>
-                                            <th>Name</th>
-                                            <th>Kab/Kota</th>
-                                            <th>Jabatan</th>
-                                            <th>Roles</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="p-6">
+            <div class="flex flex-wrap items-center gap-4 mb-4">
+                <label for="filterJabatan" class="text-sm font-medium text-admin-text-secondary">Filter by Jabatan (Role):</label>
+                <select id="filterJabatan" class="form-select w-48 sm:w-56">
+                    <option value="">All Roles</option>
+                    @foreach($roles as $role)
+                        @if(!empty($role->id))
+                        <option value="{{ (int) $role->id }}">{{ e($role->name) }}</option>
+                        @endif
+                    @endforeach
+                </select>
+                <button type="button" id="btnClearFilter" class="btn btn-secondary text-sm py-2 px-3" style="display: none;">Clear filter</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table id="usersTable" class="min-w-full divide-y divide-admin-border">
+                    <thead class="bg-gradient-to-r from-admin-primary to-admin-secondary">
+                        <tr>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">No</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Username</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Kab/Kota</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Jabatan</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Roles</th>
+                            <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-admin-border">
+                    </tbody>
+                </table>
             </div>
         </div>
-    </section>
+    </div>
+@endsection
 
+@push('modals')
     <!-- User Modal -->
-    <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div id="userModal" class="modal-wrapper modal-md" data-open="false">
+        <!-- Backdrop -->
+        <div class="modal-backdrop" onclick="modalManager.close('userModal')"></div>
+        
+        <!-- Modal Content -->
+        <div class="modal-content-wrapper">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="userModalLabel">Add New User</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                <div class="bg-gradient-to-r from-admin-primary to-admin-secondary px-6 py-4 flex items-center justify-between">
+                    <h5 class="text-xl font-semibold text-white" id="userModalLabel">Add New User</h5>
+                    <button type="button" onclick="modalManager.close('userModal')" class="text-white hover:text-gray-200 transition-colors" aria-label="Close">
+                        <i class="fas fa-times admin-icon-lg"></i>
                     </button>
                 </div>
+                
                 <form id="userForm">
-                    <div class="modal-body">
+                    <div class="p-6 overflow-y-auto flex-1 bg-white">
                         <input type="hidden" id="userId" name="id">
-                        <div class="form-group">
-                            <label>Username <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="username" name="username" required>
-                            <div class="invalid-feedback"></div>
+                        
+                        <div class="mb-6">
+                            <label class="form-label">Username <span class="text-red-500">*</span></label>
+                            <input type="text" class="form-input" id="username" name="username" required>
+                            <div class="text-red-500 text-sm mt-1 hidden invalid-feedback"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="name" name="name" required>
-                            <div class="invalid-feedback"></div>
+                        
+                        <div class="mb-6">
+                            <label class="form-label">Name <span class="text-red-500">*</span></label>
+                            <input type="text" class="form-input" id="name" name="name" required>
+                            <div class="text-red-500 text-sm mt-1 hidden invalid-feedback"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Password <span class="text-danger" id="passwordRequired">*</span></label>
-                            <input type="password" class="form-control" id="password" name="password">
-                            <small class="form-text text-muted" id="passwordHint">Leave blank to keep current password</small>
-                            <div class="invalid-feedback"></div>
+                        
+                        <div class="mb-6">
+                            <label class="form-label">Password <span class="text-red-500" id="passwordRequired">*</span></label>
+                            <input type="password" class="form-input" id="password" name="password">
+                            <small class="text-admin-text-secondary text-sm mt-1 hidden" id="passwordHint">Leave blank to keep current password</small>
+                            <div class="text-red-500 text-sm mt-1 hidden invalid-feedback"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Role <span class="text-danger">*</span></label>
-                            <select class="form-control" id="role" name="role" required>
-                                <option value="">Select Role</option>
-                                @foreach($roles as $role)
-                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                        
+                        <div class="mb-6">
+                            <label class="form-label">Jabatan (Role) <span class="text-red-500">*</span></label>
+                            <select class="form-select" id="user_role" name="jabatan_role_id" required>
+                                <option value="">Select Jabatan / Role</option>
+                                @foreach($roles as $r)
+                                    @if(!empty($r->id))
+                                    <option value="{{ (int) $r->id }}">{{ e($r->name) }}</option>
+                                    @endif
                                 @endforeach
                             </select>
-                            <div class="invalid-feedback"></div>
+                            <div class="text-red-500 text-sm mt-1 hidden invalid-feedback" id="roleError"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Kab/Kota</label>
-                            <input type="text" class="form-control" id="kab_kota" name="kab_kota">
-                        </div>
-                        <div class="form-group">
-                            <label>Jabatan</label>
-                            <input type="text" class="form-control" id="jabatan" name="jabatan">
+                        
+                        <div class="mb-6">
+                            <label class="form-label">Kab/Kota</label>
+                            <input type="text" class="form-input" id="kab_kota" name="kab_kota">
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    
+                    <div class="px-6 py-4 border-t border-admin-border flex items-center justify-end space-x-3 bg-white">
+                        <button type="button" onclick="modalManager.close('userModal')" class="btn btn-secondary">Close</button>
                         <button type="submit" class="btn btn-primary">Save User</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-@endsection
+@endpush
 
 @push('js-custom')
-    <script src="{{ asset('admin_theme/library/datatables/media/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
@@ -127,22 +146,50 @@
                 serverSide: true,
                 ajax: {
                     url: "{{ route('admin.role-management.users') }}",
-                    type: 'GET'
+                    type: 'GET',
+                    data: function(d) {
+                        var roleId = $('#filterJabatan').val();
+                        if (roleId) d.role_id = roleId;
+                    }
+                },
+                language: {
+                    processing: '<div class="flex items-center justify-center p-4"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-admin-primary"></div><span class="ml-3 text-admin-text-primary">Loading...</span></div>',
+                    emptyTable: '<div class="text-center py-8 text-admin-text-secondary">No data available</div>',
+                    zeroRecords: '<div class="text-center py-8 text-admin-text-secondary">No matching records found</div>'
                 },
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'username', name: 'username' },
-                    { data: 'name', name: 'name' },
-                    { data: 'kab_kota', name: 'kab_kota' },
-                    { data: 'jabatan', name: 'jabatan' },
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },
+                    { data: 'username', name: 'username', className: 'font-medium text-admin-text-primary' },
+                    { data: 'name', name: 'name', className: 'text-admin-text-primary' },
+                    { data: 'kab_kota', name: 'kab_kota', className: 'text-admin-text-secondary' },
+                    { data: 'jabatan', name: 'jabatan', className: 'text-admin-text-secondary' },
                     { data: 'roles', name: 'roles', orderable: false, searchable: false },
-                    { data: 'action', name: 'action', orderable: false, searchable: false }
-                ]
+                    { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
+                ],
+                drawCallback: function() {
+                    // Apply Tailwind classes to DataTable elements
+                    $('.dataTables_wrapper').addClass('w-full');
+                    $('.dataTables_filter input').addClass('form-input ml-2');
+                    $('.dataTables_length select').addClass('form-select ml-2');
+                    $('.dataTables_paginate .paginate_button').addClass('btn btn-secondary mx-1');
+                    $('.dataTables_paginate .paginate_button.current').removeClass('btn-secondary').addClass('btn-primary');
+                }
             });
 
             $('#userForm').on('submit', function(e) {
                 e.preventDefault();
                 saveUser();
+            });
+
+            $('#filterJabatan').on('change', function() {
+                table.ajax.reload();
+                $('#btnClearFilter').toggle(!!$(this).val());
+            });
+
+            $('#btnClearFilter').on('click', function() {
+                $('#filterJabatan').val('');
+                table.ajax.reload();
+                $(this).hide();
             });
         });
 
@@ -153,12 +200,12 @@
             $('#userId').val('');
             $('#passwordRequired').show();
             $('#passwordHint').hide();
-            $('.invalid-feedback').text('').hide();
-            $('.form-control').removeClass('is-invalid');
+            $('.invalid-feedback').text('').addClass('hidden');
+            $('.form-input, .form-select').removeClass('border-red-500');
 
             if (isEditMode) {
                 $('#passwordRequired').hide();
-                $('#passwordHint').show();
+                $('#passwordHint').removeClass('hidden');
                 $('#password').removeAttr('required');
                 
                 $.ajax({
@@ -171,8 +218,7 @@
                             $('#username').val(user.username);
                             $('#name').val(user.name);
                             $('#kab_kota').val(user.kab_kota);
-                            $('#jabatan').val(user.jabatan);
-                            $('#role').val(user.role_id);
+                            $('#user_role').val(user.role_id);
                         }
                     }
                 });
@@ -180,60 +226,75 @@
                 $('#password').attr('required', true);
             }
 
-            $('#userModal').modal('show');
+            modalManager.open('userModal');
         }
 
         function saveUser() {
-            const formData = {
+            var roleEl = document.getElementById('user_role') || document.querySelector('#userForm select[name="jabatan_role_id"]');
+            var roleVal = roleEl ? String(roleEl.value || '').trim() : '';
+            var payload = {
                 _token: '{{ csrf_token() }}',
-                username: $('#username').val(),
-                name: $('#name').val(),
-                password: $('#password').val(),
-                role: $('#role').val(),
-                kab_kota: $('#kab_kota').val(),
-                jabatan: $('#jabatan').val(),
+                username: document.getElementById('username').value,
+                name: document.getElementById('name').value,
+                password: document.getElementById('password').value,
+                jabatan_role_id: roleVal,
+                kab_kota: document.getElementById('kab_kota').value
             };
-
-            const userId = $('#userId').val();
-            const url = userId 
+            var userId = document.getElementById('userId').value;
+            if (userId) { payload._method = 'PUT'; }
+            var url = userId 
                 ? "{{ url('admin/role-management/users') }}/" + userId
                 : "{{ route('admin.role-management.store-user') }}";
-            const method = userId ? 'PUT' : 'POST';
+            var method = 'POST';
 
             $.ajax({
                 url: url,
                 type: method,
-                data: formData,
+                contentType: 'application/json',
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                data: JSON.stringify(payload),
                 success: function(response) {
                     if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: response.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                        $('#userModal').modal('hide');
+                        if (typeof showToast !== 'undefined') {
+                            showToast(response.message, 'success');
+                        } else {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        }
+                        modalManager.close('userModal');
                         table.ajax.reload();
                     }
                 },
                 error: function(xhr) {
                     if (xhr.status === 422) {
                         const errors = xhr.responseJSON.errors;
-                        $('.invalid-feedback').text('').hide();
-                        $('.form-control').removeClass('is-invalid');
-                        
+                        $('.invalid-feedback').text('').addClass('hidden');
+                        $('.form-input, .form-select').removeClass('border-red-500');
+                        var roleInputId = { 'role': 'user_role', 'role_id': 'user_role', 'jabatan_role_id': 'user_role' };
                         $.each(errors, function(key, value) {
-                            const input = $('#' + key);
-                            input.addClass('is-invalid');
-                            input.siblings('.invalid-feedback').text(value[0]).show();
+                            var inputId = roleInputId[key] || key;
+                            var input = $('#' + inputId);
+                            input.addClass('border-red-500');
+                            var feedback = input.siblings('.invalid-feedback').first();
+                            if (!feedback.length) feedback = $('#roleError');
+                            feedback.text(value[0]).removeClass('hidden');
                         });
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: xhr.responseJSON?.message || 'An error occurred'
-                        });
+                        const message = xhr.responseJSON?.message || 'An error occurred';
+                        if (typeof showToast !== 'undefined') {
+                            showToast(message, 'error');
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: message
+                            });
+                        }
                     }
                 }
             });
@@ -262,28 +323,42 @@
                         },
                         success: function(response) {
                             if (response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Deleted!',
-                                    text: response.message,
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
+                                if (typeof showToast !== 'undefined') {
+                                    showToast(response.message, 'success');
+                                } else {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Deleted!',
+                                        text: response.message,
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                }
                                 table.ajax.reload();
+                            } else {
+                                const message = response.message || 'Error occurred';
+                                if (typeof showToast !== 'undefined') {
+                                    showToast(message, 'error');
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error!',
+                                        text: message
+                                    });
+                                }
+                            }
+                        },
+                        error: function(xhr) {
+                            const message = xhr.responseJSON?.message || 'Failed to delete user';
+                            if (typeof showToast !== 'undefined') {
+                                showToast(message, 'error');
                             } else {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error!',
-                                    text: response.message
+                                    text: message
                                 });
                             }
-                        },
-                        error: function(xhr) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: xhr.responseJSON?.message || 'Failed to delete user'
-                            });
                         }
                     });
                 }

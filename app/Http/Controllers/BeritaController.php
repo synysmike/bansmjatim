@@ -42,14 +42,14 @@ class BeritaController extends Controller
                 ->addColumn('gambar', function ($row) {
                     if ($row->gmb) {
                         $url = asset($row->gmb); // uses public path directly
-                        return '<img src="' . $url . '" width="100" class="img-thumbnail" />';
+                        return '<img src="' . $url . '" class="w-20 h-20 object-cover rounded-lg border border-admin-border" alt="Berita Image" />';
                     }
-                    return '<span class="text-muted">No Image</span>';
+                    return '<span class="text-admin-text-secondary text-sm">No Image</span>';
                 })
                 ->addColumn('action', function ($row) {
-                    $editBtn = '<button type="button" class="btn btn-sm btn-primary editBeritaBtn" data-id="' . $row->id . '">Edit</button>';
-                    $deleteBtn = '<button type="button" class="btn btn-sm btn-danger deleteBeritaBtn" data-id="' . $row->id . '">Delete</button>';
-                    return $editBtn . ' ' . $deleteBtn;
+                    $editBtn = '<button type="button" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-admin-primary rounded-lg hover:bg-admin-primary-dark transition-all focus:outline-none focus:ring-2 focus:ring-admin-primary focus:ring-offset-2 editBeritaBtn" data-id="' . $row->id . '"><i class="fas fa-edit mr-1.5"></i>Edit</button>';
+                    $deleteBtn = '<button type="button" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-admin-danger rounded-lg hover:bg-red-600 transition-all focus:outline-none focus:ring-2 focus:ring-admin-danger focus:ring-offset-2 deleteBeritaBtn ml-2" data-id="' . $row->id . '"><i class="fas fa-trash mr-1.5"></i>Delete</button>';
+                    return '<div class="flex items-center space-x-2">' . $editBtn . $deleteBtn . '</div>';
                 })
                 ->rawColumns(['gambar', 'action'])
                 ->make(true);
@@ -131,9 +131,9 @@ class BeritaController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $editBtn = '<button type="button" class="btn btn-sm btn-primary editBtn" data-id="' . $row->id . '">Edit</button>';
-                    $deleteBtn = '<button type="button" class="btn btn-sm btn-danger deleteBtn" data-id="' . $row->id . '">Delete</button>';
-                    return $editBtn . ' ' . $deleteBtn;
+                    $editBtn = '<button type="button" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-admin-primary rounded-lg hover:bg-admin-primary-dark transition-all focus:outline-none focus:ring-2 focus:ring-admin-primary focus:ring-offset-2 editBtn" data-id="' . $row->id . '"><i class="fas fa-edit mr-1.5"></i>Edit</button>';
+                    $deleteBtn = '<button type="button" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-admin-danger rounded-lg hover:bg-red-600 transition-all focus:outline-none focus:ring-2 focus:ring-admin-danger focus:ring-offset-2 deleteBtn ml-2" data-id="' . $row->id . '"><i class="fas fa-trash mr-1.5"></i>Delete</button>';
+                    return '<div class="flex items-center space-x-2">' . $editBtn . $deleteBtn . '</div>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -183,40 +183,40 @@ class BeritaController extends Controller
         // Always return JSON for AJAX requests or when Accept header is application/json
         if (request()->wantsJson() || request()->ajax() || request()->expectsJson()) {
             // Helper function to get image URL
-            $getImageUrl = function($path) {
+            $getImageUrl = function ($path) {
                 if (!$path || trim($path) === '') return null;
-                
+
                 // Remove leading slash if present
                 $normalizedPath = ltrim($path, '/');
-                
+
                 // Check if path already starts with http (absolute URL)
                 if (strpos($normalizedPath, 'http') === 0) {
                     return $normalizedPath;
                 }
-                
+
                 // Check if file exists
                 $publicPath = public_path($normalizedPath);
                 if (file_exists($publicPath)) {
                     return asset($normalizedPath);
                 }
-                
+
                 // Fallback: try with asset() anyway
                 return asset($normalizedPath);
             };
-            
+
             // Get image URL - check both gmb and gmb1 fields, and any other image-related fields
             $imageUrl = null;
-            
+
             // Check gmb field
             if (!empty($beritum->gmb)) {
                 $imageUrl = $getImageUrl($beritum->gmb);
             }
-            
+
             // Check gmb1 field if gmb is empty
             if (!$imageUrl && !empty($beritum->gmb1)) {
                 $imageUrl = $getImageUrl($beritum->gmb1);
             }
-            
+
             // Debug: log what we found
             \Log::info('Berita image check', [
                 'id' => $beritum->id,
@@ -226,7 +226,7 @@ class BeritaController extends Controller
                 'imageUrl' => $imageUrl,
                 'all_attributes' => array_keys($beritum->getAttributes())
             ]);
-            
+
             return response()->json([
                 'id' => $beritum->id,
                 'judul' => $beritum->judul ?? '',
@@ -237,7 +237,7 @@ class BeritaController extends Controller
                 'updated_at' => $beritum->updated_at ? $beritum->updated_at->format('d M Y') : '',
             ]);
         }
-        
+
         return view('berita.show', compact('beritum'));
     }
 
@@ -331,12 +331,12 @@ class BeritaController extends Controller
     public function destroy($id)
     {
         $berita = berita::findOrFail($id);
-        
+
         // Delete associated image file if exists
         if ($berita->gmb && file_exists(public_path($berita->gmb))) {
             @unlink(public_path($berita->gmb));
         }
-        
+
         $berita->delete();
 
         return response()->json([

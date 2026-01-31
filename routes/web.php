@@ -72,12 +72,12 @@ Route::resource('/asesor', AsesorController::class);
 Route::resource('/presensi', AbsenDhController::class);
 Route::resource('/sekretariat', NamaSekretariatController::class);
 Route::resource('/judul_absen', JudulAbsenController::class);
-Route::get('/report_dh/{link}', [AbsenDhController::class, 'view']);
+Route::get('/report_dh/{id}', [AbsenDhController::class, 'view']);
 Route::get('/total', [VerifikasiController::class, 'total']);
 Route::get('/status', [DetilsekolahController::class, 'status']);
 Route::post('/perbaikan', [DetilsekolahController::class, 'perbaikan']);
 Route::post('/login', [AuthController::class, 'authenticate'])->name('authenticate');
-Route::get('/loginbansm', [AuthController::class, 'login'])->name('login');
+Route::get('/loginbanpdm', [AuthController::class, 'login'])->name('login');
 // Route::resource('/login', AuthController::class);
 Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -134,83 +134,12 @@ Route::get('/get-kat', [BeritaController::class, 'get_katlist']);
 Route::get('/kategori/{id}/edit', [BeritaController::class, 'edit_kat']);
 Route::delete('/kategori/{id}', [BeritaController::class, 'destroy_kat']);
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::resource('user', UserController::class);
-    Route::resource('admin/home', App\Http\Controllers\Admin\AdminHomeController::class)->names('admin.home');
-
-    // Super Admin Dashboard
+// Admin panel: staff can access dashboard, berita, staff, config, judul_absen; admin can access all including Home, Role & User, Deployment
+Route::middleware(['auth', 'role:admin|staff'])->group(function () {
+    // Super Admin Dashboard (admin + staff)
     Route::get('/admin/dashboard', [App\Http\Controllers\Admin\SuperAdminController::class, 'index'])->name('admin.dashboard');
 
-    // Deployment Helper Routes (for shared hosting like Rumahweb)
-    // These routes help you run artisan commands via web browser
-    Route::get('/admin/deployment/migrate', function () {
-        try {
-            Artisan::call('migrate', ['--force' => true]);
-            $output = Artisan::output();
-            return response()->json([
-                'success' => true,
-                'message' => 'Migrations completed successfully!',
-                'output' => $output
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Migration failed: ' . $e->getMessage()
-            ], 500);
-        }
-    })->name('admin.deployment.migrate');
-
-    Route::get('/admin/deployment/clear-cache', function () {
-        try {
-            Artisan::call('cache:clear');
-            Artisan::call('config:clear');
-            Artisan::call('route:clear');
-            Artisan::call('view:clear');
-            return response()->json([
-                'success' => true,
-                'message' => 'All caches cleared successfully!'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cache clear failed: ' . $e->getMessage()
-            ], 500);
-        }
-    })->name('admin.deployment.clear-cache');
-
-    Route::get('/admin/deployment/optimize', function () {
-        try {
-            Artisan::call('config:cache');
-            Artisan::call('route:cache');
-            Artisan::call('view:cache');
-            return response()->json([
-                'success' => true,
-                'message' => 'Application optimized successfully!'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Optimization failed: ' . $e->getMessage()
-            ], 500);
-        }
-    })->name('admin.deployment.optimize');
-
-    Route::get('/admin/deployment/storage-link', function () {
-        try {
-            Artisan::call('storage:link');
-            return response()->json([
-                'success' => true,
-                'message' => 'Storage link created successfully!'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Storage link failed: ' . $e->getMessage()
-            ], 500);
-        }
-    })->name('admin.deployment.storage-link');
-
-    // Berita Management (Admin access)
+    // Berita Management (admin + staff)
     Route::get('/admin/berita', [BeritaController::class, 'ordal_berita'])->name('admin.berita.index');
     Route::post('/admin/berita', [BeritaController::class, 'store'])->name('admin.berita.store');
     Route::get('/admin/berita/{id}/edit', [BeritaController::class, 'edit'])->name('admin.berita.edit');
@@ -222,7 +151,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/berita/kategori/{id}/edit', [BeritaController::class, 'edit_kat'])->name('admin.berita.kategori.edit');
     Route::delete('/admin/berita/kategori/{id}', [BeritaController::class, 'destroy_kat'])->name('admin.berita.kategori.destroy');
 
-    // Staff/Sekretariat Management (Admin access)
+    // Staff/Sekretariat Management (admin + staff)
     Route::get('/admin/staff', [NamaSekretariatController::class, 'index'])->name('admin.staff.index');
     Route::get('/admin/staff/create', [NamaSekretariatController::class, 'create'])->name('admin.staff.create');
     Route::post('/admin/staff', [NamaSekretariatController::class, 'store'])->name('admin.staff.store');
@@ -230,87 +159,145 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/admin/staff/{id}', [NamaSekretariatController::class, 'update'])->name('admin.staff.update');
     Route::delete('/admin/staff/{id}', [NamaSekretariatController::class, 'destroy'])->name('admin.staff.destroy');
 
-    // Config Management (Admin access)
+    // Config / Kegiatan Umum (admin + staff)
     Route::get('/admin/config', [ConfigController::class, 'index'])->name('admin.config.index');
     Route::post('/admin/config', [ConfigController::class, 'store'])->name('admin.config.store');
     Route::get('/admin/config/{id}', [ConfigController::class, 'show'])->name('admin.config.show');
     Route::delete('/admin/config/{id}', [ConfigController::class, 'destroy'])->name('admin.config.destroy');
 
-    // Role & User Management (Admin access)
-    Route::get('/admin/role-management', [App\Http\Controllers\Admin\RoleManagementController::class, 'index'])->name('admin.role-management.index');
+    // Judul Absen / Kegiatan Internal (admin + staff)
+    Route::resource('/admin/judul_absen', JudulAbsenController::class)->names('admin.judul_absen');
 
-    // User Management Routes
-    Route::get('/admin/role-management/users', [App\Http\Controllers\Admin\RoleManagementController::class, 'users'])->name('admin.role-management.users');
-    Route::post('/admin/role-management/users', [App\Http\Controllers\Admin\RoleManagementController::class, 'storeUser'])->name('admin.role-management.store-user');
-    Route::get('/admin/role-management/users/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'getUser'])->name('admin.role-management.get-user');
-    Route::put('/admin/role-management/users/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'updateUser'])->name('admin.role-management.update-user');
-    Route::delete('/admin/role-management/users/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'destroyUser'])->name('admin.role-management.destroy-user');
+    // Admin-only routes (Home, User resource, Deployment, Role Management)
+    Route::middleware(['role:admin'])->group(function () {
+        Route::resource('user', UserController::class);
+        Route::resource('admin/home', App\Http\Controllers\Admin\AdminHomeController::class)->names('admin.home');
 
-    // Role Management Routes
-    Route::get('/admin/role-management/roles', [App\Http\Controllers\Admin\RoleManagementController::class, 'roles'])->name('admin.role-management.roles');
-    Route::post('/admin/role-management/roles', [App\Http\Controllers\Admin\RoleManagementController::class, 'storeRole'])->name('admin.role-management.store-role');
-    Route::get('/admin/role-management/roles/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'getRole'])->name('admin.role-management.get-role');
-    Route::put('/admin/role-management/roles/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'updateRole'])->name('admin.role-management.update-role');
-    Route::delete('/admin/role-management/roles/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'destroyRole'])->name('admin.role-management.destroy-role');
-
-    // Permission Management Routes
-    Route::get('/admin/role-management/permissions', [App\Http\Controllers\Admin\RoleManagementController::class, 'permissions'])->name('admin.role-management.permissions');
-    Route::post('/admin/role-management/permissions', [App\Http\Controllers\Admin\RoleManagementController::class, 'storePermission'])->name('admin.role-management.store-permission');
-    Route::delete('/admin/role-management/permissions/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'destroyPermission'])->name('admin.role-management.destroy-permission');
-    Route::get('/admin/role-management/permissions/all', [App\Http\Controllers\Admin\RoleManagementController::class, 'getAllPermissions'])->name('admin.role-management.get-all-permissions');
-
-    // Database fix route
-    Route::get('/admin/role-management/fix-permissions-table', function () {
-        try {
-            // Check current structure
-            $tableInfo = DB::select("SHOW COLUMNS FROM permissions WHERE Field = 'id'");
-            if (empty($tableInfo)) {
+        Route::get('/admin/deployment/migrate', function () {
+            try {
+                Artisan::call('migrate', ['--force' => true]);
+                $output = Artisan::output();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Migrations completed successfully!',
+                    'output' => $output
+                ]);
+            } catch (\Exception $e) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'ID column not found'
+                    'message' => 'Migration failed: ' . $e->getMessage()
                 ], 500);
             }
+        })->name('admin.deployment.migrate');
 
-            $idColumn = $tableInfo[0];
-            $isAutoIncrement = strpos($idColumn->Extra, 'auto_increment') !== false;
-
-            if ($isAutoIncrement) {
+        Route::get('/admin/deployment/clear-cache', function () {
+            try {
+                Artisan::call('cache:clear');
+                Artisan::call('config:clear');
+                Artisan::call('route:clear');
+                Artisan::call('view:clear');
                 return response()->json([
                     'success' => true,
-                    'message' => 'Table structure is correct. ID column is already AUTO_INCREMENT.',
-                    'current_structure' => $idColumn
+                    'message' => 'All caches cleared successfully!'
                 ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cache clear failed: ' . $e->getMessage()
+                ], 500);
             }
+        })->name('admin.deployment.clear-cache');
 
-            // Try to fix it
-            DB::statement("ALTER TABLE permissions MODIFY id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT");
-
-            // Verify
-            $newTableInfo = DB::select("SHOW COLUMNS FROM permissions WHERE Field = 'id'");
-            $newIdColumn = $newTableInfo[0];
-            $newIsAutoIncrement = strpos($newIdColumn->Extra, 'auto_increment') !== false;
-
-            if ($newIsAutoIncrement) {
+        Route::get('/admin/deployment/optimize', function () {
+            try {
+                Artisan::call('config:cache');
+                Artisan::call('route:cache');
+                Artisan::call('view:cache');
                 return response()->json([
                     'success' => true,
-                    'message' => 'Table structure fixed successfully! ID column is now AUTO_INCREMENT.',
-                    'old_structure' => $idColumn,
-                    'new_structure' => $newIdColumn
+                    'message' => 'Application optimized successfully!'
                 ]);
-            } else {
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Optimization failed: ' . $e->getMessage()
+                ], 500);
+            }
+        })->name('admin.deployment.optimize');
+
+        Route::get('/admin/deployment/storage-link', function () {
+            try {
+                Artisan::call('storage:link');
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Storage link created successfully!'
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Storage link failed: ' . $e->getMessage()
+                ], 500);
+            }
+        })->name('admin.deployment.storage-link');
+
+        Route::get('/admin/role-management', [App\Http\Controllers\Admin\RoleManagementController::class, 'index'])->name('admin.role-management.index');
+        Route::get('/admin/role-management/users', [App\Http\Controllers\Admin\RoleManagementController::class, 'users'])->name('admin.role-management.users');
+        Route::post('/admin/role-management/users', [App\Http\Controllers\Admin\RoleManagementController::class, 'storeUser'])->name('admin.role-management.store-user');
+        Route::get('/admin/role-management/users/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'getUser'])->name('admin.role-management.get-user');
+        Route::put('/admin/role-management/users/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'updateUser'])->name('admin.role-management.update-user');
+        Route::delete('/admin/role-management/users/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'destroyUser'])->name('admin.role-management.destroy-user');
+        Route::get('/admin/role-management/roles', [App\Http\Controllers\Admin\RoleManagementController::class, 'roles'])->name('admin.role-management.roles');
+        Route::post('/admin/role-management/roles', [App\Http\Controllers\Admin\RoleManagementController::class, 'storeRole'])->name('admin.role-management.store-role');
+        Route::get('/admin/role-management/roles/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'getRole'])->name('admin.role-management.get-role');
+        Route::put('/admin/role-management/roles/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'updateRole'])->name('admin.role-management.update-role');
+        Route::delete('/admin/role-management/roles/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'destroyRole'])->name('admin.role-management.destroy-role');
+        Route::get('/admin/role-management/permissions', [App\Http\Controllers\Admin\RoleManagementController::class, 'permissions'])->name('admin.role-management.permissions');
+        Route::post('/admin/role-management/permissions', [App\Http\Controllers\Admin\RoleManagementController::class, 'storePermission'])->name('admin.role-management.store-permission');
+        Route::delete('/admin/role-management/permissions/{id}', [App\Http\Controllers\Admin\RoleManagementController::class, 'destroyPermission'])->name('admin.role-management.destroy-permission');
+        Route::get('/admin/role-management/permissions/all', [App\Http\Controllers\Admin\RoleManagementController::class, 'getAllPermissions'])->name('admin.role-management.get-all-permissions');
+        Route::get('/admin/role-management/fix-permissions-table', function () {
+            try {
+                $tableInfo = DB::select("SHOW COLUMNS FROM permissions WHERE Field = 'id'");
+                if (empty($tableInfo)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'ID column not found'
+                    ], 500);
+                }
+                $idColumn = $tableInfo[0];
+                $isAutoIncrement = strpos($idColumn->Extra, 'auto_increment') !== false;
+                if ($isAutoIncrement) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Table structure is correct. ID column is already AUTO_INCREMENT.',
+                        'current_structure' => $idColumn
+                    ]);
+                }
+                DB::statement("ALTER TABLE permissions MODIFY id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT");
+                $newTableInfo = DB::select("SHOW COLUMNS FROM permissions WHERE Field = 'id'");
+                $newIdColumn = $newTableInfo[0];
+                $newIsAutoIncrement = strpos($newIdColumn->Extra, 'auto_increment') !== false;
+                if ($newIsAutoIncrement) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Table structure fixed successfully! ID column is now AUTO_INCREMENT.',
+                        'old_structure' => $idColumn,
+                        'new_structure' => $newIdColumn
+                    ]);
+                }
                 return response()->json([
                     'success' => false,
                     'message' => 'Failed to set AUTO_INCREMENT. You may need to fix it manually.',
                     'structure' => $newIdColumn
                 ], 500);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error: ' . $e->getMessage()
+                ], 500);
             }
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error: ' . $e->getMessage()
-            ], 500);
-        }
-    })->name('admin.role-management.fix-permissions-table');
+        })->name('admin.role-management.fix-permissions-table');
+    });
 });
 
 Route::middleware(['auth', 'role:kpa|admin'])->group(function () {

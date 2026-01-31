@@ -1,363 +1,288 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>{{ $judul }}&mdash; BAN-PDM JATIM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta property="og:title" content="{{ $judul }}" />
-    {{-- <meta property="og:type" content="video.movie" /> --}}
-    <meta property="og:url" content="{{ url()->current() }}" />
-    <meta property="og:image" content="/ban.png" />
-    <link rel="icon" type="image/x-icon" href="/ban.png">
-    <!-- General CSS Files -->
-    <link rel="stylesheet" href="{{ asset('admin_theme/library/bootstrap/dist/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- CSS Libraries -->
-    <link rel="stylesheet" href="{{ asset('admin_theme/library/selectric/selectric.css') }}">
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="{{ asset('admin_theme/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin_theme/css/components.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
+    <title>{{ $tittle ?? $judul ?? 'Form' }} - BAN-PDM Jatim</title>
+    <link rel="icon" type="image/png" href="{{ asset('ban.png') }}">
 
+    <link rel="stylesheet" href="{{ asset('public_assets/css/tailwind.css') }}" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link rel="stylesheet" href="{{ asset('admin_theme/library/bootstrap-daterangepicker/daterangepicker.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
-    <!-- Start GA -->
 
-    <!-- END GA -->
+    @include('ad_layout.partials.theme_styles')
+    <style>
+        .page-container { max-width: 42rem; margin: 0 auto; padding: 2rem 1rem; }
+        .card-header { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #fff; padding: 1.5rem; }
+        .text-muted { color: #64748b; }
+    </style>
 </head>
+<body class="min-h-screen" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); font-family: 'Ubuntu', sans-serif;">
+    <div id="app" class="min-h-screen flex flex-col">
+        <main class="flex-1 py-8 px-4">
+            <div class="page-container">
+                <h1 class="text-3xl font-bold text-slate-800 mb-1">{{ $judul ?? 'Form' }} BAN-PDM JAWA TIMUR</h1>
+                <p class="text-sm text-muted mb-6">{{ $judul ?? 'Form' }}</p>
 
-<body>
-    <div id="app">
-        <div class="modal fade" tabindex="-1" role="dialog" id="modal-show">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>{{ $judul }}</h3>
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="card-header">
+                        <h2 class="text-xl font-semibold">{{ $judul ?? 'Form' }} BAN-PDM JAWA TIMUR</h2>
                     </div>
-                    <div class="modal-body">
-                        <div class="table-responsive">
-                            <table class="table-striped table" id="table-1">
-                                <thead>
-                                    <tr>
-                                        @foreach ($theads as $tbh)
-                                            <th class="text-center">{{ $tbh }}</th>
+                    <div class="p-6">
+                        <form id="id-form" enctype="multipart/form-data">
+                            {!! $kategori !!}
+                            @if (isset($ass) && $ass !== null)
+                                <div class="form-group mb-6">
+                                    <label for="selectValue" class="form-label">Pilih Nama :</label>
+                                    <select id="selectValue" name="nia_ass" class="form-control w-full" required>
+                                        <option value="">--Pilih Nama--</option>
+                                        @foreach ($ass as $nama)
+                                            <option value="{{ $nama->nia }}">{{ $nama->nia }} {{ $nama->nama_tanpa_gelar }}</option>
                                         @endforeach
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+                                    </select>
+                                </div>
+                            @endif
+                            @foreach ($form as $key)
+                                {!! $key->tag_field !!}
+                            @endforeach
+
+                            <div class="form-group mb-6">
+                                <input type="hidden" id="kat_dh" name="kat_dh" value="{{ $kat }}">
+                                <input type="hidden" id="signature" name="signature">
+                                <label for="sig" class="form-label">Tandatangan :</label>
+                                <div class="mt-2">
+                                    <div class="js-signature border border-slate-200 rounded-lg overflow-hidden bg-white" data-width="600" data-height="200" data-border="1px solid #e2e8f0" data-line-color="#000000" data-auto-fit="true"></div>
+                                </div>
+                                <div id="errsign" class="text-red-600 text-sm mt-1"></div>
+                                <button type="button" id="clearBtn" class="btn btn-danger mt-2">Ulangi TTD</button>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-3 pt-4">
+                                <button type="submit" class="btn btn-primary inline-flex items-center gap-2" id="btn-save">
+                                    <i class="fas fa-save"></i>
+                                    <span>Simpan</span>
+                                </button>
+                                <button type="button" id="modal-2" class="btn btn-info inline-flex items-center gap-2">
+                                    <i class="fas fa-list"></i>
+                                    <span>Lihat pengunjung</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="modal-footer bg-whitesmoke br">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+            <div class="page-container text-center text-sm text-slate-600">
+                Copyright &copy; 2022 &middot; BAN-PDM Provinsi Jawa Timur &middot; ir.teguh IT BANPDMJATIM
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal: Lihat pengunjung -->
+    <div id="modal-show" class="modal-wrapper modal-xl" data-open="false">
+        <div class="modal-backdrop" onclick="modalManager.close('modal-show')"></div>
+        <div class="modal-content-wrapper">
+            <div class="modal-content">
+                <div class="card-header px-6 py-4 flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-white">{{ $judul ?? 'Daftar' }}</h3>
+                    <button type="button" onclick="modalManager.close('modal-show')" class="text-white hover:opacity-80" aria-label="Close">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-6 overflow-y-auto">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200" id="table-1">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    @foreach ($theads as $tbh)
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wider">{{ $tbh }}</th>
+                                    @endforeach
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-slate-200 flex justify-end bg-white">
+                    <button type="button" onclick="modalManager.close('modal-show')" class="btn btn-secondary">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Success (Cetak Hasil) -->
+    <div id="modal-success" class="modal-wrapper modal-sm" data-open="false">
+        <div class="modal-backdrop" onclick="modalManager.close('modal-success')"></div>
+        <div class="modal-content-wrapper">
+            <div class="modal-content">
+                <div class="p-6 text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                        <i class="fas fa-check text-green-600 text-2xl"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-slate-800 mb-2">Berhasil</h4>
+                    <p class="text-slate-600 mb-6">Berkas telah tersimpan.</p>
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <button type="button" onclick="modalManager.close('modal-success')" class="btn btn-secondary">Tutup</button>
+                        <a id="btn-cetak-hasil" href="#" target="_blank" class="btn btn-primary inline-flex items-center gap-2">
+                            <i class="fas fa-print"></i>
+                            <span>Cetak Hasil</span>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-        <section class="section">
-            <div class="container mt-5">
-                <div class="row">
-                    <div
-                        class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-8 offset-lg-2 col-xl-8 offset-xl-2">
-                        <!-- Footer -->
-                        <div class="login-brand">
-                            <img src="/ban.png" alt="logo" width="150" class="shadow-light">
-                        </div>
-                        <!-- Content -->
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h4>{{ $judul }} BAN-PDM JAWA TIMUR</h4>
-                            </div>
-                            <div class="card-body">
-                                <form id="id-form" enctype="multipart/form-data">
-                                    {!! $kategori !!}
-                                    @if ($ass !== null)
-                                        <div class="form-group pb-3"> <label>Pilih Nama :</label> <select
-                                                id="selectValue" name="nia_ass" class="form-control" required>
-                                                <option value="">--Pilih Nama--</option>
-                                                @foreach ($ass as $nama)
-                                                    <option value="{{ $nama->nia }}">{{ $nama->nia }}
-                                                        {{ $nama->nama_tanpa_gelar }}
-                                                    </option>
-                                                @endforeach
-                                            </select></div>
-                                    @endif
-                                    @foreach ($form as $key)
-                                        {!! $key->tag_field !!}
-                                    @endforeach
-
-                                    <div class='form-group'>
-                                        <input required type='hidden' id='kat_dh' name='kat_dh'
-                                            value="{{ $kat }}">
-                                        <input required type='hidden' id='signature' name='signature'>
-                                        <label for="sig">Tandatangan :</label>
-                                        </br>
-                                        <div class="js-signature" data-width="600" data-height="200"
-                                            data-border="1px solid black" data-line-color="#000000"
-                                            data-auto-fit="true"></div>
-                                        <div id="errsign" class="alert-danger"></div>
-                                        <button id="clearBtn" class="btn btn-danger">Ulangi TTD</button>
-                                        <div class="invalid-feedback">
-                                        </div>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary btn-icon icon-right"
-                                        id="btn-save">simpan</button>
-                                </form>
-                                {{-- <button type="submit" class="btn btn-primary btn-lg btn-block">
-                                            Register
-                                        </button> --}}
-                                <button class="btn btn-primary btn-lg trigger--fire-modal-2" id="modal-2">lihat
-                                    pengunjung</button>
-                            </div>
-                        </div>
-                        <!-- Footer -->
-                        <div class="simple-footer">
-                            Copyright &copy; BAN-PDM Provinsi Jawa Timur by IR.TEGUH
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {{-- <div class="modal fade" tabindex="-1" role="dialog" id="editModal-show">
-            <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
-                <form id="edit-form" action="" enctype="multipart/form-data">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 id="tittle" class="modal-title"></h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            @foreach ($form as $key)
-                                {!! $key->tag_field !!}
-                            @endforeach
-                        </div>
-                        <div class="modal-footer">
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div> --}}
-    </div>
     </div>
 
-    <!-- General JS Scripts -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[60] space-y-2" style="display: none;"></div>
 
-    <script src="{{ asset('admin_theme/library/jquery/dist/jquery.min.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/popper.js/dist/umd/popper.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/tooltip.js/dist/umd/tooltip.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/jquery.nicescroll/dist/jquery.nicescroll.min.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/moment/min/moment.min.js') }}"></script>
-    <script src="{{ asset('admin_theme/js/stisla.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"
-        integrity="sha512-0QDLUJ0ILnknsQdYYjG7v2j8wERkKufvjBNmng/EdR/s/SE7X8cQ9y0+wMzuQT0lfXQ/NhG+zhmHNOWTUS3kMA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="{{ asset('jq-signature/jq-signature.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/additional-methods.js"></script>
-    <script src="{{ asset('admin_theme/library/cleave.js/dist/cleave.min.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/cleave.js/dist/addons/cleave-phone.id.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/sweetalert/dist/sweetalert.min.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/datatables/media/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/selectric/jquery.selectric.min.js') }}"></script>
-    <script src="{{ asset('admin_theme/library/jquery.pwstrength/jquery.pwstrength.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.print.min.js"></script>
-    <!-- Page Specific JS File -->
-    <!-- Template JS File -->
-    <script src="{{ asset('admin_theme/js/page/auth-register.js') }}"></script>
-    {{-- <script src="admin_theme/js/scripts.js"></script>
-    <script src="admin_theme/js/custom.js"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('admin_theme/library/moment/min/moment.min.js') }}"></script>
+    <script src="{{ asset('admin_theme/library/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('jq-signature/jq-signature.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+    <script src="{{ asset('admin_theme/library/cleave.js/dist/cleave.min.js') }}"></script>
+    <script src="{{ asset('admin_theme/library/cleave.js/dist/addons/cleave-phone.id.js') }}"></script>
     <script>
+        function showToast(message, type) {
+            type = type || 'success';
+            var container = document.getElementById('toast-container');
+            if (!container) return;
+            container.style.display = 'block';
+            var bg = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#3b82f6';
+            var toast = document.createElement('div');
+            toast.style.cssText = 'background:' + bg + ';color:#fff;padding:1rem 1.5rem;border-radius:0.5rem;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);display:flex;align-items:center;gap:0.75rem;min-width:300px;max-width:28rem;';
+            toast.innerHTML = '<span class="flex-1">' + message + '</span><button onclick="this.parentElement.remove();" style="background:none;border:none;color:#fff;cursor:pointer;">&times;</button>';
+            container.appendChild(toast);
+            setTimeout(function() { if (toast.parentNode) toast.remove(); if (container.children.length === 0) container.style.display = 'none'; }, 5000);
+        }
+        window.modalManager = {
+            open: function(id) {
+                var m = document.getElementById(id);
+                if (m) { m.setAttribute('data-open', 'true'); document.body.style.overflow = 'hidden'; document.body.style.position = 'fixed'; document.body.style.width = '100%'; }
+            },
+            close: function(id) {
+                var m = document.getElementById(id);
+                if (m) { m.setAttribute('data-open', 'false'); document.body.style.overflow = ''; document.body.style.position = ''; document.body.style.width = ''; }
+            },
+            closeAll: function() {
+                document.querySelectorAll('.modal-wrapper').forEach(function(m) { m.setAttribute('data-open', 'false'); });
+                document.body.style.overflow = ''; document.body.style.position = ''; document.body.style.width = '';
+            }
+        };
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') modalManager.closeAll(); });
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.modal-wrapper').forEach(function(m) { m.setAttribute('data-open', 'false'); });
+        });
+
         $(document).ready(function() {
-            $("#selectValue").select2({
-                placeholder: "Pilih nama | Ketikan nama/NIA anda Disini, lalu pilih nama anda"
-            });
-            "use strict";
-            var cleavePN = new Cleave(".phone-number", {
-                phone: true,
-                phoneRegionCode: "id",
-            });
+            if ($('#selectValue').length) {
+                $('#selectValue').select2({ placeholder: "Pilih nama | Ketik nama/NIA anda di sini, lalu pilih nama anda" });
+            }
+            if (typeof Cleave !== 'undefined') {
+                try { new Cleave(".phone-number", { phone: true, phoneRegionCode: "id" }); } catch (e) {}
+            }
             $('.datepicker').daterangepicker({
-                locale: {
-                    format: 'DD-MM-YYYY'
-                },
+                locale: { format: 'DD-MM-YYYY' },
                 singleDatePicker: true,
                 showDropdowns: true,
                 minYear: 1901,
                 maxYear: parseInt(moment().format('YYYY'), 10)
             });
-            // for limit number char on phone number
-            // $('#btn-save').attr('disabled', true);
             $('.js-signature').jqSignature();
-            $('#clearBtn').click(function() {
-                $('.js-signature').jqSignature('clearCanvas');
-                // $('#btn-save').attr('disabled', true);                
-            });
-            $('number#title').attr('maxLength', '8').keypress(limitMe);
-
+            $('#clearBtn').on('click', function() { $('.js-signature').jqSignature('clearCanvas'); });
             function limitMe(e) {
-                if (e.keyCode == 8) {
-                    return true;
-                }
-                return this.value.length < $(this).attr("maxLength");
+                if (e.keyCode === 8) return true;
+                return this.value.length < parseInt($(this).attr("maxLength") || 999, 10);
             }
-            $(document).on('click', '.show-btn', function() {
-                $('#id-form').trigger("reset");
-                $("#editModal-show").modal('show');
-                var data_id = $(this).data('id');
+            $('input[type="number"]#title, number#title').attr('maxLength', '8').on('keypress', limitMe);
 
-                $.get("{{ $link }}/" + data_id, function(data) {
-                    console.log(data.nama);
-                });
-            });
-
-            $('#modal-2').click(function() {
-                $("#modal-show").modal('show');
-                // dynamic datatable
-                var label = [];
-                '@foreach ($unit as $unt)';
-                label.push('{!! $unt !!}');
-                '@endforeach';
-                // console.log(label);
-                var columns = [];
-
-                $.each(label, function(key, value) {
-                    var my_item = {};
-                    my_item.name = value;
-                    my_item.data = value;
-                    columns.push(my_item);
-                });
-                // datatable yajra
-                var table = $('#table-1').DataTable({
-                    'processing': true,
-                    'serverSide': true, //aktifkan server-side 
-                    'ajax': {
-                        'url': '{{ $link }}', // ambil data
-                        'type': 'GET'
-                    },
-                    // parsing nama columns
-                    'columns': columns,
-                    'bAutoWidth': false,
-
-                });
-                // console.log(table);
-                new $.fn.dataTable.Buttons(table, {
-                    buttons: [
-                        'copy', 'csv', 'pdf'
-                    ],
-
-                });
-                table.buttons(0, null).container().prependTo(
-                    table.table().container()
-                );
-                var oTable = $("#table-1").dataTable();
-                oTable.fnDraw(false);
-            });
-            $("#jumlah_progli").on('change', function() {
-                var vals = this.value
-                console.log(vals)
-                if (vals == "lain") {
-                    $("#jumlah_progli").remove()
-                    $("#field_progli").append(
-                        "<input required id='jumlah_progli' placeholder='Masukan Jumlah Progli' name='jumlah_progli' class='form-control' type='textarea'>"
-                    )
-
+            $('#modal-2').on('click', function() {
+                modalManager.open('modal-show');
+                if ($.fn.DataTable.isDataTable('#table-1')) {
+                    $('#table-1').DataTable().ajax.reload(null, false);
+                    return;
                 }
-            })
+                var label = @json($unit ?? []);
+                var columns = [];
+                $.each(label, function(k, v) { columns.push({ name: v, data: v }); });
+                $('#table-1').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: { url: '{{ $link ?? "" }}', type: 'GET' },
+                    columns: columns,
+                    bAutoWidth: false
+                });
+                new $.fn.dataTable.Buttons($('#table-1').DataTable(), { buttons: ['copy', 'csv', 'pdf'] });
+                $('#table-1').DataTable().buttons(0, null).container().prependTo($('#table-1').closest('.overflow-x-auto'));
+            });
+
+            $("#jumlah_progli").on('change', function() {
+                if (this.value === "lain") {
+                    $("#jumlah_progli").remove();
+                    $("#field_progli").append("<input required id='jumlah_progli' placeholder='Masukan Jumlah Progli' name='jumlah_progli' class='form-control w-full' type='text'>");
+                }
+            });
             $(".daftar_progli").summernote({
                 dialogsInBody: true,
                 placeholder: 'Progli 1 :, Progli 2 :, Progli 3:, dan seterusnya... (Wajib Diakhiri (,) koma di setiap progli)',
                 minHeight: 150,
-                toolbar: [
-                    ['style', ['bold', 'italic', 'underline', 'clear']],
-                    ['font', ['strikethrough']],
-                    ['para', ['paragraph']]
-                ]
+                toolbar: [ ['style', ['bold', 'italic', 'underline', 'clear']], ['font', ['strikethrough']], ['para', ['paragraph']] ]
             });
 
-            $(document).on('submit', '#id-form', function(e) {
-                var blankSignature = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqgAAADICAYAAAAk0xMvAAAAAXNSR0IArs4c6QAACy9JREFUeF7t1jERAAAMArHi33Rt/JAq4EIHdo4AAQIECBAgQIBASGChLKIQIECAAAECBAgQOAPVExAgQIAAAQIECKQEDNRUHcIQIECAAAECBAgYqH6AAAECBAgQIEAgJWCgpuoQhgABAgQIECBAwED1AwQIECBAgAABAikBAzVVhzAECBAgQIAAAQIGqh8gQIAAAQIECBBICRioqTqEIUCAAAECBAgQMFD9AAECBAgQIECAQErAQE3VIQwBAgQIECBAgICB6gcIECBAgAABAgRSAgZqqg5hCBAgQIAAAQIEDFQ/QIAAAQIECBAgkBIwUFN1CEOAAAECBAgQIGCg+gECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgAABAgQIpAQM1FQdwhAgQIAAAQIECBiofoAAAQIECBAgQCAlYKCm6hCGAAECBAgQIEDAQPUDBAgQIECAAAECKQEDNVWHMAQIECBAgAABAgaqHyBAgAABAgQIEEgJGKipOoQhQIAAAQIECBAwUP0AAQIECBAgQIBASsBATdUhDAECBAgQIECAgIHqBwgQIECAAAECBFICBmqqDmEIECBAgAABAgQMVD9AgAABAgQIECCQEjBQU3UIQ4AAAQIECBAgYKD6AQIECBAgQIAAgZSAgZqqQxgCBAgQIECAAAED1Q8QIECAAAECBAikBAzUVB3CECBAgAABAgQIGKh+gAABAgQIECBAICVgoKbqEIYAAQIECBAgQMBA9QMECBAgQIAAAQIpAQM1VYcwBAgQIECAAAECBqofIECAAAECBAgQSAkYqKk6hCFAgAABAgQIEDBQ/QABAgQIECBAgEBKwEBN1SEMAQIECBAgQICAgeoHCBAgQIAAAQIEUgIGaqoOYQgQIECAAAECBAxUP0CAAAECBAgQIJASMFBTdQhDgAABAgQIECBgoPoBAgQIECBAgACBlICBmqpDGAIECBAgQIAAAQPVDxAgQIAAAQIECKQEDNRUHcIQIECAAAECBAgYqH6AAAECBAgQIEAgJWCgpuoQhgABAgQIECBAwED1AwQIECBAgAABAikBAzVVhzAECBAgQIAAAQIGqh8gQIAAAQIECBBICRioqTqEIUCAAAECBAgQMFD9AAECBAgQIECAQErAQE3VIQwBAgQIECBAgICB6gcIECBAgAABAgRSAgZqqg5hCBAgQIAAAQIEDFQ/QIAAAQIECBAgkBIwUFN1CEOAAAECBAgQIGCg+gECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgAABAgQIpAQM1FQdwhAgQIAAAQIECBiofoAAAQIECBAgQCAlYKCm6hCGAAECBAgQIEDAQPUDBAgQIECAAAECKQEDNVWHMAQIECBAgAABAgaqHyBAgAABAgQIEEgJGKipOoQhQIAAAQIECBAwUP0AAQIECBAgQIBASsBATdUhDAECBAgQIECAgIHqBwgQIECAAAECBFICBmqqDmEIECBAgAABAgQMVD9AgAABAgQIECCQEjBQU3UIQ4AAAQIECBAgYKD6AQIECBAgQIAAgZSAgZqqQxgCBAgQIECAAAED1Q8QIECAAAECBAikBAzUVB3CECBAgAABAgQIGKh+gAABAgQIECBAICVgoKbqEIYAAQIECBAgQMBA9QMECBAgQIAAAQIpAQM1VYcwBAgQIECAAAECBqofIECAAAECBAgQSAkYqKk6hCFAgAABAgQIEDBQ/QABAgQIECBAgEBKwEBN1SEMAQIECBAgQICAgeoHCBAgQIAAAQIEUgIGaqoOYQgQIECAAAECBAxUP0CAAAECBAgQIJASMFBTdQhDgAABAgQIECBgoPoBAgQIECBAgACBlICBmqpDGAIECBAgQIAAAQPVDxAgQIAAAQIECKQEDNRUHcIQIECAAAECBAgYqH6AAAECBAgQIEAgJWCgpuoQhgABAgQIECBAwED1AwQIECBAgAABAikBAzVVhzAECBAgQIAAAQIGqh8gQIAAAQIECBBICRioqTqEIUCAAAECBAgQMFD9AAECBAgQIECAQErAQE3VIQwBAgQIECBAgICB6gcIECBAgAABAgRSAgZqqg5hCBAgQIAAAQIEDFQ/QIAAAQIECBAgkBIwUFN1CEOAAAECBAgQIGCg+gECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgAABAgQIpAQM1FQdwhAgQIAAAQIECBiofoAAAQIECBAgQCAlYKCm6hCGAAECBAgQIEDAQPUDBAgQIECAAAECKQEDNVWHMAQIECBAgAABAgaqHyBAgAABAgQIEEgJGKipOoQhQIAAAQIECBAwUP0AAQIECBAgQIBASsBATdUhDAECBAgQIECAgIHqBwgQIECAAAECBFICBmqqDmEIECBAgAABAgQMVD9AgAABAgQIECCQEjBQU3UIQ4AAAQIECBAgYKD6AQIECBAgQIAAgZSAgZqqQxgCBAgQIECAAAED1Q8QIECAAAECBAikBAzUVB3CECBAgAABAgQIGKh+gAABAgQIECBAICVgoKbqEIYAAQIECBAgQMBA9QMECBAgQIAAAQIpAQM1VYcwBAgQIECAAAECBqofIECAAAECBAgQSAkYqKk6hCFAgAABAgQIEDBQ/QABAgQIECBAgEBKwEBN1SEMAQIECBAgQICAgeoHCBAgQIAAAQIEUgIGaqoOYQgQIECAAAECBAxUP0CAAAECBAgQIJASMFBTdQhDgAABAgQIECBgoPoBAgQIECBAgACBlICBmqpDGAIECBAgQIAAAQPVDxAgQIAAAQIECKQEDNRUHcIQIECAAAECBAgYqH6AAAECBAgQIEAgJWCgpuoQhgABAgQIECBAwED1AwQIECBAgAABAikBAzVVhzAECBAgQIAAAQIGqh8gQIAAAQIECBBICRioqTqEIUCAAAECBAgQMFD9AAECBAgQIECAQErAQE3VIQwBAgQIECBAgICB6gcIECBAgAABAgRSAgZqqg5hCBAgQIAAAQIEDFQ/QIAAAQIECBAgkBIwUFN1CEOAAAECBAgQIGCg+gECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgAABAgQIpAQM1FQdwhAgQIAAAQIECBiofoAAAQIECBAgQCAlYKCm6hCGAAECBAgQIEDAQPUDBAgQIECAAAECKQEDNVWHMAQIECBAgAABAgaqHyBAgAABAgQIEEgJGKipOoQhQIAAAQIECBAwUP0AAQIECBAgQIBASsBATdUhDAECBAgQIECAgIHqBwgQIECAAAECBFICBmqqDmEIECBAgAABAgQMVD9AgAABAgQIECCQEjBQU3UIQ4AAAQIECBAgYKD6AQIECBAgQIAAgZSAgZqqQxgCBAgQIECAAAED1Q8QIECAAAECBAikBAzUVB3CECBAgAABAgQIGKh+gAABAgQIECBAICVgoKbqEIYAAQIECBAgQMBA9QMECBAgQIAAAQIpAQM1VYcwBAgQIECAAAECBqofIECAAAECBAgQSAkYqKk6hCFAgAABAgQIEDBQ/QABAgQIECBAgEBKwEBN1SEMAQIECBAgQICAgeoHCBAgQIAAAQIEUgIGaqoOYQgQIECAAAECBAxUP0CAAAECBAgQIJASMFBTdQhDgAABAgQIECBgoPoBAgQIECBAgACBlICBmqpDGAIECBAgQIAAAQPVDxAgQIAAAQIECKQEDNRUHcIQIECAAAECBAgYqH6AAAECBAgQIEAgJWCgpuoQhgABAgQIECBAwED1AwQIECBAgAABAikBAzVVhzAECBAgQIAAAQIPCDEAyXM/m1YAAAAASUVORK5CYII=";
+            var blankSignature = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqgAAADICAYAAAAk0xMvAAAAAXNSR0IArs4c6QAACy9JREFUeF7t1jERAAAMArHi33Rv/JAq4EIHdo4AAQIECBAgQIBASGChLKIQIECAAAECBAgQOAPVExAgQIAAAQIECKQEDNRUHcIQIECAAAECBAgYqH6AAAECBAgQIEAgJWCgpuoQhgABAgQIECBAwED1AwQIECBAgAABAikBAzVVhzAECBAgQIAAAQIGqh8gQIAAAQIECBBICRioqTqEIUCAAAECBAgQMFD9AAECBAgQIECAQErAQE3VIQwBAgQIECBAgICB6gcIECBAgAABAgRSAgZqqg5hCBAgQIAAAQIEDFQ/QIAAAQIECBAgkBIwUFN1CEOAAAECBAgQIGCg+gECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIGUgIGaqkMYAgQIECBAgAABA9UPECBAgQIECAAIPCDEAyXM/m1YAAAAASUVORK5CYII=";
+
+            $('#id-form').on('submit', function(e) {
+                e.preventDefault();
                 var currentSignature = $('.js-signature').jqSignature('getDataURL');
-                console.log(currentSignature);
                 if (currentSignature === blankSignature) {
-                    swal({
-                        title: "Gagal",
-                        text: "Mohon untuk mengisi TTD terlebih dahulu",
-                        icon: "error",
-                        button: "OK",
-                    });
+                    showToast('Mohon untuk mengisi TTD terlebih dahulu', 'error');
                     return false;
                 }
-                var img = currentSignature;
-                // // // console.log(img)
-                var anchor = $("#signature");
-                anchor.val(img);
-
-                e.preventDefault()
+                $('#signature').val(currentSignature);
                 var formData = new FormData(this);
+                var $btn = $('#btn-save');
+                $btn.prop('disabled', true).find('span').text('Menyimpan...');
                 $.ajax({
                     type: "POST",
-                    url: "{{ $link }}",
+                    url: "{{ $link ?? '' }}",
                     data: formData,
                     dataType: 'json',
                     processData: false,
                     contentType: false,
                     success: function(data) {
                         $('.js-signature').jqSignature('clearCanvas');
-                        $('#id-form').trigger(
-                            "reset");
-                        $('#btn-save').html('Tersimpan');
-                        //Reload Total Finansial Planing
-                        swal({
-  title: "Berhasil",
-  text: "Berkas telah tersimpan",
-  icon: "success",
-  buttons: {
-    cancel: "Tutup",
-    print: {
-      text: "Cetak Hasil",
-      value: "print",
-    }
-  }
-}).then((value) => {
-  if (value === "print") {
-    var id = data.id;
-    window.location.href = `https://banpdmjatim.id/print_biodata/rakorda?_token=${id}`;
-  }
-});
-
-
+                        $('#id-form').trigger("reset");
+                        $btn.prop('disabled', false).find('span').text('Simpan');
+                        showToast('Berkas telah tersimpan', 'success');
+                        $('#btn-cetak-hasil').attr('href', 'https://banpdmjatim.id/print_biodata/rakorda?_token=' + (data.id || ''));
+                        modalManager.open('modal-success');
                     },
-                    error: function(data) {
-                        console.log('Error', data);
+                    error: function(xhr) {
+                        $btn.prop('disabled', false).find('span').text('Simpan');
+                        showToast(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Gagal menyimpan', 'error');
                     }
                 });
-
-            });
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
+                return false;
             });
         });
     </script>
-
 </body>
-
 </html>

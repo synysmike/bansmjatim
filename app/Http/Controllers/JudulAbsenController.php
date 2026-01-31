@@ -7,6 +7,7 @@ use App\Http\Requests\Storejudul_absenRequest;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Requests\Updatejudul_absenRequest;
+use Carbon\Carbon;
 
 class JudulAbsenController extends Controller
 {
@@ -24,19 +25,24 @@ class JudulAbsenController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
-                    $rp = '<a target="_blank" href="report_dh/' . $data->id . '" class="btn btn-success" id="goto">Report</a> ';
-                    $form = ' <a href="/presensi/' . $data->url . '" target="_blank" class="btn btn-primary btn-icon icon-right">lihat form</a>';
-                    $edit = '<a  class="btn btn-warning btn-icon icon-right" id="edit" data-id="' . $data->id . '" data-judul="' . $data->judul . '" data-tanggal="' . $data->tanggal . '" data-active="' . $data->activate . '">Edit</a>';
-                    $btn = $rp . $form . $edit;
-                    return $btn;
+                    $tanggalDisplay = $data->tanggal ? \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') : '';
+                    $reportUrl = url('report_dh/' . $data->id);
+                    $formUrl = url('presensi/' . $data->url);
+                    $html = '<div class="action-dropdown">';
+                    $html .= '<button type="button" class="action-dropdown-toggle">Aksi <i class="fas fa-chevron-down admin-icon-sm"></i></button>';
+                    $html .= '<div class="action-dropdown-menu hidden">';
+                    $html .= '<a href="' . $reportUrl . '" target="_blank"><i class="fas fa-file-alt admin-icon"></i> Report</a>';
+                    $html .= '<a href="' . $formUrl . '" target="_blank"><i class="fas fa-external-link-alt admin-icon"></i> Lihat form</a>';
+                    $html .= '<button type="button" class="btn-edit-judul" data-id="' . $data->id . '" data-judul="' . e($data->judul) . '" data-url="' . e($data->url) . '" data-tanggal="' . e($tanggalDisplay) . '" data-active="' . $data->activate . '"><i class="fas fa-edit admin-icon"></i> Edit</button>';
+                    $html .= '<button type="button" class="btn-delete-judul text-red-600" data-id="' . $data->id . '" data-judul="' . e($data->judul) . '"><i class="fas fa-trash admin-icon"></i> Hapus</button>';
+                    $html .= '</div></div>';
+                    return $html;
                 })
                 ->addColumn('act', function ($data) {
                     if ($data->activate == 1) {
-                        # code...
-                        return '<div class="badge badge-success">Active</div>';
-                    } else {
-                        return '<div class="badge badge-danger">Inactive</div>';
+                        return '<span class="inline-flex px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-800">Active</span>';
                     }
+                    return '<span class="inline-flex px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-800">Inactive</span>';
                 })
                 ->rawColumns(['action', 'act'])
                 ->make(true);
@@ -64,20 +70,24 @@ class JudulAbsenController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-
+        // Convert DD-MM-YYYY from frontend to YYYY-MM-DD for MySQL
+        $tanggal = $request->tanggal;
+        if ($tanggal) {
+            try {
+                $tanggal = Carbon::createFromFormat('d-m-Y', $tanggal)->format('Y-m-d');
+            } catch (\Exception $e) {
+                // If already Y-m-d or other format, use as-is
+            }
+        }
 
         if ($request->id) {
-            $inpid = [
-                'id' => $request->id
-            ];
-
+            $inpid = ['id' => $request->id];
             $unit = judul_absen::updateOrCreate(
                 $inpid,
                 [
                     'judul' => $request->judul,
                     'url' => $request->url,
-                    'tanggal' => $request->tanggal,
+                    'tanggal' => $tanggal,
                     'activate' => $request->active
                 ]
             );
@@ -86,7 +96,7 @@ class JudulAbsenController extends Controller
                 [
                     'judul' => $request->judul,
                     'url' => $request->url,
-                    'tanggal' => $request->tanggal,
+                    'tanggal' => $tanggal,
                     'activate' => $request->active
                 ]
             );
@@ -148,6 +158,7 @@ class JudulAbsenController extends Controller
      */
     public function destroy(judul_absen $judul_absen)
     {
-        //
+        $judul_absen->delete();
+        return response()->json(['success' => true, 'message' => 'Judul absen telah dihapus.']);
     }
 }

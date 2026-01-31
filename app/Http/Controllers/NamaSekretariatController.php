@@ -20,19 +20,30 @@ class NamaSekretariatController extends Controller
     {
         $tittle = 'Staff Management';
         $data = nama_sekretariat::all();
-        
+
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $editBtn = '<a href="' . route('admin.staff.edit', $row->id) . '" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>';
-                    $deleteBtn = '<button class="btn btn-sm btn-danger" onclick="deleteStaff(' . $row->id . ')"><i class="fas fa-trash"></i> Delete</button>';
-                    return $editBtn . ' ' . $deleteBtn;
+                ->addColumn('photo_preview', function ($row) {
+                    if ($row->photo) {
+                        $url = asset($row->photo);
+                        return '<img src="' . e($url) . '" alt="" class="w-12 h-12 object-cover rounded-lg border border-admin-border" />';
+                    }
+                    return '<span class="text-admin-text-secondary text-sm">—</span>';
                 })
-                ->rawColumns(['action'])
+                ->addColumn('action', function ($row) {
+                    $html = '<div class="action-dropdown">';
+                    $html .= '<button type="button" class="action-dropdown-toggle" aria-haspopup="true"><span>Actions</span><i class="fas fa-chevron-down admin-icon-sm"></i></button>';
+                    $html .= '<div class="action-dropdown-menu hidden">';
+                    $html .= '<a href="' . route('admin.staff.edit', $row->id) . '"><i class="fas fa-edit admin-icon"></i> Edit</a>';
+                    $html .= '<button type="button" onclick="deleteStaff(' . $row->id . ')" class="text-left text-red-600"><i class="fas fa-trash admin-icon"></i> Delete</button>';
+                    $html .= '</div></div>';
+                    return $html;
+                })
+                ->rawColumns(['photo_preview', 'action'])
                 ->make(true);
         }
-        
+
         return view('admin.staff.index', compact('tittle', 'data'));
     }
 
@@ -60,14 +71,14 @@ class NamaSekretariatController extends Controller
             'unit' => 'nullable|string|in:Ketua,Sekretaris,Anggota,KPKK,Staff Administrasi,Staff Keuangan,Staff Data dan IT',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-        
+
         $data = [
             'nama' => $request->nama,
             'unit' => $request->unit ?? null,
             'createdAt' => now(),
             'updated_at' => now(),
         ];
-        
+
         // Handle photo upload
         if ($request->hasFile('photo')) {
             try {
@@ -78,7 +89,7 @@ class NamaSekretariatController extends Controller
                 if (!is_writable($uploadDir)) {
                     chmod($uploadDir, 0777);
                 }
-                
+
                 $photoPath = $request->file('photo')->store('staff_photos', 'public');
                 $data['photo'] = 'storage/' . $photoPath;
             } catch (\Exception $e) {
@@ -88,9 +99,9 @@ class NamaSekretariatController extends Controller
                     ->withErrors(['photo' => 'Failed to upload photo: ' . $e->getMessage()]);
             }
         }
-        
+
         nama_sekretariat::create($data);
-        
+
         return redirect()->route('admin.staff.index')
             ->with('success', 'Staff created successfully.');
     }
@@ -133,15 +144,15 @@ class NamaSekretariatController extends Controller
             'unit' => 'nullable|string|in:Ketua,Sekretaris,Anggota,KPKK,Staff Administrasi,Staff Keuangan,Staff Data dan IT',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-        
+
         $staff = nama_sekretariat::findOrFail($id);
-        
+
         $data = [
             'nama' => $request->nama,
             'unit' => $request->unit ?? null,
             'updated_at' => now(),
         ];
-        
+
         // Handle photo upload
         if ($request->hasFile('photo')) {
             try {
@@ -152,12 +163,12 @@ class NamaSekretariatController extends Controller
                 if (!is_writable($uploadDir)) {
                     chmod($uploadDir, 0777);
                 }
-                
+
                 // Delete old photo if exists
                 if ($staff->photo && Storage::disk('public')->exists(str_replace('storage/', '', $staff->photo))) {
                     Storage::disk('public')->delete(str_replace('storage/', '', $staff->photo));
                 }
-                
+
                 $photoPath = $request->file('photo')->store('staff_photos', 'public');
                 $data['photo'] = 'storage/' . $photoPath;
             } catch (\Exception $e) {
@@ -173,9 +184,9 @@ class NamaSekretariatController extends Controller
             }
             $data['photo'] = null;
         }
-        
+
         $staff->update($data);
-        
+
         return redirect()->route('admin.staff.index')
             ->with('success', 'Staff updated successfully.');
     }
@@ -189,14 +200,14 @@ class NamaSekretariatController extends Controller
     public function destroy($id)
     {
         $staff = nama_sekretariat::findOrFail($id);
-        
+
         // Delete photo if exists
         if ($staff->photo && Storage::disk('public')->exists(str_replace('storage/', '', $staff->photo))) {
             Storage::disk('public')->delete(str_replace('storage/', '', $staff->photo));
         }
-        
+
         $staff->delete();
-        
+
         return response()->json(['success' => true, 'message' => 'Staff deleted successfully.']);
     }
 }

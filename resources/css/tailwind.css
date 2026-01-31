@@ -7,72 +7,73 @@
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply font-lato;
   }
 }
 
 @layer components {
+
   /* Video overlay */
   .video-overlay {
     @apply absolute inset-0;
     background-color: hsla(54, 14%, 15%, 0.562);
   }
-  
+
   /* Slider animations */
   [data-animate="fadeInUp"] {
     @apply animate-fadeInUp;
   }
-  
+
   [data-animate="fadeInDown"] {
     @apply animate-fadeInDown;
   }
-  
+
   [data-animate="fadeInLeft"] {
     @apply animate-fadeInLeft;
   }
-  
+
   /* Flip card styles */
   .flip-card {
     @apply relative w-full;
     perspective: 1000px;
   }
-  
+
   .flip-card-front,
   .flip-card-back {
     @apply absolute inset-0 w-full h-full rounded-lg;
     backface-visibility: hidden;
     transition: transform 0.6s;
   }
-  
+
   .flip-card-back {
     transform: rotateY(180deg);
   }
-  
+
   .flip-card:hover .flip-card-front {
     transform: rotateY(-180deg);
   }
-  
+
   .flip-card:hover .flip-card-back {
     transform: rotateY(0deg);
   }
-  
+
   .flip-card-inner {
     @apply relative w-full h-full;
     transform-style: preserve-3d;
   }
-  
+
   /* Sticky header */
   header[data-sticky-class] {
     transition: all 0.3s ease;
   }
-  
+
   /* Container utility */
   .container {
     @apply max-w-7xl mx-auto px-4;
   }
-  
+
   /* Clearfix utility */
   .clearfix::after {
     content: "";
@@ -82,12 +83,14 @@
 }
 
 @layer utilities {
+
   /* Animation utilities */
   @keyframes fadeInUp {
     from {
       opacity: 0;
       transform: translateY(20px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -99,6 +102,7 @@
       opacity: 0;
       transform: translateY(-20px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -110,6 +114,7 @@
       opacity: 0;
       transform: translateX(-20px);
     }
+
     to {
       opacity: 1;
       transform: translateX(0);
@@ -126,5 +131,34 @@
 
   .animate-fadeInLeft {
     animation: fadeInLeft 0.6s ease-out;
+  }
+
+  /* Admin Theme Utilities */
+  .card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+  }
+
+  .sidebar-transition {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }

@@ -120,7 +120,7 @@ class DaftarhadirController extends Controller
                 ->make(true);
         }
         // dd($ass);
-        return view('daftarhadir.form', compact($compact));
+        return view('daftarhadir.form', array_merge(compact($compact), ['tittle' => $judul]));
     }
 
 
@@ -659,8 +659,8 @@ class DaftarhadirController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        // dd($form);
-        return view('daftarhadir.form', compact('unit', 'theads', 'judul', 'kategori', 'form', 'link', 'kat'));
+        $tittle = $judul;
+        return view('daftarhadir.form', compact('unit', 'theads', 'judul', 'kategori', 'form', 'link', 'kat', 'tittle'));
     }
     public function postkesediaan(Request $request)
     {
@@ -777,8 +777,8 @@ class DaftarhadirController extends Controller
                 ->addIndexColumn()
                 ->make(true);
         }
-        // dd($form);
-        return view('daftarhadir.form', compact('unit', 'theads', 'judul', 'kategori', 'form', 'link', 'kat'));
+        $tittle = $judul;
+        return view('daftarhadir.form', compact('unit', 'theads', 'judul', 'kategori', 'form', 'link', 'kat', 'tittle'));
     }
 
     public function postsesi1(Request $request)

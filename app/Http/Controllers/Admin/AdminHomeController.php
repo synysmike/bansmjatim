@@ -85,15 +85,15 @@ class AdminHomeController extends Controller
     public function index(Request $request)
     {
         $tittle = 'Manage Home Page Content';
-        
+
         $data = home::orderBy('sort_order')->orderBy('section_name')->get();
-        
+
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function ($row) {
-                    $status = $row->is_active 
-                        ? '<span class="badge badge-success">Active</span>' 
+                    $status = $row->is_active
+                        ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-secondary">Inactive</span>';
                     return $status;
                 })
@@ -113,15 +113,22 @@ class AdminHomeController extends Controller
                     return '<span class="text-muted">No Image</span>';
                 })
                 ->addColumn('actions', function ($row) {
-                    $editBtn = '<a href="' . route('admin.home.edit', $row->id) . '" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>';
-                    $deleteBtn = '<button class="btn btn-sm btn-danger" onclick="deleteContent(' . $row->id . ')"><i class="fas fa-trash"></i> Delete</button>';
-                    return $editBtn . ' ' . $deleteBtn;
+                    $html = '<div class="action-dropdown">';
+                    $html .= '<button type="button" class="action-dropdown-toggle" aria-haspopup="true"><span>Actions</span><i class="fas fa-chevron-down admin-icon-sm"></i></button>';
+                    $html .= '<div class="action-dropdown-menu hidden">';
+                    $html .= '<button type="button" onclick="openEditHomeContent(' . $row->id . ')" class="text-left"><i class="fas fa-edit admin-icon"></i> Edit</button>';
+                    $html .= '<button type="button" onclick="deleteContent(' . $row->id . ')" class="text-left text-red-600"><i class="fas fa-trash admin-icon"></i> Delete</button>';
+                    $html .= '</div></div>';
+                    return $html;
                 })
                 ->rawColumns(['status', 'image_preview', 'actions'])
                 ->make(true);
         }
-        
-        return view('admin.home.index', compact('tittle'));
+
+        $sectionKeys = $this->getAllowedSectionKeys();
+        $existingKeys = home::pluck('section_key')->toArray();
+        $availableKeys = array_diff_key($sectionKeys, array_flip($existingKeys));
+        return view('admin.home.index', compact('tittle', 'sectionKeys', 'availableKeys'));
     }
 
     /**
@@ -134,7 +141,7 @@ class AdminHomeController extends Controller
         $existingKeys = home::pluck('section_key')->toArray();
         // Filter out already created section keys
         $availableKeys = array_diff_key($sectionKeys, array_flip($existingKeys));
-        
+
         return view('admin.home.create', compact('tittle', 'availableKeys', 'sectionKeys'));
     }
 
@@ -145,12 +152,12 @@ class AdminHomeController extends Controller
     {
         $allowedKeys = array_keys($this->getAllowedSectionKeys());
         $sectionKeys = $this->getAllowedSectionKeys();
-        
+
         // Auto-populate section_name based on selected section_key
         if ($request->filled('section_key') && isset($sectionKeys[$request->section_key])) {
             $request->merge(['section_name' => $sectionKeys[$request->section_key]['name']]);
         }
-        
+
         $request->validate([
             'section_key' => 'required|string|in:' . implode(',', $allowedKeys) . '|unique:home_page_contents,section_key',
             'section_name' => 'required|string|max:255',
@@ -165,12 +172,12 @@ class AdminHomeController extends Controller
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|in:0,1',
         ]);
-        
+
         $data = $request->except(['image', '_token', '_method']);
-        
+
         // Handle is_active checkbox - convert to boolean
         $data['is_active'] = $request->input('is_active', 0) == 1 || $request->input('is_active') === true || $request->input('is_active') === '1';
-        
+
         // Handle image upload
         if ($request->hasFile('image')) {
             try {
@@ -182,7 +189,7 @@ class AdminHomeController extends Controller
                 if (!is_writable($uploadDir)) {
                     chmod($uploadDir, 0777);
                 }
-                
+
                 $imagePath = $request->file('image')->store('home_content', 'public');
                 $data['image_path'] = 'storage/' . $imagePath;
             } catch (\Exception $e) {
@@ -195,11 +202,11 @@ class AdminHomeController extends Controller
             // Ensure image_path is null if no image uploaded
             $data['image_path'] = null;
         }
-        
+
         // Handle hero media (video file, YouTube URL, or image)
         if ($request->section_key === 'hero_media') {
             $data['media_type'] = $request->input('media_type');
-            
+
             if ($request->hasFile('video_file')) {
                 try {
                     $uploadDir = storage_path('app/public/home_content');
@@ -209,7 +216,7 @@ class AdminHomeController extends Controller
                     if (!is_writable($uploadDir)) {
                         chmod($uploadDir, 0777);
                     }
-                    
+
                     $videoPath = $request->file('video_file')->store('home_content', 'public');
                     $data['media_url'] = 'storage/' . $videoPath;
                     $data['media_type'] = 'video';
@@ -227,7 +234,7 @@ class AdminHomeController extends Controller
                 $data['media_url'] = $data['image_path'];
             }
         }
-        
+
         // Ensure empty string values are null for nullable fields
         if (empty($data['content'])) {
             $data['content'] = null;
@@ -250,9 +257,15 @@ class AdminHomeController extends Controller
 
         try {
             $content = home::create($data);
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'message' => 'Home page content created successfully.', 'data' => $content]);
+            }
             return redirect()->route('admin.home.index')
                 ->with('success', 'Home page content created successfully.');
         } catch (\Exception $e) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage(), 'errors' => []], 422);
+            }
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['error' => 'Failed to create content: ' . $e->getMessage()]);
@@ -272,9 +285,12 @@ class AdminHomeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $content = home::findOrFail($id);
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json($content);
+        }
         $tittle = 'Edit Home Page Content';
         $sectionKeys = $this->getAllowedSectionKeys();
         return view('admin.home.edit', compact('content', 'tittle', 'sectionKeys'));
@@ -286,14 +302,17 @@ class AdminHomeController extends Controller
     public function update(Request $request, $id)
     {
         $content = home::findOrFail($id);
-        
+
         $allowedKeys = array_keys($this->getAllowedSectionKeys());
-        
+
         $request->validate([
             'section_key' => 'required|string|in:' . implode(',', $allowedKeys) . '|unique:home_page_contents,section_key,' . $id,
             'section_name' => 'required|string|max:255',
             'content' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'media_type' => 'nullable|in:video,youtube,image',
+            'media_url' => 'nullable|string|max:500',
+            'video_file' => 'nullable|mimes:mp4,webm,ogg|max:10240',
             'youtube_api_key' => 'nullable|string|max:255',
             'youtube_channel_id' => 'nullable|string|max:255',
             'max_youtube_results' => 'nullable|integer|min:1|max:50',
@@ -302,14 +321,14 @@ class AdminHomeController extends Controller
         ]);
 
         $data = $request->except(['image', 'video_file', '_token', '_method']);
-        
+
         // Handle is_active checkbox - convert to boolean
         $data['is_active'] = $request->input('is_active', 0) == 1 || $request->input('is_active') === true || $request->input('is_active') === '1';
 
         // Handle hero media (video file, YouTube URL, or image)
         if ($request->section_key === 'hero_media') {
             $data['media_type'] = $request->input('media_type');
-            
+
             if ($request->hasFile('video_file')) {
                 try {
                     $uploadDir = storage_path('app/public/home_content');
@@ -319,12 +338,12 @@ class AdminHomeController extends Controller
                     if (!is_writable($uploadDir)) {
                         chmod($uploadDir, 0777);
                     }
-                    
+
                     // Delete old video if exists
                     if ($content->media_url && Storage::disk('public')->exists(str_replace('storage/', '', $content->media_url))) {
                         Storage::disk('public')->delete(str_replace('storage/', '', $content->media_url));
                     }
-                    
+
                     $videoPath = $request->file('video_file')->store('home_content', 'public');
                     $data['media_url'] = 'storage/' . $videoPath;
                     $data['media_type'] = 'video';
@@ -346,12 +365,12 @@ class AdminHomeController extends Controller
                     if (!is_writable($uploadDir)) {
                         chmod($uploadDir, 0777);
                     }
-                    
+
                     // Delete old media if exists
                     if ($content->media_url && Storage::disk('public')->exists(str_replace('storage/', '', $content->media_url))) {
                         Storage::disk('public')->delete(str_replace('storage/', '', $content->media_url));
                     }
-                    
+
                     $imagePath = $request->file('image')->store('home_content', 'public');
                     $data['image_path'] = 'storage/' . $imagePath;
                     $data['media_url'] = 'storage/' . $imagePath;
@@ -378,12 +397,12 @@ class AdminHomeController extends Controller
                     if (!is_writable($uploadDir)) {
                         chmod($uploadDir, 0777);
                     }
-                    
+
                     // Delete old image
                     if ($content->image_path && Storage::disk('public')->exists(str_replace('storage/', '', $content->image_path))) {
                         Storage::disk('public')->delete(str_replace('storage/', '', $content->image_path));
                     }
-                    
+
                     $imagePath = $request->file('image')->store('home_content', 'public');
                     $data['image_path'] = 'storage/' . $imagePath;
                 } catch (\Exception $e) {
@@ -394,14 +413,17 @@ class AdminHomeController extends Controller
                 }
             }
         }
-        
+
         // Strip HTML tags from organization name if it's organization_name section
         if ($content->section_key === 'organization_name' && isset($data['content'])) {
             $data['content'] = strip_tags(trim($data['content']));
         }
-        
+
         $content->update($data);
 
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Home page content updated successfully.', 'data' => $content->fresh()]);
+        }
         return redirect()->route('admin.home.index')
             ->with('success', 'Home page content updated successfully.');
     }
@@ -412,12 +434,12 @@ class AdminHomeController extends Controller
     public function destroy($id)
     {
         $content = home::findOrFail($id);
-        
+
         // Delete image if exists
         if ($content->image_path && Storage::disk('public')->exists(str_replace('storage/', '', $content->image_path))) {
             Storage::disk('public')->delete(str_replace('storage/', '', $content->image_path));
         }
-        
+
         $content->delete();
 
         return response()->json(['success' => true, 'message' => 'Content deleted successfully.']);

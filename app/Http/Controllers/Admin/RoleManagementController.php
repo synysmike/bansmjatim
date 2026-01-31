@@ -43,7 +43,13 @@ class RoleManagementController extends Controller
         $user = Auth::user();
 
         if ($request->ajax()) {
-            $users = User::with('roles')->select('*');
+            $users = User::with('roles')->select('users.*');
+
+            if ($request->filled('role_id')) {
+                $users->whereHas('roles', function ($q) use ($request) {
+                    $q->where('roles.id', $request->role_id);
+                });
+            }
 
             return DataTables::of($users)
                 ->addIndexColumn()
@@ -53,15 +59,19 @@ class RoleManagementController extends Controller
                     })->implode(' ');
                 })
                 ->addColumn('action', function ($user) {
-                    $editBtn = '<button onclick="editUser(' . $user->id . ')" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</button>';
-                    $deleteBtn = '<button onclick="deleteUser(' . $user->id . ')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>';
-                    return $editBtn . ' ' . $deleteBtn;
+                    $html = '<div class="action-dropdown">';
+                    $html .= '<button type="button" class="action-dropdown-toggle" aria-haspopup="true"><span>Actions</span><i class="fas fa-chevron-down admin-icon-sm"></i></button>';
+                    $html .= '<div class="action-dropdown-menu hidden">';
+                    $html .= '<button type="button" onclick="editUser(' . $user->id . ')" class="text-left"><i class="fas fa-edit admin-icon"></i> Edit</button>';
+                    $html .= '<button type="button" onclick="deleteUser(' . $user->id . ')" class="text-left text-red-600"><i class="fas fa-trash admin-icon"></i> Delete</button>';
+                    $html .= '</div></div>';
+                    return $html;
                 })
                 ->rawColumns(['roles', 'action'])
                 ->make(true);
         }
 
-        $roles = Role::all();
+        $roles = Role::orderBy('name')->get(['id', 'name']);
         return view('admin.role-management.users', compact('tittle', 'user', 'roles'));
     }
 
@@ -70,14 +80,19 @@ class RoleManagementController extends Controller
      */
     public function storeUser(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'username' => 'required|string|max:255|unique:users,username',
-            'name' => 'required|string|max:255',
-            'password' => 'required|string|min:6',
-            'role' => 'required|exists:roles,id',
-            'kab_kota' => 'nullable|string|max:255',
-            'jabatan' => 'nullable|string|max:255',
-        ]);
+        $roleId = $request->input('jabatan_role_id');
+        $validator = Validator::make(
+            array_merge($request->all(), ['jabatan_role_id' => $roleId]),
+            [
+                'username' => 'required|string|max:255|unique:users,username',
+                'name' => 'required|string|max:255',
+                'password' => 'required|string|min:6',
+                'jabatan_role_id' => 'required|exists:roles,id',
+                'kab_kota' => 'nullable|string|max:255',
+                'jabatan' => 'nullable|string|max:255',
+            ],
+            ['jabatan_role_id.required' => 'Please select a Jabatan (Role).', 'jabatan_role_id.exists' => 'The selected Jabatan (Role) is invalid.']
+        );
 
         if ($validator->fails()) {
             return response()->json([
@@ -96,7 +111,7 @@ class RoleManagementController extends Controller
                 'jabatan' => $request->jabatan,
             ]);
 
-            $role = Role::findOrFail($request->role);
+            $role = Role::findOrFail($roleId);
             $user->assignRole($role);
 
             return response()->json([
@@ -137,15 +152,20 @@ class RoleManagementController extends Controller
     public function updateUser(Request $request, $id)
     {
         $user = User::findOrFail($id);
+        $roleId = $request->input('jabatan_role_id');
 
-        $validator = Validator::make($request->all(), [
-            'username' => 'required|string|max:255|unique:users,username,' . $id,
-            'name' => 'required|string|max:255',
-            'password' => 'nullable|string|min:6',
-            'role' => 'required|exists:roles,id',
-            'kab_kota' => 'nullable|string|max:255',
-            'jabatan' => 'nullable|string|max:255',
-        ]);
+        $validator = Validator::make(
+            array_merge($request->all(), ['jabatan_role_id' => $roleId]),
+            [
+                'username' => 'required|string|max:255|unique:users,username,' . $id,
+                'name' => 'required|string|max:255',
+                'password' => 'nullable|string|min:6',
+                'jabatan_role_id' => 'required|exists:roles,id',
+                'kab_kota' => 'nullable|string|max:255',
+                'jabatan' => 'nullable|string|max:255',
+            ],
+            ['jabatan_role_id.required' => 'Please select a Jabatan (Role).', 'jabatan_role_id.exists' => 'The selected Jabatan (Role) is invalid.']
+        );
 
         if ($validator->fails()) {
             return response()->json([
@@ -160,7 +180,7 @@ class RoleManagementController extends Controller
                 'username' => $request->username,
                 'name' => $request->name,
                 'kab_kota' => $request->kab_kota,
-                'jabatan' => $request->jabatan,
+                'jabatan' => $request->filled('jabatan') ? $request->jabatan : $user->jabatan,
             ];
 
             if ($request->filled('password')) {
@@ -170,7 +190,7 @@ class RoleManagementController extends Controller
             $user->update($updateData);
 
             // Update role
-            $role = Role::findOrFail($request->role);
+            $role = Role::findOrFail($roleId);
             $user->syncRoles([$role]);
 
             return response()->json([
@@ -232,17 +252,22 @@ class RoleManagementController extends Controller
                 ->addIndexColumn()
                 ->addColumn('permissions', function ($role) {
                     return $role->permissions->map(function ($permission) {
-                        return '<span class="badge badge-info">' . $permission->name . '</span>';
+                        return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-admin-info bg-opacity-20 text-admin-info">' . e($permission->name) . '</span>';
                     })->implode(' ');
                 })
                 ->addColumn('users_count', function ($role) {
                     return $role->users()->count();
                 })
                 ->addColumn('action', function ($role) {
-                    $editBtn = '<button onclick="editRole(' . $role->id . ')" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</button>';
-                    $permissionsBtn = '<button onclick="managePermissions(' . $role->id . ')" class="btn btn-sm btn-info"><i class="fas fa-key"></i> Permissions</button>';
-                    $deleteBtn = '<button onclick="deleteRole(' . $role->id . ')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>';
-                    return $editBtn . ' ' . $permissionsBtn . ' ' . $deleteBtn;
+                    $roleId = isset($role->id) ? (int) $role->id : 0;
+                    $html = '<div class="action-dropdown">';
+                    $html .= '<button type="button" class="action-dropdown-toggle" aria-haspopup="true"><span>Actions</span><i class="fas fa-chevron-down admin-icon-sm"></i></button>';
+                    $html .= '<div class="action-dropdown-menu hidden">';
+                    $html .= '<button type="button" onclick="editRole(' . $roleId . ')" class="text-left"><i class="fas fa-edit admin-icon"></i> Edit</button>';
+                    $html .= '<button type="button" onclick="managePermissions(' . $roleId . ')" class="text-left"><i class="fas fa-key admin-icon"></i> Permissions</button>';
+                    $html .= '<button type="button" onclick="deleteRole(' . $roleId . ')" class="text-left text-red-600"><i class="fas fa-trash admin-icon"></i> Delete</button>';
+                    $html .= '</div></div>';
+                    return $html;
                 })
                 ->rawColumns(['permissions', 'action'])
                 ->make(true);
@@ -302,13 +327,16 @@ class RoleManagementController extends Controller
     public function getRole($id)
     {
         $role = Role::with('permissions')->findOrFail($id);
+        $permissionIds = $role->permissions->pluck('id')->map(function ($id) {
+            return (int) $id;
+        })->values()->toArray();
 
         return response()->json([
             'success' => true,
             'role' => [
-                'id' => $role->id,
-                'name' => $role->name,
-                'permission_ids' => $role->permissions->pluck('id')->toArray(),
+                'id' => (int) $role->id,
+                'name' => $role->name ?? '',
+                'permission_ids' => $permissionIds,
             ]
         ]);
     }
@@ -334,16 +362,15 @@ class RoleManagementController extends Controller
 
         try {
             $role->update([
-                'name' => $request->name,
+                'name' => $request->input('name'),
             ]);
 
-            // Update permissions if provided
-            if ($request->has('permissions') && is_array($request->permissions)) {
-                $permissions = Permission::whereIn('id', $request->permissions)->get();
-                $role->syncPermissions($permissions);
-            } else {
-                $role->syncPermissions([]);
-            }
+            // Update permissions: use request permissions or empty array
+            $permissionIds = $request->has('permissions') && is_array($request->permissions)
+                ? $request->permissions
+                : [];
+            $permissions = Permission::whereIn('id', $permissionIds)->get();
+            $role->syncPermissions($permissions);
 
             // Clear permission cache
             app()[PermissionRegistrar::class]->forgetCachedPermissions();
@@ -365,6 +392,15 @@ class RoleManagementController extends Controller
      */
     public function destroyRole($id)
     {
+        if ($id === null || $id === '' || $id === 'undefined' || !is_numeric($id) || (int) $id < 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid role ID.',
+            ], 400);
+        }
+
+        $id = (int) $id;
+
         try {
             $role = Role::findOrFail($id);
 
@@ -410,15 +446,19 @@ class RoleManagementController extends Controller
                 ->addIndexColumn()
                 ->addColumn('roles', function ($permission) {
                     return $permission->roles->map(function ($role) {
-                        return '<span class="badge badge-primary">' . $role->name . '</span>';
+                        return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-admin-primary bg-opacity-20 text-admin-primary">' . e($role->name) . '</span>';
                     })->implode(' ');
                 })
                 ->addColumn('action', function ($permission) {
                     if (!$permission->id) {
-                        return '<span class="text-muted">No ID</span>';
+                        return '<span class="text-admin-text-secondary text-sm">—</span>';
                     }
-                    $deleteBtn = '<button onclick="deletePermission(' . $permission->id . ')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>';
-                    return $deleteBtn;
+                    $html = '<div class="action-dropdown">';
+                    $html .= '<button type="button" class="action-dropdown-toggle" aria-haspopup="true"><span>Actions</span><i class="fas fa-chevron-down admin-icon-sm"></i></button>';
+                    $html .= '<div class="action-dropdown-menu hidden">';
+                    $html .= '<button type="button" onclick="deletePermission(' . $permission->id . ')" class="text-left text-red-600"><i class="fas fa-trash admin-icon"></i> Delete</button>';
+                    $html .= '</div></div>';
+                    return $html;
                 })
                 ->rawColumns(['roles', 'action'])
                 ->make(true);

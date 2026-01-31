@@ -23,11 +23,12 @@ class AbsenDhController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request, $link) {}
-    public function view(Request $request, $link)
+    public function view(Request $request, $id)
     {
-
-        // dd($link);
-        $judul = judul_absen::where('url', $link)->first();
+        $judul = judul_absen::find($id);
+        if (!$judul) {
+            abort(404, 'Judul absen tidak ditemukan.');
+        }
 
         $tittle = $judul->judul;
         $tanggal = $judul->tanggal;

@@ -1,81 +1,70 @@
 @extends('ad_layout.wrapper')
 
 @section('admin-container')
-    <section>
-        <div class="section-header">
-            <h1>{{ $tittle }}</h1>
-            <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('admin.staff.index') }}">Staff</a></div>
-                <div class="breadcrumb-item">{{ $tittle }}</div>
-            </div>
+    <!-- Section Header -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-ubuntu font-bold text-admin-text-primary mb-2">{{ $tittle }}</h1>
+        <nav class="flex items-center space-x-2 text-sm text-admin-text-secondary">
+            <a href="{{ route('admin.dashboard') }}" class="hover:text-admin-primary transition-colors">Dashboard</a>
+            <span>/</span>
+            <a href="{{ route('admin.staff.index') }}" class="hover:text-admin-primary transition-colors">Staff</a>
+            <span>/</span>
+            <span class="text-admin-primary font-medium">{{ $tittle }}</span>
+        </nav>
+    </div>
+
+    <!-- Main Card -->
+    <div class="bg-white rounded-2xl shadow-admin overflow-hidden">
+        <div class="bg-gradient-to-r from-admin-primary to-admin-secondary p-6">
+            <h2 class="text-xl font-semibold text-white">Create New Staff</h2>
         </div>
-
-        <div class="section-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Create New Staff</h4>
-                        </div>
-                        <div class="card-body">
-                            <form action="{{ route('admin.staff.store') }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Nama <span class="text-danger">*</span></label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control @error('nama') is-invalid @enderror" 
-                                               name="nama" value="{{ old('nama') }}" required>
-                                        @error('nama')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Unit</label>
-                                    <div class="col-sm-9">
-                                        <select class="form-control @error('unit') is-invalid @enderror" 
-                                                name="unit">
-                                            <option value="">-- Select Unit --</option>
-                                            <option value="Ketua" {{ old('unit') == 'Ketua' ? 'selected' : '' }}>Ketua</option>
-                                            <option value="Sekretaris" {{ old('unit') == 'Sekretaris' ? 'selected' : '' }}>Sekretaris</option>
-                                            <option value="Anggota" {{ old('unit') == 'Anggota' ? 'selected' : '' }}>Anggota</option>
-                                            <option value="KPKK" {{ old('unit') == 'KPKK' ? 'selected' : '' }}>KPKK</option>
-                                            <option value="Staff Administrasi" {{ old('unit') == 'Staff Administrasi' ? 'selected' : '' }}>Staff Administrasi</option>
-                                            <option value="Staff Keuangan" {{ old('unit') == 'Staff Keuangan' ? 'selected' : '' }}>Staff Keuangan</option>
-                                            <option value="Staff Data dan IT" {{ old('unit') == 'Staff Data dan IT' ? 'selected' : '' }}>Staff Data dan IT</option>
-                                        </select>
-                                        @error('unit')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Photo</label>
-                                    <div class="col-sm-9">
-                                        <input type="file" class="form-control @error('photo') is-invalid @enderror" 
-                                               name="photo" accept="image/*">
-                                        <small class="form-text text-muted">Max size: 2MB, Formats: jpeg, png, jpg, gif</small>
-                                        @error('photo')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <div class="col-sm-9 offset-sm-3">
-                                        <button type="submit" class="btn btn-primary">Save Staff</button>
-                                        <a href="{{ route('admin.staff.index') }}" class="btn btn-secondary">Cancel</a>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+        <div class="p-6">
+            @if ($errors->any())
+                <div class="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700">
+                    <p class="font-semibold mb-2">Please fix the following errors:</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
-            </div>
+            @endif
+
+            <form action="{{ route('admin.staff.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <div class="mb-6">
+                    <label for="nama" class="form-label">Nama <span class="text-red-500">*</span></label>
+                    <input type="text" id="nama" name="nama" class="form-input" value="{{ old('nama') }}" required placeholder="Nama lengkap">
+                </div>
+
+                <div class="mb-6">
+                    <label for="unit" class="form-label">Unit</label>
+                    <select id="unit" name="unit" class="form-select">
+                        <option value="">-- Select Unit --</option>
+                        <option value="Ketua" {{ old('unit') == 'Ketua' ? 'selected' : '' }}>Ketua</option>
+                        <option value="Sekretaris" {{ old('unit') == 'Sekretaris' ? 'selected' : '' }}>Sekretaris</option>
+                        <option value="Anggota" {{ old('unit') == 'Anggota' ? 'selected' : '' }}>Anggota</option>
+                        <option value="KPKK" {{ old('unit') == 'KPKK' ? 'selected' : '' }}>KPKK</option>
+                        <option value="Staff Administrasi" {{ old('unit') == 'Staff Administrasi' ? 'selected' : '' }}>Staff Administrasi</option>
+                        <option value="Staff Keuangan" {{ old('unit') == 'Staff Keuangan' ? 'selected' : '' }}>Staff Keuangan</option>
+                        <option value="Staff Data dan IT" {{ old('unit') == 'Staff Data dan IT' ? 'selected' : '' }}>Staff Data dan IT</option>
+                    </select>
+                </div>
+
+                <div class="mb-6">
+                    <label for="photo" class="form-label">Photo</label>
+                    <input type="file" id="photo" name="photo" class="form-input" accept="image/*">
+                    <p class="text-sm text-admin-text-secondary mt-1">Max size: 2MB. Formats: jpeg, png, jpg, gif</p>
+                </div>
+
+                <div class="flex items-center gap-3 pt-4 border-t border-admin-border">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save admin-icon mr-2"></i>Save Staff
+                    </button>
+                    <a href="{{ route('admin.staff.index') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
         </div>
-    </section>
+    </div>
 @endsection
