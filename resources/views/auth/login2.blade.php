@@ -1,6 +1,6 @@
 @extends('auth.wrapper')
 @push('tittle')
-<title>Login &mdash; BAN-S/M JATIM</title>
+<title>Login &mdash; BAN-PDM JATIM</title>
 <meta property="og:title" content="Login" />
 <!-- <meta property="og:type" content="video.movie" />  -->
 <meta property="og:url" content="{{url()->current()}}" />
@@ -50,7 +50,7 @@
                 @endif
                 <img src="/ban.png" alt="logo" width="80"
                     class="shadow-light rounded-circle mb-5 mt-2">
-                <h4 class="text-dark font-weight-normal">Selamat Datang Di <span class="font-weight-bold">BAN-S/M Provinsi Jawa Timur</span>
+                <h4 class="text-dark font-weight-normal">Selamat Datang Di <span class="font-weight-bold">BAN-PDM Provinsi Jawa Timur</span>
                 </h4>
                 <p class="text-muted"></p>
                 <form method="POST" action="{{ route('authenticate') }}" class="needs-validation" novalidate="">
