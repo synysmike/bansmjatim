@@ -83,10 +83,11 @@
                         @csrf
                         <input type="hidden" name="id" id="home_content_id" value="">
                         <input type="hidden" name="_method" id="home_content_method" value="POST">
+                        <input type="hidden" name="section_key" id="home_section_key_submit" value="">
 
                         <div class="mb-4" id="row-section-key-select">
                             <label for="home_section_key" class="form-label">Section Key <span class="text-red-500">*</span></label>
-                            <select class="form-select" name="section_key" id="home_section_key" required>
+                            <select class="form-select" id="home_section_key" required>
                                 <option value="">-- Select Section --</option>
                                 @foreach($availableKeys ?? [] as $key => $section)
                                     <option value="{{ $key }}" data-name="{{ $section['name'] }}" data-type="{{ $section['type'] }}">{{ $section['name'] }}</option>
@@ -97,7 +98,7 @@
                         <div class="mb-4" id="row-section-key-readonly" style="display: none;">
                             <label class="form-label">Section Key</label>
                             <input type="text" class="form-input bg-gray-100" id="home_section_key_display" readonly>
-                            <input type="hidden" name="section_key" id="home_section_key_hidden" value="">
+                            <input type="hidden" id="home_section_key_hidden" value="">
                         </div>
 
                         <div class="mb-4">
@@ -285,6 +286,7 @@
             document.getElementById('home-content-modal-title').textContent = 'Add Home Content';
             document.getElementById('home_content_id').value = '';
             document.getElementById('home_content_method').value = 'POST';
+            document.getElementById('home_section_key_submit').value = '';
             document.getElementById('row-section-key-select').style.display = 'block';
             document.getElementById('row-section-key-readonly').style.display = 'none';
             document.getElementById('home_section_key').value = '';
@@ -321,20 +323,25 @@
             fetch(HOME_EDIT_URL + '/' + id + '/edit', {
                 method: 'GET',
                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-            }).then(function(r) { return r.json(); }).then(function(data) {
+            }).then(function(r) { return r.json();             }).then(function(data) {
                 document.getElementById('home-content-modal-title').textContent = 'Edit Home Content';
                 document.getElementById('home_content_id').value = data.id;
                 document.getElementById('home_content_method').value = 'PUT';
+                document.getElementById('home_section_key_submit').value = data.section_key || '';
                 document.getElementById('row-section-key-select').style.display = 'none';
                 document.getElementById('row-section-key-readonly').style.display = 'block';
-                document.getElementById('home_section_key_display').value = data.section_key;
-                document.getElementById('home_section_key_hidden').value = data.section_key;
+                document.getElementById('home_section_key_display').value = data.section_key || '';
+                document.getElementById('home_section_key_hidden').value = data.section_key || '';
                 document.getElementById('home_section_name').value = data.section_name || '';
                 document.getElementById('home_content_text').value = (data.section_key === 'organization_name') ? (data.content ? data.content.replace(/<[^>]*>/g, '') : '') : '';
                 if (homeQuill) {
-                    try { homeQuill.root.innerHTML = data.content || ''; } catch (e) { homeQuill.setText(data.content || ''); }
+                    try {
+                        homeQuill.root.innerHTML = (data.content != null && data.content !== '') ? data.content : '';
+                    } catch (e) {
+                        homeQuill.setText(data.content != null ? String(data.content) : '');
+                    }
                 }
-                document.getElementById('home_content_value').value = data.content || '';
+                document.getElementById('home_content_value').value = data.content != null ? data.content : '';
                 document.getElementById('home_media_type').value = data.media_type || '';
                 document.getElementById('home_media_url').value = data.media_url || '';
                 document.getElementById('home_youtube_api_key').value = data.youtube_api_key || '';
@@ -377,6 +384,9 @@
                 contentVal.value = homeQuill.root.innerHTML || '';
             } else {
                 contentVal.value = '';
+            }
+            if (method === 'POST') {
+                document.getElementById('home_section_key_submit').value = document.getElementById('home_section_key').value || '';
             }
             const formData = new FormData(form);
             if (method === 'PUT') formData.append('_method', 'PUT');

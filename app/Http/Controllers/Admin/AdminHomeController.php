@@ -289,7 +289,9 @@ class AdminHomeController extends Controller
     {
         $content = home::findOrFail($id);
         if ($request->wantsJson() || $request->ajax()) {
-            return response()->json($content);
+            $data = $content->toArray();
+            $data['image_path'] = $content->image_path ? (strpos($content->image_path, 'http') === 0 ? $content->image_path : asset($content->image_path)) : null;
+            return response()->json($data);
         }
         $tittle = 'Edit Home Page Content';
         $sectionKeys = $this->getAllowedSectionKeys();
