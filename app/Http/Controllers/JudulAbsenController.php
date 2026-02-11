@@ -20,7 +20,7 @@ class JudulAbsenController extends Controller
     {
         //
         $tittle = "judul dh";
-        $data = judul_absen::all()->sortByDesc('created_at');
+        $data = judul_absen::orderBy('created_at', 'desc')->get();
         if ($request->ajax()) {
             return DataTables::of($data)
                 ->addIndexColumn()

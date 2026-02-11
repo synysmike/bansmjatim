@@ -12,6 +12,15 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
+                        @if(isset($id))
+                        <div class="card-header bg-gradient-to-r from-admin-primary to-admin-secondary px-6 py-4 flex items-center justify-between">
+                            <h2 class="text-xl font-semibold text-white">{{ $tittle ?? 'Report Daftar Hadir' }}</h2>
+                            <a href="{{ route('report_dh.pdf', $id) }}" target="_blank" class="inline-flex items-center gap-2 bg-white text-admin-primary px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all font-medium">
+                                <i class="fas fa-file-pdf admin-icon"></i>
+                                <span>Export PDF</span>
+                            </a>
+                        </div>
+                        @endif
                         <div id="kolom" class="card-body">
                             <div class="table-1">
                                 <table class="table-striped table" id="table-1">

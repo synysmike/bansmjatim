@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AbsenDhController extends Controller
 {
@@ -41,9 +42,9 @@ class AbsenDhController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('ttd', function ($data) {
-                    $cek =  URL::to($data->ttd);
                     if (!empty($data->ttd)) {
-                        return '<img width="170" src="' . $cek . '" />';
+                        $ttdUrl = asset(Storage::url($data->ttd));
+                        return '<img width="170" src="' . e($ttdUrl) . '" alt="TTD" style="max-height: 120px; object-fit: contain;" />';
                     } else {
                         return '-';
                     }
@@ -51,7 +52,52 @@ class AbsenDhController extends Controller
                 ->rawColumns(['ttd'])
                 ->make(true);
         }
-        return view('absen.report', compact('tittle'));
+        return view('absen.report', compact('tittle', 'id'));
+    }
+
+    /**
+     * Export report_dh table as PDF (same data as view, TTD images included).
+     */
+    public function exportPdf($id)
+    {
+        $judul = judul_absen::find($id);
+        if (!$judul) {
+            abort(404, 'Judul absen tidak ditemukan.');
+        }
+
+        $tittle = $judul->judul;
+        $tanggal = $judul->tanggal;
+        $data = absen_dh::join('tbm_nama_sekretariat', 'tbm_nama_sekretariat.id', '=', 'tbr_dhabsen.id_nama')
+            ->where('tbr_dhabsen.tanggal', $tanggal)
+            ->where('tbr_dhabsen.nama_judul', $tittle)
+            ->get(['tbr_dhabsen.*', 'tbm_nama_sekretariat.nama'])->sortByDesc('created_at');
+
+        // Attach TTD as base64 for DomPDF (reliable embedding)
+        $rows = $data->map(function ($row, $index) {
+            $ttdBase64 = null;
+            if (!empty($row->ttd)) {
+                $path = Storage::path($row->ttd);
+                if (is_file($path)) {
+                    $ttdBase64 = base64_encode(file_get_contents($path));
+                }
+            }
+            return (object) [
+                'no' => $index + 1,
+                'nama' => $row->nama ?? '-',
+                'tanggal' => $row->tanggal ?? '-',
+                'nama_judul' => $row->nama_judul ?? '-',
+                'ttd_base64' => $ttdBase64,
+            ];
+        });
+
+        $pdf = Pdf::loadView('absen.report_pdf', [
+            'tittle' => $tittle,
+            'tanggal' => $tanggal,
+            'rows' => $rows,
+        ])->setPaper('a4', 'landscape');
+
+        $filename = 'report_daftar_hadir_' . \Illuminate\Support\Str::slug($tittle) . '_' . date('Y-m-d') . '.pdf';
+        return $pdf->download($filename);
     }
 
     public function create() {}
@@ -107,9 +153,9 @@ class AbsenDhController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('ttd', function ($data) {
-                    $cek =  URL::to($data->ttd);
                     if (!empty($data->ttd)) {
-                        return '<img width="170" src="' . $cek . '" />';
+                        $ttdUrl = asset(Storage::url($data->ttd));
+                        return '<img width="170" src="' . e($ttdUrl) . '" alt="TTD" style="max-height: 120px; object-fit: contain;" />';
                     } else {
                         return '-';
                     }

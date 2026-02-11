@@ -72,7 +72,8 @@ Route::resource('/asesor', AsesorController::class);
 Route::resource('/presensi', AbsenDhController::class);
 Route::resource('/sekretariat', NamaSekretariatController::class);
 Route::resource('/judul_absen', JudulAbsenController::class);
-Route::get('/report_dh/{id}', [AbsenDhController::class, 'view']);
+Route::get('/report_dh/{id}', [AbsenDhController::class, 'view'])->name('report_dh.view');
+Route::get('/report_dh/{id}/pdf', [AbsenDhController::class, 'exportPdf'])->name('report_dh.pdf');
 Route::get('/total', [VerifikasiController::class, 'total']);
 Route::get('/status', [DetilsekolahController::class, 'status']);
 Route::post('/perbaikan', [DetilsekolahController::class, 'perbaikan']);
@@ -80,6 +81,11 @@ Route::post('/login', [AuthController::class, 'authenticate'])->name('authentica
 Route::get('/loginbanpdm', [AuthController::class, 'login'])->name('login');
 // Route::resource('/login', AuthController::class);
 Route::post('/logout', [AuthController::class, 'logout']);
+
+// Public page (admin layout, no login required)
+Route::get('/public-page', function () {
+    return view('admin.public', ['tittle' => 'Public Page']);
+})->name('public.page');
 
 // public access
 Route::post('/list-form', [DaftarhadirController::class, 'listForm']);
@@ -167,6 +173,16 @@ Route::middleware(['auth', 'role:admin|staff'])->group(function () {
 
     // Judul Absen / Kegiatan Internal (admin + staff)
     Route::resource('/admin/judul_absen', JudulAbsenController::class)->names('admin.judul_absen');
+
+    // Form Builder (admin + staff): templates by name, drag-and-drop builder, save to DB
+    Route::get('/admin/form-builder', [App\Http\Controllers\Admin\FormBuilderController::class, 'index'])->name('admin.form-builder.index');
+    Route::get('/admin/form-builder/create', [App\Http\Controllers\Admin\FormBuilderController::class, 'create'])->name('admin.form-builder.create');
+    Route::post('/admin/form-builder', [App\Http\Controllers\Admin\FormBuilderController::class, 'store'])->name('admin.form-builder.store');
+    Route::get('/admin/form-builder/{id}', [App\Http\Controllers\Admin\FormBuilderController::class, 'show'])->name('admin.form-builder.show');
+    Route::get('/admin/form-builder/{id}/edit', [App\Http\Controllers\Admin\FormBuilderController::class, 'edit'])->name('admin.form-builder.edit');
+    Route::put('/admin/form-builder/{id}', [App\Http\Controllers\Admin\FormBuilderController::class, 'update'])->name('admin.form-builder.update');
+    Route::delete('/admin/form-builder/{id}', [App\Http\Controllers\Admin\FormBuilderController::class, 'destroy'])->name('admin.form-builder.destroy');
+    Route::get('/admin/form-builder/{id}/template', [App\Http\Controllers\Admin\FormBuilderController::class, 'getTemplate'])->name('admin.form-builder.get-template');
 
     // Admin-only routes (Home, User resource, Deployment, Role Management)
     Route::middleware(['role:admin'])->group(function () {

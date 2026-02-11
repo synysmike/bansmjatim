@@ -42,6 +42,7 @@
                 @endif
                 <a href="{{ route('admin.config.index') }}" class="px-3 py-2 rounded-lg text-white hover:bg-white hover:bg-opacity-15 transition-all text-sm font-medium">Kegiatan Umum</a>
                 <a href="{{ route('admin.judul_absen.index') }}" class="px-3 py-2 rounded-lg text-white hover:bg-white hover:bg-opacity-15 transition-all text-sm font-medium">Kegiatan Internal</a>
+                <a href="{{ route('admin.form-builder.index') }}" class="px-3 py-2 rounded-lg text-white hover:bg-white hover:bg-opacity-15 transition-all text-sm font-medium">Form Builder</a>
             </div>
 
             <!-- Profile Dropdown -->
@@ -180,6 +181,10 @@
             <a href="{{ route('admin.judul_absen.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white hover:bg-white hover:bg-opacity-15 transition-all">
                 <i class="fas fa-calendar-check admin-icon w-5"></i>
                 <span class="font-medium">Kegiatan Internal</span>
+            </a>
+            <a href="{{ route('admin.form-builder.index') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-white hover:bg-white hover:bg-opacity-15 transition-all">
+                <i class="fas fa-wpforms admin-icon w-5"></i>
+                <span class="font-medium">Form Builder</span>
             </a>
         </div>
     </div>

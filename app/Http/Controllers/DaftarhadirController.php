@@ -394,7 +394,8 @@ class DaftarhadirController extends Controller
                 ->addColumn('tand', function ($data) {
                     $ttd = $data->ttd;
                     if (!empty($data->ttd)) {
-                        return '<img width="100" src="/' . $ttd . '" alt="">';
+                        $ttdUrl = Storage::url($ttd);
+                        return '<img width="100" src="' . $ttdUrl . '" alt="TTD" style="max-height: 100px; object-fit: contain;">';
                     } else {
                         return '-';
                     }
@@ -457,7 +458,12 @@ class DaftarhadirController extends Controller
                 ->addIndexColumn()
                 ->addColumn('ttd', function ($data) {
                     $ttd = $data->ttd;
-                    return '<img width="100" src="/' . $ttd . '" alt="">';
+                    if (!empty($data->ttd)) {
+                        $ttdUrl = Storage::url($ttd);
+                        return '<img width="100" src="' . $ttdUrl . '" alt="TTD" style="max-height: 100px; object-fit: contain;">';
+                    } else {
+                        return '-';
+                    }
                 })
                 ->rawColumns(['ttd'])
                 ->make(true);

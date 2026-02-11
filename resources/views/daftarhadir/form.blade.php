@@ -39,6 +39,7 @@
                     </div>
                     <div class="p-6">
                         <form id="id-form" enctype="multipart/form-data">
+                            @csrf
                             {!! $kategori !!}
                             @if (isset($ass) && $ass !== null)
                                 <div class="form-group mb-6">
@@ -262,11 +263,14 @@
                 $btn.prop('disabled', true).find('span').text('Menyimpan...');
                 $.ajax({
                     type: "POST",
-                    url: "{{ $link ?? '' }}",
+                    url: "{{ url('form/' . ($link ?? '')) }}",
                     data: formData,
                     dataType: 'json',
                     processData: false,
                     contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     success: function(data) {
                         $('.js-signature').jqSignature('clearCanvas');
                         $('#id-form').trigger("reset");
