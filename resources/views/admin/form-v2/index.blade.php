@@ -235,15 +235,25 @@
 
             $('#form-field-def').on('submit', function(e) {
                 e.preventDefault();
+                var optStr = $('#fd-options').val() || '';
+                var tipe = $('#fd-tipe').val();
+                if (optStr && ['select', 'radio', 'checkbox'].indexOf(tipe) >= 0) {
+                    try {
+                        JSON.parse(optStr);
+                    } catch (err) {
+                        alert('Options: format JSON tidak valid. Gunakan tanda petik ganda, contoh: [{"value":"a","label":"A"}]');
+                        return;
+                    }
+                }
                 var id = $('#field-def-id').val();
                 var url = id ? "{{ url('admin/form-v2/field-definitions') }}/" + id : FIELD_DEF_STORE;
                 var data = {
                     nama_field: $('#fd-nama_field').val(),
-                    tipe: $('#fd-tipe').val(),
+                    tipe: tipe,
                     label: $('#fd-label').val(),
                     required: $('#fd-required').prop('checked') ? 1 : 0,
                     placeholder: $('#fd-placeholder').val(),
-                    options: $('#fd-options').val() || '',
+                    options: optStr,
                     sort_order: $('#fd-sort_order').val() || 0,
                     _token: csrf
                 };
@@ -251,7 +261,16 @@
                 $.ajax({ url: url, type: 'POST', data: data }).done(function(res) {
                     if (res.success) { $('#tabel-field-def').DataTable().ajax.reload(null, false); modalManager.close('modalFieldDef'); alert(res.message); }
                 }).fail(function(xhr) {
-                    alert(xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Gagal menyimpan');
+                    var msg = 'Gagal menyimpan';
+                    if (xhr.responseJSON) {
+                        if (xhr.responseJSON.errors && typeof xhr.responseJSON.errors === 'object') {
+                            var first = Object.values(xhr.responseJSON.errors).flat()[0];
+                            if (first) msg = first;
+                        } else if (xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                    }
+                    alert(msg);
                 });
             });
 

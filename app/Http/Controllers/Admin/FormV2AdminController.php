@@ -43,15 +43,28 @@ class FormV2AdminController extends Controller
             'tipe' => 'required|in:' . implode(',', FormFieldDefinition::TYPES),
             'label' => 'required|string|max:255',
             'required' => 'nullable|boolean',
-            'options' => 'nullable|string',
+            'options' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (!$value || !in_array($request->tipe, ['select', 'radio', 'checkbox'])) {
+                        return;
+                    }
+                    $trimmed = trim($value);
+                    if ($trimmed === '') {
+                        return;
+                    }
+                    if (json_decode($value, true) === null) {
+                        $fail('Options harus berformat JSON yang valid (contoh: [{"value":"a","label":"A"}]). Gunakan tanda petik ganda.');
+                    }
+                },
+            ],
             'placeholder' => 'nullable|string|max:255',
             'sort_order' => 'nullable|integer|min:0',
         ]);
         $data = $request->only(['nama_field', 'tipe', 'label', 'placeholder', 'sort_order']);
         $data['required'] = (bool) $request->input('required');
-        if ($request->filled('options')) {
-            $data['options'] = json_decode($request->options, true) ?: [];
-        }
+        $data['options'] = $this->parseOptionsFromRequest($request->input('options'));
         FormFieldDefinition::create($data);
         return response()->json(['success' => true, 'message' => 'Field definisi berhasil ditambah.']);
     }
@@ -70,17 +83,42 @@ class FormV2AdminController extends Controller
             'tipe' => 'required|in:' . implode(',', FormFieldDefinition::TYPES),
             'label' => 'required|string|max:255',
             'required' => 'nullable|boolean',
-            'options' => 'nullable|string',
+            'options' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (!$value || !in_array($request->tipe, ['select', 'radio', 'checkbox'])) {
+                        return;
+                    }
+                    $trimmed = trim($value);
+                    if ($trimmed === '') {
+                        return;
+                    }
+                    if (json_decode($value, true) === null) {
+                        $fail('Options harus berformat JSON yang valid (contoh: [{"value":"a","label":"A"}]). Gunakan tanda petik ganda.');
+                    }
+                },
+            ],
             'placeholder' => 'nullable|string|max:255',
             'sort_order' => 'nullable|integer|min:0',
         ]);
         $data = $request->only(['nama_field', 'tipe', 'label', 'placeholder', 'sort_order']);
         $data['required'] = (bool) $request->input('required');
-        if ($request->has('options')) {
-            $data['options'] = $request->options ? (json_decode($request->options, true) ?: []) : null;
-        }
+        $data['options'] = $this->parseOptionsFromRequest($request->input('options'));
         $field->update($data);
         return response()->json(['success' => true, 'message' => 'Field definisi berhasil diubah.']);
+    }
+
+    /**
+     * Parse options from request (JSON string) to array for DB. Always returns array or null.
+     */
+    private function parseOptionsFromRequest($value)
+    {
+        if ($value === null || trim((string) $value) === '') {
+            return null;
+        }
+        $decoded = json_decode($value, true);
+        return is_array($decoded) ? $decoded : null;
     }
 
     public function destroyFieldDefinition($id)
