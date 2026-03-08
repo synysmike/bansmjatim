@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $tittle }} - BAN-PDM Jatim</title>
+    <title>{{ $tittle ?? $title ?? '' }} - BAN-PDM Jatim</title>
     <link rel="icon" type="image/png" href="{{ asset('ban.png') }}">
     <meta property="og:image" content="{{ asset('ban.png') }}">
     <meta name="twitter:card" content="summary_large_image">

@@ -21,6 +21,7 @@ use App\Http\Controllers\RakordaController;
 use App\Http\Controllers\SekolahController;
 use App\Http\Controllers\BukuTamuController;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\FormV2Controller;
 // use App\Http\Controllers\RecordBioController;
 // use App\Http\Controllers\AssetsFormController;
 // use App\Http\Controllers\ConfigFormController;
@@ -41,6 +42,49 @@ use App\Http\Controllers\NamaSekretariatController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/check-db', function () {
+    $result = ['connections' => []];
+    $connections = [config('database.default') => 'default', 'mysql2' => 'mysql2'];
+    foreach ($connections as $name => $label) {
+        try {
+            $conn = DB::connection($name);
+            $conn->getPdo();
+            $conn->selectOne('SELECT 1');
+            $result['connections'][$label] = ['ok' => true, 'database' => $conn->getDatabaseName()];
+        } catch (\Throwable $e) {
+            $result['connections'][$label] = ['ok' => false, 'error' => $e->getMessage()];
+        }
+    }
+    $result['ok'] = !collect($result['connections'])->contains(fn ($c) => !($c['ok'] ?? false));
+    return response()->json($result);
+});
+
+Route::get('/run-migrate', function () {
+    $secret = env('MIGRATE_URL_KEY');
+    if ($secret === null || $secret === '') {
+        return response()->json(['ok' => false, 'error' => 'MIGRATE_URL_KEY tidak diset di .env'], 403);
+    }
+    if (request()->query('key') !== $secret) {
+        return response()->json(['ok' => false, 'error' => 'Key tidak valid'], 403);
+    }
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        $output = trim(Artisan::output());
+        return response()->json([
+            'ok' => true,
+            'message' => 'Migrate selesai',
+            'output' => $output,
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'ok' => false,
+            'error' => $e->getMessage(),
+            'output' => trim(Artisan::output()),
+        ], 500);
+    }
+});
+
 // Route::get('tes', function(){
 //     return view('admin.modal');
 // });
@@ -110,6 +154,9 @@ Route::resource('/config', ConfigController::class);
 Route::get('form/{link}', [DaftarhadirController::class, 'index']);
 Route::get('print', [DaftarhadirController::class, 'print_form']);
 Route::post('form/{link}', [DaftarhadirController::class, 'store']);
+// Form v2: structured fields (form_field_definitions + form_v2_config)
+Route::get('form-v2/{link}', [FormV2Controller::class, 'show']);
+Route::post('form-v2/{link}', [FormV2Controller::class, 'store']);
 // Route::post('/form/{link}/{id}', [DaftarhadirController::class,'show']);
 
 Route::get('link/{red}', [UrlController::class, 'redirect']);
@@ -183,6 +230,22 @@ Route::middleware(['auth', 'role:admin|staff'])->group(function () {
     Route::put('/admin/form-builder/{id}', [App\Http\Controllers\Admin\FormBuilderController::class, 'update'])->name('admin.form-builder.update');
     Route::delete('/admin/form-builder/{id}', [App\Http\Controllers\Admin\FormBuilderController::class, 'destroy'])->name('admin.form-builder.destroy');
     Route::get('/admin/form-builder/{id}/template', [App\Http\Controllers\Admin\FormBuilderController::class, 'getTemplate'])->name('admin.form-builder.get-template');
+
+    // Form V2 (structured fields): definisi field + konfigurasi form
+    Route::get('/admin/form-v2', [App\Http\Controllers\Admin\FormV2AdminController::class, 'index'])->name('admin.form-v2.index');
+    Route::get('/admin/form-v2/field-definitions', [App\Http\Controllers\Admin\FormV2AdminController::class, 'fieldDefinitions'])->name('admin.form-v2.field-definitions');
+    Route::post('/admin/form-v2/field-definitions', [App\Http\Controllers\Admin\FormV2AdminController::class, 'storeFieldDefinition'])->name('admin.form-v2.field-definitions.store');
+    Route::get('/admin/form-v2/field-definitions/{id}', [App\Http\Controllers\Admin\FormV2AdminController::class, 'editFieldDefinition'])->name('admin.form-v2.field-definitions.edit');
+    Route::put('/admin/form-v2/field-definitions/{id}', [App\Http\Controllers\Admin\FormV2AdminController::class, 'updateFieldDefinition'])->name('admin.form-v2.field-definitions.update');
+    Route::delete('/admin/form-v2/field-definitions/{id}', [App\Http\Controllers\Admin\FormV2AdminController::class, 'destroyFieldDefinition'])->name('admin.form-v2.field-definitions.destroy');
+    Route::get('/admin/form-v2/configs', [App\Http\Controllers\Admin\FormV2AdminController::class, 'configs'])->name('admin.form-v2.configs');
+    Route::post('/admin/form-v2/configs', [App\Http\Controllers\Admin\FormV2AdminController::class, 'storeConfig'])->name('admin.form-v2.configs.store');
+    Route::get('/admin/form-v2/configs/{id}', [App\Http\Controllers\Admin\FormV2AdminController::class, 'editConfig'])->name('admin.form-v2.configs.edit');
+    Route::put('/admin/form-v2/configs/{id}', [App\Http\Controllers\Admin\FormV2AdminController::class, 'updateConfig'])->name('admin.form-v2.configs.update');
+    Route::delete('/admin/form-v2/configs/{id}', [App\Http\Controllers\Admin\FormV2AdminController::class, 'destroyConfig'])->name('admin.form-v2.configs.destroy');
+    Route::get('/admin/form-v2/configs/{id}/rekap', [App\Http\Controllers\Admin\FormV2AdminController::class, 'rekap'])->name('admin.form-v2.configs.rekap');
+    Route::get('/admin/form-v2/configs/{id}/rekap/pdf', [App\Http\Controllers\Admin\FormV2AdminController::class, 'rekapPdf'])->name('admin.form-v2.configs.rekap.pdf');
+    Route::get('/admin/form-v2/field-definitions-list', [App\Http\Controllers\Admin\FormV2AdminController::class, 'getFieldDefinitionsList'])->name('admin.form-v2.field-definitions-list');
 
     // Admin-only routes (Home, User resource, Deployment, Role Management)
     Route::middleware(['role:admin'])->group(function () {
