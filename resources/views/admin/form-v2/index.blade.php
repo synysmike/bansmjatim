@@ -3,6 +3,7 @@
 @push('css-custom')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endpush
 
 @section('admin-container')
@@ -188,6 +189,7 @@
 @push('js-custom')
     <script src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         var FIELD_DEF_URL = "{{ route('admin.form-v2.field-definitions') }}";
         var FIELD_DEF_STORE = "{{ route('admin.form-v2.field-definitions.store') }}";
@@ -371,6 +373,38 @@
                 if (!confirm('Hapus konfigurasi ini?')) return;
                 $.ajax({ url: "{{ url('admin/form-v2/configs') }}/" + id, type: 'DELETE', headers: { 'X-CSRF-TOKEN': csrf } }).done(function(res) {
                     if (res.success) { $('#tabel-config-v2').DataTable().ajax.reload(null, false); alert(res.message); }
+                });
+            };
+
+            window.duplicateConfig = function(id) {
+                Swal.fire({
+                    title: 'Duplikat konfigurasi form?',
+                    text: 'Akan dibuat salinan dengan link dan judul berakhiran _2, _3, dan seterusnya.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, duplikat',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#6366f1'
+                }).then(function(result) {
+                    if (!result.isConfirmed) return;
+                    $.ajax({
+                        url: "{{ url('admin/form-v2/configs') }}/" + id + "/duplicate",
+                        type: 'POST',
+                        data: { _token: csrf },
+                        dataType: 'json'
+                    }).done(function(res) {
+                        if (res.success) {
+                            $('#tabel-config-v2').DataTable().ajax.reload(null, false);
+                            Swal.fire({ title: 'Berhasil', text: res.message, icon: 'success', confirmButtonColor: '#6366f1' });
+                        }
+                    }).fail(function(xhr) {
+                        Swal.fire({
+                            title: 'Gagal',
+                            text: xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Gagal menduplikat konfigurasi.',
+                            icon: 'error',
+                            confirmButtonColor: '#6366f1'
+                        });
+                    });
                 });
             };
         });

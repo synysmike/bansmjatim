@@ -47,6 +47,8 @@ class FormV2Controller extends Controller
                 ->make(true);
         }
 
+        $today = Carbon::now('Asia/Jakarta')->format('d-m-Y');
+
         return view('form-v2.show', [
             'config' => $config,
             'fields' => $fields,
@@ -55,6 +57,7 @@ class FormV2Controller extends Controller
             'link' => $link,
             'tittle' => $judul,
             'title' => $judul,
+            'today' => $today,
         ]);
     }
 

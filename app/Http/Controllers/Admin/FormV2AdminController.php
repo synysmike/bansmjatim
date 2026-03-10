@@ -144,6 +144,7 @@ class FormV2AdminController extends Controller
                     return '<a href="' . $url . '" target="_blank" class="text-admin-primary hover:underline"><i class="fas fa-external-link-alt admin-icon"></i> Form</a> | ' .
                         '<a href="' . $rekapUrl . '" class="text-admin-primary hover:underline"><i class="fas fa-list admin-icon"></i> Rekap</a> | ' .
                         '<button type="button" data-edit-config="' . $row->id . '" class="text-admin-primary hover:underline bg-transparent border-none cursor-pointer"><i class="fas fa-edit admin-icon"></i> Edit</button> | ' .
+                        '<button type="button" onclick="duplicateConfig(' . $row->id . ')" class="text-admin-primary hover:underline bg-transparent border-none cursor-pointer"><i class="fas fa-copy admin-icon"></i> Duplikat</button> | ' .
                         '<button type="button" onclick="deleteConfig(' . $row->id . ')" class="text-red-600 hover:underline bg-transparent border-none cursor-pointer"><i class="fas fa-trash admin-icon"></i> Hapus</button>';
                 })
                 ->rawColumns(['actions'])
@@ -207,6 +208,50 @@ class FormV2AdminController extends Controller
     {
         FormV2Config::findOrFail($id)->delete();
         return response()->json(['success' => true, 'message' => 'Konfigurasi dihapus.']);
+    }
+
+    /**
+     * Duplikat konfigurasi form. Link dan judul diberi suffix _2, _3, ... otomatis.
+     */
+    public function duplicateConfig($id)
+    {
+        $config = FormV2Config::findOrFail($id);
+        $baseLink = $config->link;
+        $baseJudul = $config->judul;
+
+        $linkSuffixes = [0];
+        foreach (FormV2Config::where('link', $baseLink)->orWhere('link', 'like', $baseLink . '_%')->pluck('link') as $l) {
+            if ($l === $baseLink) {
+                $linkSuffixes[] = 1;
+            } elseif (preg_match('/^' . preg_quote($baseLink, '/') . '_(\d+)$/', $l, $m)) {
+                $linkSuffixes[] = (int) $m[1];
+            }
+        }
+        $newLink = $baseLink . '_' . (max($linkSuffixes) + 1);
+
+        $judulSuffixes = [0];
+        foreach (FormV2Config::where('judul', $baseJudul)->orWhere('judul', 'like', $baseJudul . '_%')->pluck('judul') as $j) {
+            if ($j === $baseJudul) {
+                $judulSuffixes[] = 1;
+            } elseif (preg_match('/^' . preg_quote($baseJudul, '/') . '_(\d+)$/', $j, $m)) {
+                $judulSuffixes[] = (int) $m[1];
+            }
+        }
+        $newJudul = $baseJudul . '_' . (max($judulSuffixes) + 1);
+
+        FormV2Config::create([
+            'link' => $newLink,
+            'judul' => $newJudul,
+            'kategori' => $config->kategori,
+            'field_names' => $config->field_names ?? [],
+            'is_active' => (bool) $config->is_active,
+            'signature_enabled' => (bool) ($config->signature_enabled ?? true),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Konfigurasi berhasil diduplikat. Link: ' . $newLink . ', Judul: ' . $newJudul,
+        ]);
     }
 
     public function getFieldDefinitionsList()

@@ -243,6 +243,7 @@ Route::middleware(['auth', 'role:admin|staff'])->group(function () {
     Route::get('/admin/form-v2/configs/{id}', [App\Http\Controllers\Admin\FormV2AdminController::class, 'editConfig'])->name('admin.form-v2.configs.edit');
     Route::put('/admin/form-v2/configs/{id}', [App\Http\Controllers\Admin\FormV2AdminController::class, 'updateConfig'])->name('admin.form-v2.configs.update');
     Route::delete('/admin/form-v2/configs/{id}', [App\Http\Controllers\Admin\FormV2AdminController::class, 'destroyConfig'])->name('admin.form-v2.configs.destroy');
+    Route::post('/admin/form-v2/configs/{id}/duplicate', [App\Http\Controllers\Admin\FormV2AdminController::class, 'duplicateConfig'])->name('admin.form-v2.configs.duplicate');
     Route::get('/admin/form-v2/configs/{id}/rekap', [App\Http\Controllers\Admin\FormV2AdminController::class, 'rekap'])->name('admin.form-v2.configs.rekap');
     Route::get('/admin/form-v2/configs/{id}/rekap/pdf', [App\Http\Controllers\Admin\FormV2AdminController::class, 'rekapPdf'])->name('admin.form-v2.configs.rekap.pdf');
     Route::get('/admin/form-v2/field-definitions-list', [App\Http\Controllers\Admin\FormV2AdminController::class, 'getFieldDefinitionsList'])->name('admin.form-v2.field-definitions-list');
