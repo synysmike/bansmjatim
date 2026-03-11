@@ -217,7 +217,7 @@
                                 <button type="submit" class="btn btn-primary" id="btn-save" name="submit" value="1">
                                     <i class="fas fa-paper-plane" aria-hidden="true"></i>
                                     <span>Simpan</span>
-                                </button>
+                                </button><br>
                                 <button type="button" id="modal-daftar" class="btn btn-outline">
                                     <i class="fas fa-list" aria-hidden="true"></i>
                                     <span>Lihat Daftar Pengunjung</span>
