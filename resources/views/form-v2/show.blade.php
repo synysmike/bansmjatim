@@ -116,9 +116,9 @@
             border-radius: 4px;
             background: #fafafa !important;
         }
-        .form-v2-page .btn-group { margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--form-v2-border); display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+        .form-v2-page .btn-group { margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--form-v2-border); display: flex !important; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
         .form-v2-page .btn {
-            display: inline-flex;
+            display: inline-flex !important;
             align-items: center;
             gap: 0.5rem;
             padding: 0.625rem 1.25rem;
@@ -130,13 +130,19 @@
             transition: background 0.15s, border-color 0.15s, color 0.15s;
             border: 1px solid transparent;
         }
-        .form-v2-page .btn-primary {
-            background: var(--form-v2-accent);
-            color: #fff;
-            border-color: var(--form-v2-accent);
+        .form-v2-page .btn-primary,
+        .form-v2-page button[type="submit"] {
+            background: var(--form-v2-accent) !important;
+            color: #fff !important;
+            border-color: var(--form-v2-accent) !important;
+            min-height: 44px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
         }
-        .form-v2-page .btn-primary:hover:not(:disabled) { background: #1e293b; border-color: #1e293b; }
-        .form-v2-page .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+        .form-v2-page .btn-primary:hover:not(:disabled),
+        .form-v2-page button[type="submit"]:hover:not(:disabled) { background: #1e293b !important; border-color: #1e293b !important; }
+        .form-v2-page .btn-primary:disabled,
+        .form-v2-page button[type="submit"]:disabled { opacity: 0.7; cursor: not-allowed; }
         .form-v2-page .btn-outline {
             background: #fff;
             color: var(--form-v2-ink);
@@ -207,13 +213,13 @@
                             </div>
                             @endif
 
-                            <div class="btn-group">
-                                <button type="submit" class="btn btn-primary" id="btn-save">
-                                    <i class="fas fa-pen-to-square"></i>
+                            <div class="btn-group" role="group" aria-label="Aksi form">
+                                <button type="submit" class="btn btn-primary" id="btn-save" name="submit" value="1">
+                                    <i class="fas fa-paper-plane" aria-hidden="true"></i>
                                     <span>Simpan</span>
                                 </button>
                                 <button type="button" id="modal-daftar" class="btn btn-outline">
-                                    <i class="fas fa-list"></i>
+                                    <i class="fas fa-list" aria-hidden="true"></i>
                                     <span>Lihat Daftar Pengunjung</span>
                                 </button>
                             </div>
