@@ -132,23 +132,23 @@
         }
         .form-v2-page .btn-primary,
         .form-v2-page button[type="submit"] {
-            background: var(--form-v2-accent) !important;
+            background: #2563eb !important;
             color: #fff !important;
-            border-color: var(--form-v2-accent) !important;
+            border-color: #2563eb !important;
             min-height: 44px;
             padding: 0.75rem 1.5rem;
             font-size: 1rem;
         }
         .form-v2-page .btn-primary:hover:not(:disabled),
-        .form-v2-page button[type="submit"]:hover:not(:disabled) { background: #1e293b !important; border-color: #1e293b !important; }
+        .form-v2-page button[type="submit"]:hover:not(:disabled) { background: #1d4ed8 !important; border-color: #1d4ed8 !important; }
         .form-v2-page .btn-primary:disabled,
         .form-v2-page button[type="submit"]:disabled { opacity: 0.7; cursor: not-allowed; }
         .form-v2-page .btn-outline {
-            background: #fff;
-            color: var(--form-v2-ink);
-            border-color: var(--form-v2-border);
+            background: transparent !important;
+            color: #2563eb !important;
+            border-color: #2563eb !important;
         }
-        .form-v2-page .btn-outline:hover { background: #f8fafc; border-color: var(--form-v2-accent); color: var(--form-v2-accent); }
+        .form-v2-page .btn-outline:hover { background: rgba(37, 99, 235, 0.08) !important; border-color: #1d4ed8 !important; color: #1d4ed8 !important; }
         .form-v2-page .btn-danger {
             background: #fff;
             color: #b91c1c;
