@@ -55,7 +55,7 @@
             border: 1px solid var(--form-v2-border);
             border-radius: 4px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-            overflow: hidden;
+            overflow: visible;
             margin-top: 2rem;
         }
         .form-v2-page .form-card-head {
@@ -71,7 +71,7 @@
             margin: 0;
             letter-spacing: 0.01em;
         }
-        .form-v2-page .form-card-body { padding: 1.75rem 1.5rem; }
+        .form-v2-page .form-card-body { padding: 1.75rem 1.5rem; padding-bottom: 2rem; }
         .form-v2-page .form-group { margin-bottom: 1.5rem; }
         .form-v2-page .form-group:last-of-type { margin-bottom: 0; }
         .form-v2-page .form-label {
@@ -165,14 +165,17 @@
             border-top: 1px solid var(--form-v2-border);
             background: var(--form-v2-paper);
         }
-        .form-v2-page .modal-wrapper .modal-content { border-radius: 4px; border: 1px solid var(--form-v2-border); }
+        .form-v2-page .modal-wrapper .modal-content { border-radius: 4px; border: 1px solid var(--form-v2-border); display: flex; flex-direction: column; max-height: 85vh; overflow: hidden; }
         .form-v2-page .modal-wrapper .card-header {
             background: var(--form-v2-accent);
             color: #fff;
             padding: 1rem 1.25rem;
             font-family: 'Source Serif 4', Georgia, serif;
             font-size: 1.125rem;
+            flex-shrink: 0;
         }
+        .form-v2-page #modal-show .modal-body-scroll { flex: 1; min-height: 0; overflow-y: auto !important; overflow-x: auto; }
+        .form-v2-page #modal-show .modal-content .border-t { flex-shrink: 0; }
         .form-v2-page #table-1 { font-size: 0.875rem; }
         .form-v2-page #table-1 th { background: #f8fafc; font-weight: 600; color: var(--form-v2-ink); }
     </style>
@@ -243,7 +246,7 @@
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
-                <div class="p-6 overflow-y-auto">
+                <div class="p-6 overflow-y-auto modal-body-scroll">
                     <div class="overflow-x-auto">
                         <table id="table-1" class="min-w-full divide-y divide-slate-200">
                             <thead class="bg-slate-100">
